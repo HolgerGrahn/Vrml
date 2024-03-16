@@ -20,8 +20,8 @@ https://www.bitmanagement.de/developer/index.html
 Generell VRML / X3D information / Resources
 https://www.web3d.org/what-x3d-graphics
 
-VRML 97 spec copy
-https://www.bitmanagement.de/developer/spec/vrml97/index.htm
+VRML 97  ISO/IEC 14772-1:1997 - The Virtual Reality Modeling Language
+https://www.bitmanagement.de/developer/spec/vrml97/index.html
 https://www.bitmanagement.de/developer/spec/vrml97specification.pdf
 https://www.bitmanagement.de/developer/spec/vrmlscript/vrmlscript.html
 
