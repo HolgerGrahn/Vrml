@@ -11,23 +11,46 @@ BSContact Stereo adds support for
 Stereo Rendering, MultiView Display and  VR Occulus Rift support 
 https://www.bitmanagement.de/en/products/interactive-3d-clients/bs-contact-stereo
 
-Because drop of support for native plugins in Webbrowsers like Google Chrome, Microsoft Edge
-you would need to load url's in the BSContact Player->File Open Command.
 
-Microsoft Internet Explorer supports the hosting of the Active X compononent BSContactVmrl.ocx,
-so examples using the WebBrowser HTML integration.
 
-More developer info on 
+More Bitmanagement developer info on 
 http://sdk.bitmanagement.de/
 https://www.bitmanagement.de/developer/index.html
 
-A solution to open an url in BSContact is by simply clicking in a WebBrower of locally , is to create a BSURL file.
+Generell VRML / X3D information / Resources
+https://www.web3d.org/what-x3d-graphics
+
+VRML 97 spec copy
+https://www.bitmanagement.de/developer/spec/vrml97/index.htm
+https://www.bitmanagement.de/developer/spec/vrml97specification.pdf
+https://www.bitmanagement.de/developer/spec/vrmlscript/vrmlscript.html
+
+
+Launching the Player
+
+Because drop of support for native plugins in Webbrowsers like Google Chrome, Microsoft Edge
+you would need to load url's in the BSContact Player->File Open Command.
+
+Microsoft Internet Explorer supported the hosting of the Active X compononent BSContactVmrl.ocx,
+so there are many examples using the WebBrowser HTML integration.
+A workaround solution to open an url in BSContact is by simply clicking in a WebBrower, is to create a BSURL file.
 Its the same fromat as the Windows URL InternetShortCut file, but bsurl is associated with BSContact.exe
 
 
 Eaxmple bsurl file, save as  textfile with .bsurl extension:
 [InternetShortcut]
 URL=https://www.bitmanagement.de/developer/contact/examples/texcoordGen/venus_gradient.wrl
+
+Examples:
+https://github.com/HolgerGrahn/Vrml/tree/main/Examples/bsurl
+
+click on a file, use the GitHub download button, double click in  the download file to open BSContact.exe or drag the link into an open BSContact.
+
+
+
+Some older examples
+https://home.snafu.de/hg/
+
 
 
 
