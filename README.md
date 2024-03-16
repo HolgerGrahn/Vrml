@@ -25,6 +25,9 @@ https://www.bitmanagement.de/developer/spec/vrml97/index.html
 https://www.bitmanagement.de/developer/spec/vrml97specification.pdf
 https://www.bitmanagement.de/developer/spec/vrmlscript/vrmlscript.html
 
+X3D ISO/IEC 19775-1:2013
+https://www.web3d.org/documents/specifications/19775-1/V3.3/
+
 
 Launching the Player
 
@@ -49,7 +52,10 @@ click on a file, use the GitHub download button, double click in  the download f
 
 
 Some older examples
-https://home.snafu.de/hg/
+https://home.snafu.de/hg/vrml/archive/
+
+https://home.snafu.de/hg/ (mostly defunct links)
+
 
 
 
