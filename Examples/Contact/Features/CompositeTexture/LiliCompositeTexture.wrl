@@ -1,0 +1,183 @@
+#VRML V2.0 utf8
+
+WorldInfo{
+	title "Lili Render to CompositeTexture3D"
+	info[
+ 		"Contact composite texture test"
+	]
+}
+
+EXTERNPROTO CompositeTexture3D[
+	eventIn MFNode addChildren
+	eventIn MFNode removeChildren
+	exposedField MFNode children
+	exposedField SFInt32 pixelWidth
+	exposedField SFInt32 pixelHeight
+	exposedField SFNode background
+	exposedField SFNode fog
+	exposedField SFNode navigationInfo
+	exposedField SFNode viewpoint
+	exposedField SFBool repeatS
+	exposedField SFBool repeatT
+	exposedField MFString parameter
+	exposedField SFString update
+	exposedField SFNode textureProperties
+	exposedField SFNode metadata
+	eventOut SFVec2f resolution
+	eventOut SFMatrix viewMatrix
+	eventOut SFMatrix projectionsMatrix
+	eventOut SFMatrix previousViewMatrix
+	eventOut SFMatrix previousProjectionsMatrix
+	eventOut SFVec2f nearFar
+]
+["urn:inet:bitmanagement.de:node:CompositeTexture3D","http://www.bitmanagement.de/vrml/protos/nodes.wrl#CompositeTexture3D","nodes.wrl#CompositeTexture3D"]
+
+EXTERNPROTO MultiTextureCoordinate[
+	exposedField MFNode coord
+	exposedField SFNode metadata
+]
+["urn:inet:bitmanagement.de:node:MultiTextureCoordinate","http://www.bitmanagement.de/vrml/protos/nodes.wrl#MultiTextureCoordinate","nodes.wrl#MultiTextureCoordinate"]
+
+NavigationInfo {
+
+	##	visibilityLimit 200
+}
+
+DEF TS TimeSensor {
+	enabled TRUE
+	loop TRUE
+	cycleInterval 10
+}
+
+DEF Entry-VP Viewpoint 
+{
+	position 0 1.75 5	
+	fieldOfView 1.0
+	description	"Entry"
+	jump FALSE
+}
+
+DEF Background Background { skyColor 0.2 0.2 0.4 }
+PointLight {
+	on FALSE
+	location 0 2 0
+	color 1 0.05 0.05
+}
+
+DEF sceneShadow 
+Transform {
+	translation	0 1.75 0
+	children Inline	{ url "../avatars/lili.wrl" }
+}
+
+DEF Lili-VP Viewpoint 
+{
+	position 0 1. 2
+	fieldOfView 1.0
+	description	"Lili"
+	jump FALSE
+}
+
+Group {
+
+	children [
+
+		DEF Ground Transform {
+			##		scale 50 50 50
+			children [
+				Shape {
+					appearance 
+					Appearance { 
+						material 
+						Material { 
+							diffuseColor 0 0 0 
+							emissiveColor 1 1 1 
+							#	transparency 0.2 
+						}
+						texture 
+						CompositeTexture3D 
+						{
+							#pixelWidth 512 	pixelHeight 512
+							pixelWidth 1024 	pixelHeight 1024
+							# no parameter no depth
+
+							parameter ["format=RGBA","mipmap=true","depth=D24X8"]
+							#	parameter ["format=A2B10G10R10","mipmap=true","depth=D24S8"]  # 10 bit 
+							#	parameter ["format=RGBA","mipmap=true","depth=D24S8"]
+							
+							#	parameter ["format=X8R8G8B8","mipmap=false","depth=D16"]
+							#	parameter [	"format=R32F" "depth=D24X8" "mipmap=false"]	# 32 Bit float
+							##multiSample sceneLOD=bool rectangle	   
+
+						
+							viewpoint 
+							
+							Viewpoint 
+							{
+								position 0 1. 2
+								fieldOfView 1.0
+								description	"Lili"
+								jump FALSE
+							}									
+							
+							#USE Lili-VP 
+							##Viewpoint {position 2 0 5} 
+							#background Background {skyColor [0 1 1]}
+
+							background Background {
+								skyAngle   	[
+									0,0.2,0.4,0.6,0.8,1.0,1.2,1.4,1.6
+								]
+								skyColor	[
+									0 0.0 0.5,
+									0 0.0 0.7,
+									0 0.1 0.8,
+									0 0.2 0.8,
+									0 0.2 0.9,
+									0 0.2 0.9,
+									0.1 0.1 1.0,
+									0.2 0.2 1.0,
+									0.5 0.3 1.0,
+									0.7 0.3 0.3,
+								]
+							}
+
+							children [ USE Lili-VP USE sceneShadow ]
+						}
+						#	textureTransform [ 
+						#		#TextureTransform { scale 0.1 0.1 } 
+					}
+					geometry DEF Square IndexedFaceSet {
+						solid FALSE
+						coord Coordinate {
+							point [ -20 0 -20,
+								20 0 -20,
+								20 0 20,
+								-20 0 20 ]
+						}
+						texCoord MultiTextureCoordinate {
+							coord [
+								DEF TEXCOORD TextureCoordinate {
+									point [ 0 0, 
+										1 0,
+										1 1,
+										0 1 ]
+								}
+								USE TEXCOORD
+							]
+						}
+						coordIndex [ 0, 1, 2, 3, -1 ]
+					}
+				}
+			]
+		}
+
+
+
+	]
+}
+
+
+
+
+
