@@ -1,0 +1,13 @@
+What's new?
+-----------
+-----------
+4.0.9
+April 25,2021
+--------------
+Updated VRML Syntax file including protos for X3D.
+Fixed errors in both languages.
+VRML autocomplete now includes X3D protos.
+Highlighting of elements between quotes and double quotes
+VRML Boilerplatehighlighting
+Folding in comments allowed
+Changes to readme and How to Install

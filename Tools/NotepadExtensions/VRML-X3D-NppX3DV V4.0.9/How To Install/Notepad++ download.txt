@@ -1,0 +1,15 @@
+NEW INSTALL
+
+Download Notepad++ from here: https://notepad-plus-plus.org/
+
+Then follow the steps that you see in the images.
+
+
+-----
+
+UPDATING
+
+Autocomplete files: just overwrite the old ones
+
+Syntax files: Open the "User Defined Language" that you opened when you installed the files. This time, select the X3DV or VRML files, and click the "Remove" button.
+Then follow the same instructions as for installing for the first time.
