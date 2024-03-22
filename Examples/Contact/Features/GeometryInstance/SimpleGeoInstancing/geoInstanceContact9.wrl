@@ -1,0 +1,380 @@
+#VRML V2.0 utf8
+
+EXTERNPROTO Slider [#slightly modified version
+	exposedField MFNode arrow_geometry
+    exposedField SFFloat min
+    exposedField SFFloat max
+    exposedField SFFloat pageSize
+    eventIn  SFFloat     set_position
+    field    SFFloat initial_position
+    eventOut SFFloat         position_changed 
+    eventOut SFInt32         positionInt_changed
+    eventIn  SFFloat            silently_set_position
+    eventIn  SFFloat silently_set_unfiltered_position   
+    eventIn  SFFloat          set_unfiltered_position
+    eventOut SFFloat              unfiltered_position_changed
+    eventOut SFFloat                    knob_position_changed
+    exposedField SFFloat height
+    exposedField SFFloat radiusKnob
+    exposedField SFFloat radiusStick
+    exposedField SFNode appearance
+] "inlines/proto_Slider_mod.wrl#Slider"
+
+PROTO simpleText[
+	exposedField	SFVec3f		translation		0 0 0
+	exposedField	SFRotation	rotation		0 0 1 0
+	exposedField	SFVec3f		scale			1 1 1
+	exposedField	SFColor		color			1 1 1
+	exposedField	MFString	string			""
+    exposedField    SFFloat     transparency    0
+]{
+	Transform{
+		translation IS translation
+		rotation IS	rotation
+		scale IS scale
+		children Shape {
+			appearance Appearance{material Material{diffuseColor IS color  emissiveColor IS color  transparency IS transparency}}
+			geometry Text{
+				string IS string
+				fontStyle FontStyle {style "BOLD USE_TEXTURE"  family "Arial"}
+			}
+		}
+	}
+}
+Viewpoint 
+{
+    position     13.516 13.500 64.571
+    orientation  0.000 1.000 0.000 0.002
+    fieldOfView  0.785
+	description	"ALL"
+}
+
+WorldInfo {
+	title "Test GeometryInstance Node with instance color, Contact 9.3 (DX9)"
+}
+
+#DEF	VP Viewpoint {
+#	position 150 15 300
+
+
+#}
+
+EXTERNPROTO MultiTexture[
+	exposedField SFBool materialColor
+	exposedField SFBool materialAlpha
+	exposedField SFBool materialSpecular
+	exposedField SFBool transparent
+	exposedField SFBool nomipmap
+	exposedField MFString mode
+	exposedField MFString source
+	exposedField MFString function
+	exposedField MFString type
+	exposedField MFNode texture
+	exposedField MFNode textureTransform
+	exposedField MFNode bumpTransform
+	exposedField MFInt32 textureOp
+	exposedField SFColor color
+	exposedField SFFloat alpha
+	exposedField SFNode metadata
+	]
+ ["urn:inet:bitmanagement.de:node:MultiTexture","http://www.bitmanagement.de/vrml/protos/nodes.wrl#MultiTexture","nodes.wrl#MultiTexture"]
+EXTERNPROTO MultiTextureCoordinate[
+	exposedField MFNode coord
+	exposedField SFNode metadata
+	]
+ ["urn:inet:bitmanagement.de:node:MultiTextureCoordinate","http://www.bitmanagement.de/vrml/protos/nodes.wrl#MultiTextureCoordinate","nodes.wrl#MultiTextureCoordinate"]
+EXTERNPROTO GeometryInstance[
+	exposedField SFNode metadata
+	exposedField SFVec3f bboxSize
+	exposedField SFVec3f bboxCenter
+	exposedField SFVec2f range
+	exposedField SFNode shader
+	exposedField MFBool enabled
+	exposedField MFVec3f translation
+	exposedField MFRotation rotation
+	exposedField MFVec3f scale
+	exposedField MFRotation scaleOrientation
+	exposedField SFNode color
+	exposedField SFNode shape
+	]
+["urn:inet:bitmanagement.de:node:GeometryInstance","http://www.bitmanagement.de/vrml/protos/nodes.wrl#GeometryInstance","nodes.wrl#GeometryInstance"]
+
+
+
+Layer3D{
+	viewpoint Viewpoint {position 0 0.5 7.5}
+	size 1 0.5
+	translation -0.5 -0.3
+	children[
+		DirectionalLight{direction 0 -.2 -1}
+		Transform { 
+    		translation 3.5 2.5 0
+			rotation 0 0 1 -1.57
+    		children DEF SldInstance Slider {
+        		initial_position 0.01
+				height 3.5
+				radiusStick 0.1
+
+        		appearance DEF AppMiscSliders Appearance{material Material{emissiveColor 0.2 0.2 0.2  diffuseColor 0.2 0.2 0.2}}
+				arrow_geometry Transform{
+					translation 0 0 0.5
+					children Shape{
+						appearance Appearance {
+							material Material {}
+							texture ImageTexture{url "images/slider_arrow.gif"}
+							textureTransform TextureTransform{rotation 1.57}
+						}
+						geometry Box{size 3.5 1 0}
+					}
+				}
+    		}
+		}
+		DEF instanceText simpleText{
+					string "Number of Instances"
+					color 1 1 1
+					translation 3.42 2.05 0
+					scale 0.5 0.5 0.5
+		}
+		DEF FramerateText simpleText{
+					string "Frames"
+					color 1 1 1
+					translation 3.42 1.55 0
+					scale 0.5 0.5 0.5
+		}
+
+		Group { #Sphere switch
+            children [
+                DEF TchSphere TouchSensor{}
+                Transform {
+                    translation 9 3 0
+                    scale 0.25 0.25 1
+                    children Shape {
+                        appearance Appearance {
+                            material DEF MatDiffuseColorIndicator Material{diffuseColor 0 0 0  emissiveColor 0 0 0}
+                        }
+                        geometry DEF IfsColorInd IndexedFaceSet {
+                            coord Coordinate {point[-1 -1  0, 1 -1  0, 1  1  0, -1  1  0]}
+                            coordIndex [ 0 1 2 3 -1 ]
+                        }
+                    }
+                }
+                Transform {
+                    translation 9.05 3 -0.025
+                    scale 0.3 0.3 1
+					children Shape {
+                        appearance Appearance {material Material{emissiveColor 1 1 1}}
+                        geometry USE IfsColorInd
+                    }
+                }
+
+				DEF SphereText simpleText{
+					string "Use Spheres"
+					color 1 1 1
+					translation 8.05 2 -0.025
+					scale 0.5 0.5 0.5
+		}
+            ]
+        }
+	]
+}
+
+DEF GeoInstance GeometryInstance{
+	
+	shader PackagedShader {
+		url "HLSL_Instancing.fx"
+	}
+	shape Shape {
+		appearance DEF TEX-APP Appearance 
+		{
+			material Material {
+				diffuseColor 1 1 1
+				specularColor 0.9 0.9 0.9
+				ambientIntensity .0833
+				shininess .08
+			}
+			texture	ImageTexture {
+				url	[ "../../textures/cc063219.jpg"   "images/cc063219.jpg"	]
+			}
+		}
+		geometry Box {
+			size 2 2 2 
+		}
+	}
+	#translation [0 0 0, 3 0 0, 6 0 0]
+	#rotation [1 0 0 0]#, 1 0 0 0, 1 0 0 0]
+	#scale [1 1 1]
+	color Color {}
+}
+
+
+
+NavigationInfo {
+	type ["FLY"]
+}
+
+DEF TS TimeSensor {
+	loop TRUE
+}
+
+DEF Scr Script 
+{
+	field SFNode GeoInstance USE GeoInstance
+	field SFNode instanceText USE instanceText
+	field SFNode FramerateText USE FramerateText
+	field SFNode MatDiffuseColorIndicator USE MatDiffuseColorIndicator
+	field SFFloat numberOfObjects 0
+	field SFInt32 min 1
+	field SFInt32 max 100000
+
+	##
+	field SFInt32 ojectsPerRowY 0
+	field SFInt32 ojectsPerRowZ 0
+	field SFVec3f nextPos 0 0 0
+	
+	field SFNode Sphere Sphere {radius 1}
+	field SFNode Box Box {size 2 2 2}
+	field SFBool sphere FALSE
+
+	eventIn	SFFloat	NumInstance
+	eventIn	SFTime update
+	eventIn	SFTime switchGeo
+	directOutput TRUE
+
+	url "javascript:
+	
+	function initialize()
+	{
+
+		addInstances(1000);
+		instanceText.string[0]=numberOfObjects+' Instances';
+		fps = Browser.getCurrentFrameRate();
+		fps = Math.round(fps);
+		FramerateText.string[0]=fps+' FPS';
+
+		//
+
+	}
+	function NumInstance()
+	{
+		number = NumInstance*max;
+		
+		if(number < min)
+			number = min;
+
+		number=Math.round(number);
+
+		if(number == numberOfObjects)
+			return;
+
+		if(number > numberOfObjects)
+		{
+			addInstances(number-numberOfObjects);
+		
+		}
+		else if (number < numberOfObjects)
+		{
+			reduceInstances(number);
+		}
+
+		instanceText.string[0]=numberOfObjects+' Instances';
+		
+	}
+
+	function addInstances(number)
+	{
+
+		var color = GeoInstance.color;
+
+		for(i=0;i<number;i++)
+		{
+			//print('Add2 '+numberOfObjects+i);
+			GeoInstance.translation[numberOfObjects+i]= nextPos;
+			
+			if (color)
+				color.color[numberOfObjects+i]	 = new SFColor(Math.random(),Math.random(),Math.random());
+
+			ojectsPerRowY++;
+			nextPos.y +=3;
+
+			if(ojectsPerRowY>=10)
+			{
+				nextPos.y=0;
+				nextPos.z+=3;
+				ojectsPerRowZ++;
+
+				if(ojectsPerRowZ >= 10)
+				{
+					nextPos.z = 0;
+					nextPos.x+=3;
+					ojectsPerRowZ=0;
+				}
+				ojectsPerRowY=0;
+			}
+		}
+		numberOfObjects+=number;
+	}
+
+	function reduceInstances(number)
+	{
+		//we have to recreate the number of objects
+		ojectsPerRowY = 0;
+		ojectsPerRowZ = 0;
+		nextPos = new SFVec3f(0,0,0);
+
+		for(i=0;i<number;i++)
+		{
+			//print('Add2 '+numberOfObjects+i);
+			GeoInstance.translation[i]= nextPos;
+			ojectsPerRowY++;
+			nextPos.y +=3;
+
+			if(ojectsPerRowY>=10)
+			{
+				nextPos.y=0;
+				nextPos.z+=3;
+				ojectsPerRowZ++;
+
+				if(ojectsPerRowZ >= 10)
+				{
+					nextPos.z = 0;
+					nextPos.x+=3;
+					ojectsPerRowZ=0;
+				}
+				ojectsPerRowY=0;
+			}
+		}
+		numberOfObjects=number;
+		GeoInstance.translation.length=number;
+	
+	}
+
+	function update()
+	{
+		fps = Browser.getCurrentFrameRate();
+		fps = Math.round(fps);
+		FramerateText.string[0]=fps+' FPS';
+	}
+
+	function switchGeo()
+	{
+		if(sphere!=true)
+		{
+			GeoInstance.shape.geometry = Sphere;
+			MatDiffuseColorIndicator.emissiveColor[1] = 1;
+			sphere=true;
+
+		}
+		else
+		{
+			GeoInstance.shape.geometry = Box;
+			MatDiffuseColorIndicator.emissiveColor[1] = 0;
+			sphere= false;
+		}
+	}
+	
+	"
+}
+
+ROUTE SldInstance.unfiltered_position_changed TO Scr.NumInstance
+ROUTE TS.time TO Scr.update
+ROUTE TchSphere.touchTime TO Scr.switchGeo

@@ -1,0 +1,274 @@
+#VRML V2.0 utf8
+
+WorldInfo  {
+	title "GeometryInstance scripted test, press c: to create a cone, d: to delete"
+}							 
+
+EXTERNPROTO GeometryInstance[
+		exposedField SFNode metadata
+		exposedField SFVec3f bboxSize
+		exposedField SFVec3f bboxCenter
+		exposedField SFVec2f range
+		exposedField SFNode shader
+		exposedField MFBool enabled
+		exposedField MFVec3f translation
+		exposedField MFRotation rotation
+		exposedField MFVec3f scale
+		exposedField MFRotation scaleOrientation
+		exposedField SFNode color
+		exposedField SFNode shape
+		]
+["urn:inet:bitmanagement.de:node:GeometryInstance","http://www.bitmanagement.de/vrml/protos/nodes.wrl#GeometryInstance","nodes.wrl#GeometryInstance"]
+
+
+PROTO Cone_Item[
+	exposedField SFInt32 index -1
+	exposedField SFVec3f translation 0 0 0
+	exposedField SFRotation rotation 0 0 1 0
+	exposedField SFVec3f scale 1 1 1
+	exposedField SFRotation scaleOrientation 0 0 1 0
+	eventOut SFInt32 update
+	exposedField MFNode	attachedNodes []
+]
+{
+	Script {
+		directOutput TRUE
+		exposedField SFInt32 index IS index
+		exposedField SFVec3f translation IS translation
+		exposedField SFRotation rotation IS rotation
+		exposedField SFVec3f scale IS scale
+		exposedField SFRotation scaleOrientation IS scaleOrientation
+		eventOut SFInt32 update IS update
+		url"javascript:
+		
+		function translation()
+		{
+		//	print(translation);
+			update = index;
+		}
+		function rotation()
+		{
+			update = index;
+		}
+		function scale()
+		{
+			update = index;
+		}
+		function scaleOrientation()
+		{
+			update = index;
+		}		
+		
+		"
+	}
+}
+
+PROTO Cone_GI_Manager
+[
+	eventIn	SFNode add_GI_Item
+	eventIn	SFInt32	deleteIndex
+	eventOut SFNode	itemAboutToDelete
+	
+]
+{
+	DEF GI GeometryInstance {
+		shader DEF _GeometryInstance_Shader PackagedShader {
+			exposedField SFBool flipTexture FALSE 
+			url "instancing.fx"
+		}
+		translation []
+		rotation [ ]
+		scale []
+		scaleOrientation []
+		shape DEF _5 Shape {
+			appearance DEF _6 Appearance {material DEF _7 Material {
+				diffuseColor .88 .15 .01
+				specularColor .19 .03 .03
+				ambientIntensity .0833
+				shininess .08
+			}}
+			geometry DEF _8 Cone {}
+		}
+	}
+	Script	{
+		directOutput TRUE
+		eventIn	SFInt32	updateIndex
+		eventIn	SFNode add_GI_Item IS add_GI_Item
+		eventIn	SFInt32	deleteIndex IS deleteIndex
+		eventOut SFNode	itemAboutToDelete IS itemAboutToDelete
+		field SFNode GI USE	GI
+		field MFNode GI_Items []
+		url"javascript:
+		
+		function add_GI_Item(item)
+		{
+			GI_Items[GI_Items.length]= item;
+			var index = GI_Items.length-1;
+			item.index = index;
+
+			updateIndex(index);
+			Browser.addRoute(item, 'update', Browser.getScript(), 'updateIndex');
+		}
+
+		function updateIndex(index)
+		{
+			//print('update');
+			if(index < 0)
+				return;
+
+			GI.translation[index] = GI_Items[index].translation;
+			GI.rotation[index] = GI_Items[index].rotation;
+			GI.scale[index] = GI_Items[index].scale;
+			GI.scaleOrientation[index] = GI_Items[index].scaleOrientation;
+		}
+
+		function deleteIndex(index)
+		{
+			print('delete index '+index);
+			if(index <0)
+				return;
+
+			//replace the index with the last object
+			GI.translation[index] = GI.translation[GI.translation.length-1];
+			GI.translation.length = GI.translation.length-1;
+			GI.rotation[index] = GI.rotation[GI.rotation.length-1];
+			GI.rotation.length = GI.rotation.length-1;
+			GI.scale[index] = GI.scale[GI.scale.length-1];
+			GI.scale.length = GI.scale.length-1;
+			GI.scaleOrientation[index] = GI.scaleOrientation[GI.scaleOrientation.length-1];
+			GI.scaleOrientation.length = GI.scaleOrientation.length-1;
+			
+			item = GI_Items[index];
+
+			GI_Items[index] = GI_Items[GI_Items.length-1];
+			GI_Items.length = GI_Items.length-1;
+			GI_Items[index].index = index;
+
+			item.index = -1;
+			itemAboutToDelete = item;
+		}
+		
+		
+		"
+	}
+}
+
+Viewpoint 
+{
+    position     53.284 53.948 186.235
+    orientation  -1.000 -0.016 0.002 0.362
+    fieldOfView  0.785
+}
+
+
+DEF	Key KeySensor{}
+
+DEF ConeManager Cone_GI_Manager{}
+
+DEF	Animation_Group Group{}
+
+DEF	KeyScr Script {
+	eventIn	SFInt32	key
+	eventIn	SFNode itemToDelete
+	field SFNode ConeManager USE ConeManager
+	field SFNode Animation_Group USE Animation_Group
+	field SFInt32 maxIndex 0
+	url"javascript:
+		function key(k)
+		{
+			print(k);
+			if(k == 67) //c  create new items with random position and animation
+			{
+				print('create item');
+
+				//create the proto instance
+				var item = Browser.createVrmlFromString('Cone_Item{}')[0];
+				 
+				item.translation = new SFVec3f(Math.random() *100,Math.random() *10,Math.random() *100);
+
+				//add instance to Gi manager
+				ConeManager.add_GI_Item =item;
+
+
+				//create the interpolators for animation
+				var interpolator = Browser.createVrmlFromString('PositionInterpolator{}')[0];
+				interpolator.key = new MFFloat(0,0.25,0.5,0.75,0.99);
+				interpolator.keyValue[0]=item.translation;
+				interpolator.keyValue[1]=item.translation;
+				interpolator.keyValue[1].x =item.translation.x+Math.random() *10 +5;
+				interpolator.keyValue[2]=interpolator.keyValue[1];
+				interpolator.keyValue[2].z=interpolator.keyValue[1].z+Math.random() *10 +5;
+				interpolator.keyValue[3]=interpolator.keyValue[2];
+				interpolator.keyValue[3].x=item.translation.x;
+				interpolator.keyValue[4]=item.translation;
+				//print(interpolator.keyValue);
+
+				var interpolatorRotation = Browser.createVrmlFromString('OrientationInterpolator{}')[0];
+				interpolatorRotation.key = new MFFloat(0,0.25,0.5,0.75,0.99);
+				interpolatorRotation.keyValue[0]=new SFRotation(1,0,0,0);
+				interpolatorRotation.keyValue[1]=interpolatorRotation.keyValue[0];
+				interpolatorRotation.keyValue[1].angle =1.57;
+				interpolatorRotation.keyValue[2]=interpolatorRotation.keyValue[1];
+				interpolatorRotation.keyValue[2].angle=3.14;
+				interpolatorRotation.keyValue[3]=interpolatorRotation.keyValue[2];
+				interpolatorRotation.keyValue[3].angle=4.711;
+				interpolatorRotation.keyValue[4]=interpolatorRotation.keyValue[0];
+
+				var timeSensor = Browser.createVrmlFromString('TimeSensor{}')[0];
+				timeSensor.loop = true;
+				timeSensor.cycleInterval = Math.random() *10;
+
+				item.attachedNodes[item.attachedNodes.length] = timeSensor;
+				item.attachedNodes[item.attachedNodes.length] = interpolator;
+				item.attachedNodes[item.attachedNodes.length] = interpolatorRotation;
+
+				Animation_Group.children[Animation_Group.children.length] = timeSensor;
+				Animation_Group.children[Animation_Group.children.length] = interpolator;
+				Animation_Group.children[Animation_Group.children.length] = interpolatorRotation;
+
+				Browser.addRoute(timeSensor, 'fraction_changed', interpolator, 'set_fraction');
+				Browser.addRoute(interpolator, 'value_changed', item, 'translation');
+				Browser.addRoute(timeSensor, 'fraction_changed', interpolatorRotation, 'set_fraction');
+				Browser.addRoute(interpolatorRotation, 'value_changed', item, 'rotation');
+
+				maxIndex++;
+			}
+			else if(k == 68) //d  deletes random index 
+			{
+				if(maxIndex<1)
+					return;
+
+				var delete_index = Math.random()* maxIndex;
+				ConeManager.deleteIndex =delete_index;
+				
+				maxIndex--;
+			}
+		}
+
+		function itemToDelete(item)
+		{
+			print('delete item');
+			var length = item.attachedNodes.length;
+
+			//we know the interpolator order
+			Browser.deleteRoute(item.attachedNodes[0], 'fraction_changed', item.attachedNodes[1], 'set_fraction');
+			Browser.deleteRoute(item.attachedNodes[0], 'fraction_changed', item.attachedNodes[2], 'set_fraction');
+			Browser.deleteRoute(item.attachedNodes[1], 'value_changed', item, 'translation');
+			Browser.deleteRoute(item.attachedNodes[2], 'value_changed', item, 'rotation');
+
+			//find and delete in scene
+			for(var i = 0; i < length; i++)
+			{
+				Animation_Group.children.remove(item.attachedNodes[i]);
+			}
+
+			//delete the interpolators
+			item.attachedNodes.length = 0;
+		}
+		
+	
+	"
+}
+
+ROUTE Key.keyPress TO KeyScr.key
+ROUTE ConeManager.itemAboutToDelete	TO KeyScr.itemToDelete
