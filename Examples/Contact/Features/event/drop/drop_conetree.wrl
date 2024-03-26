@@ -1,0 +1,1131 @@
+#VRML V2.0 utf8
+
+WorldInfo {
+	title "Cone Tree"
+    info [
+        "cone tree proto from Bob Crispen http://home.hiwaay.net/~crispen/"
+		"(c) Holger Grahn"
+    ]
+}
+EXTERNPROTO MenuSensor[
+    exposedField SFBool enabled
+    exposedField SFString title
+    exposedField MFInt32 choices
+    exposedField MFString descriptions
+    exposedField SFString position
+    eventOut SFBool isActive
+    eventOut SFInt32 choice
+]
+["urn:inet:bitmanagement.de:node:MenuSensor","http://www.bitmanagement.de/vrml/protos/nodes.wrl#MenuSensor","nodes.wrl#MenuSensor"]
+
+EXTERNPROTO DeviceSensor[
+    exposedField SFBool enabled
+    exposedField MFString device
+    exposedField MFString eventType
+    exposedField SFNode event
+    eventOut SFBool isActive
+]
+["urn:inet:bitmanagement.de:node:DeviceSensor","http://www.bitmanagement.de/vrml/protos/nodes.wrl#DeviceSensor","nodes.wrl#DeviceSensor"]
+EXTERNPROTO Object[
+	exposedField MFString url
+	exposedField SFString type
+	exposedField SFString title
+	exposedField MFString description
+	exposedField MFString properties
+	exposedField MFNode children
+	eventIn SFBool set_open
+	eventOut SFBool isOpen
+]
+["urn:inet:bitmanagement.de:node:Object","http://www.bitmanagement.de/vrml/protos/nodes.wrl#Object","nodes.wrl#Object"]
+
+# y -4 is the offset
+
+
+#
+# MyObject wraps a Contact 3D object node
+# and provides a simple UI 
+
+PROTO MyObject[
+    exposedField SFBool enabled TRUE
+    exposedField SFVec3f translation 0 0 0
+
+    exposedField MFString url []
+    exposedField SFString type  ""
+    exposedField SFString title "An object"
+    exposedField MFString description []
+    exposedField MFString properties [ "target=external"    ## default target frame
+    ]
+    exposedField MFNode children []
+    
+    eventIn SFBool set_open
+
+    eventOut SFBool isOpen
+    eventOut SFBool isActive
+    eventOut SFBool isOver
+    eventOut SFTime touchTime
+]
+
+{
+
+    Transform {
+        translation IS translation
+
+        children [
+        
+            DEF OTS TouchSensor {
+                enabled IS enabled
+                isOver IS isOver
+                touchTime IS touchTime
+        
+            }
+            #           Anchor {
+            #               url IS url
+            #               parameter IS properties
+            #               children [
+            #                   Shape {
+            #                       geometry Box {}
+            #                   }
+            #               ]
+            #           }
+            DEF OMS MenuSensor {
+            
+            }
+            DEF OVP Viewpoint { jump FALSE }
+
+
+            DEF O Object {
+                url IS url
+                type IS type 
+
+                title IS title
+                description IS description
+                properties IS properties
+
+                ###children IS children
+            
+                set_open IS set_open
+                isOpen IS isOpen
+
+            }
+        ]
+    }
+
+    DEF OS Script {
+        directOutput TRUE
+    
+        field SFNode object USE O
+        field SFNode viewpoint USE  OVP
+
+        eventIn SFTime o_touched
+        eventIn SFBool o_over 
+
+        url "vrmlscript:
+
+        function o_touched() {
+            //return;
+            var des = object.title;
+            var isOpen = object.isOpen;
+            isOpen = !isOpen;
+            if (isOpen) {
+                Browser.setDescription('Opening object '+des);
+                //print('Opening object '+des);
+                viewpoint.set_bind=true;
+            } else {
+                Browser.setDescription('Closing object '+des);
+                //print('Closing object '+des);
+                viewpoint.set_bind=false;
+            }
+            object.set_open = isOpen;
+        }
+    
+        function o_over() {
+            //return; 
+            var des = object.title;
+            print('over object '+des);
+            Browser.setDescription('Object '+des +' Type='+object.type);
+        }
+
+        "
+    }
+
+    ROUTE OTS.touchTime TO OS.o_touched
+    ROUTE OTS.isOver TO OS.o_over
+
+
+}
+
+###########################################################################
+
+# An object that can have descendents
+
+PROTO TreeCone [
+    exposedField    MFString label [ ]
+    exposedField    MFString longLabel [ ]
+
+    eventIn         MFFloat  set_childData
+    eventIn         SFNode  addChild
+
+    exposedField    MFNode   children [ ]
+
+
+]
+{
+    Transform {
+        children [  
+            DEF ME Transform {
+                translation 0 -4 0
+                children [
+
+                    # children added here 
+                    DEF ME-CHILDS Transform {
+                    }
+                
+                    Transform {
+                        children [
+                        	DEF TOUCHED TouchSensor { }
+
+                            Shape {
+                                appearance Appearance {
+                                    material DEF CONE_COLOR Material {
+                                        diffuseColor 1 0 0
+                                        transparency 0.1
+                                    }
+                                }
+                                geometry Cone { }
+                            }
+
+                    		Billboard {
+                        		axisOfRotation 0 0 0
+                        		children [
+                            		Transform {
+                                		translation 0 0 1
+                                		children [
+                                    		Shape {
+                                        		appearance Appearance {
+                                            		material Material {
+                                                		diffuseColor 0.9412 0.9725 1.0000
+                                            		}
+                                        		}
+                                        		geometry DEF TEXT Text {
+                                            		string IS label
+                                            		fontStyle FontStyle {
+                                                		family "SANS"
+                                                		justify "MIDDLE"
+                                                		size 0.6
+                                                		spacing 1.2
+                                                		style "BOLD"
+                                            		}
+                                            		length 0
+                                        		}
+                                    		}
+                                		]
+                            		}
+                        		]
+                    		}
+                        ]
+                    }
+
+                    DEF VP Viewpoint {
+                        position 0 0 18
+                        orientation -1 0 0 0.2
+                        description "Auto"
+                        jump FALSE
+                    }]
+            }
+            # rotate children if mouse is over cone 
+            DEF ROT-TS TimeSensor {
+                loop TRUE
+                cycleInterval 7
+                startTime -1 
+            }
+            DEF ROT-IP OrientationInterpolator {
+                ROUTE ROT-TS.fraction_changed TO ROT-IP.set_fraction
+                keyValue [0 1 0 0, 0 1 0 2.09439,0 1 0 4.18879, 0 1 0 6.28318] # 6.28318 3.1415
+                ROUTE ROT-IP.value_changed TO ME-CHILDS.rotation
+            }
+            Shape {
+                appearance Appearance {
+                    material Material {
+                        emissiveColor 0.85 0.85 0.10
+                    }
+                }
+                geometry IndexedLineSet {
+                    coord DEF LINECOORDS Coordinate {
+                        point [ 0 0 0, 0 0 0 ]
+                    }
+                    coordIndex [ 0 1 -1 ]
+                    colorPerVertex FALSE
+                }
+            }
+
+            DEF EXPANDER Script {
+                directOutput TRUE
+
+
+                eventIn  SFBool  touched
+                eventIn  SFBool  show
+                eventIn  MFFloat set_childData IS set_childData
+
+                ## hg allow addition of a new child
+                eventIn  SFNode addChild IS addChild
+
+
+                eventOut SFVec3f newTranslation
+                eventOut MFVec3f lineCoords
+                eventOut MFNode  newChildren
+                eventOut MFNode  oldChildren
+                eventOut SFColor coneColor
+                eventOut SFBool  bindVp
+
+                exposedField   MFNode   children IS children
+                exposedField   MFString longLabel IS longLabel
+                
+                field   SFNode   rotTimer USE ROT-TS
+                field   SFNode   vp USE VP
+                field   SFNode   text USE TEXT 
+
+                field SFInt32 numSiblings 0
+                field SFInt32 myChildNumber 0
+
+                field SFColor leafColor 0.49 0.68 1
+                
+                field MFColor expandedColor [0.3922 0.5043 0.8294, 0.9 0.5043 0.8294]
+                field MFColor unexpandedColor [ 0.2400 0.3500 0.6700 ,  0.9 0.3500 0.6700]
+
+                field SFBool  expanded FALSE
+                field SFBool  isOver FALSE
+
+                # For browsers that don't like vars
+                field SFFloat theta 0.0
+                field SFFloat ntheta 0.0
+                field SFFloat r 0.0
+                field SFInt32 i 0
+
+                url "javascript:
+
+                // For each of the children of this node, we send it the
+                // number of children in the group and the child's own number.
+                // The child will use this information to compute its position.
+                // We do this in the initialize() method because if you do it
+                // in the touched() method it's possible for the children
+                // to be added to the scene graph before they finish processing
+                // the event that computes their position.  This doesn't work
+                // at all in WorldView 2.0, and I have no idea why not.
+                function initialize() {
+
+                //vp.description = 'Node '+text.string[0];
+
+                if (children.length > 0) {
+                coneColor = unexpandedColor[isOver];
+                l= children.length;
+                for (i=0; i<l; i++) {
+                children[i].set_childData = new MFFloat(l, i);
+                }
+                } else {
+                coneColor = leafColor;
+                }
+                }
+
+                function shutdown() {
+
+                }
+
+                function addChild(n) {
+                children[children.length]=n;
+                initialize();
+                if (expanded)
+                newChildren = children;
+
+                }
+
+                // Called by the parent to set the child's number of siblings
+                // and child number, from which it computes its position
+                function set_childData(value) {
+                numSiblings = value[0];
+                myChildNumber = value[1];
+                lineCoords = new MFVec3f(new SFVec3f(0,0,0), new SFVec3f(0,0,0));
+
+                r = 5;
+                if (value.length>2) r = value[2];
+
+                if (numSiblings > 0) {
+                theta = 3.14159*2/numSiblings;
+                if (numSiblings > 2)
+                ntheta = (myChildNumber*theta)-1.570795;
+                else
+                ntheta = myChildNumber*theta;
+                if (numSiblings > 1) {
+                r = r/Math.sin(theta/2.0);
+                newTranslation = new SFVec3f(
+                r * Math.cos(ntheta), -4.0, -r * Math.sin(ntheta));
+                } else {
+                newTranslation = new SFVec3f(0,-4,0);
+                }
+                lineCoords[1] = newTranslation;
+                lineCoords[1][1] += 1;
+                }
+                }
+
+                // expand or collapse tree
+                function expand(flag,t) 
+                {
+
+                if (flag) {
+                if (children.length > 0) {
+                //initialize();
+                coneColor = expandedColor[isOver];
+                newChildren = children;
+                expanded = TRUE;
+                }
+                } else {
+                if (children.length > 0)
+                coneColor = unexpandedColor[isOver];
+                else
+                coneColor = leafColor;
+                oldChildren = children;
+                expanded = FALSE;
+                rotTimer.set_stopTime = t+0.01;
+
+                }
+
+                }
+
+                // Called when the user touches the cone.  Either expands the
+                // cone (addChildren) or contracts it (removeChildren)
+                function touched(value,t) {
+                if (value) {
+                if (!expanded) {
+                bindVp = true;
+                expand(true,t); 
+                } else {
+                bindVp = false;
+                expand(false,t);
+                }
+                }
+                }
+
+                // Displays the long label in the tray when the user's mouse
+                // is over this node
+                function show(value,t) {
+                isOver = value;
+
+                if (value) {
+                if (longLabel.length > 0)
+                Browser.setDescription(longLabel[0]);
+                if (expanded) { // rotate children
+                x=rotTimer.fraction * rotTimer.cycleInterval;
+                rotTimer.set_startTime = t-x; // +0.3;
+                rotTimer.set_stopTime = -1;
+                coneColor = expandedColor[isOver];
+                } else {
+                if (children.length > 0)
+                coneColor = unexpandedColor[isOver];
+                else
+                coneColor = leafColor;
+                }
+
+                } else {
+                Browser.setDescription('');
+                rotTimer.set_stopTime = t+0.01;
+                if (children.length > 0)
+                coneColor = unexpandedColor[isOver];
+                else
+                coneColor = leafColor;
+
+
+                }
+                }
+                "
+            }
+        ]
+    }
+    ROUTE TOUCHED.isActive TO EXPANDER.touched
+    ROUTE TOUCHED.isOver TO EXPANDER.show
+    ROUTE EXPANDER.newTranslation TO ME.set_translation
+    ROUTE EXPANDER.lineCoords TO LINECOORDS.set_point
+    ROUTE EXPANDER.newChildren TO ME-CHILDS.addChildren
+    ROUTE EXPANDER.oldChildren TO ME-CHILDS.removeChildren
+    ROUTE EXPANDER.coneColor TO CONE_COLOR.set_diffuseColor
+    ROUTE EXPANDER.bindVp TO VP.set_bind
+}
+
+# A leaf object
+
+PROTO UrlBall [
+    field       MFString label [ ]
+    field       MFString url [ ]
+    ## field    SFNode ballAppearance 
+    eventIn         MFFloat  set_childData
+    exposedField    SFVec3f vpposition 0 0 12
+
+]
+{
+    Transform {
+        children [
+
+
+            DEF ME Transform {
+                translation 0 -4 0
+                children [
+                    DEF VP Viewpoint {
+                        position IS vpposition
+                        orientation -1 0 0 0.2
+                        description "Auto"
+                        jump FALSE
+                    }
+                    DEF VP-T TimeSensor { 
+                        loop FALSE 
+                        cycleInterval   2
+                    }
+
+                    Transform {
+                        children [
+                            Shape {
+                                appearance DEF ballAppearance Appearance {
+                                    material Material {
+                                        diffuseColor 0.49 0.68 1
+                                        specularColor 0 0 0
+                                        shininess 0.7
+                                    }
+                                }
+                                geometry Sphere { radius 0.75 }
+                            }
+                            Billboard {
+                                axisOfRotation 0 0 0
+                                children [
+                                    Transform {
+                                        translation 0 0 1
+                                        children [
+                                            Shape {
+                                                appearance DEF textAppearance Appearance {
+                                                    material Material {
+                                                        diffuseColor 0.9412 0.9725 1.0000
+                                                    }
+                                                }
+                                                geometry Text {
+                                                    string IS label
+                                                    fontStyle FontStyle {
+                                                        family "SANS USE_TEXTURE"
+                                                        justify "MIDDLE"
+                                                        size 0.6
+                                                        spacing 1.2
+                                                        style "BOLD"
+                                                    }
+                                                    length 0
+                                                }
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                    DEF TOUCHED TouchSensor { }
+                ]
+            }
+            Shape {
+                appearance Appearance {
+                    material Material {
+                        emissiveColor 0.85 0.85 0.10
+                    }
+                }
+                geometry IndexedLineSet {
+                    coord DEF LINECOORDS Coordinate {
+                        point [ 0 0 0, 0 0 0 ]
+                    }
+                    coordIndex [ 0 1 -1 ]
+                    colorPerVertex FALSE
+                }
+            }
+            DEF LINK Script {
+                eventIn  MFFloat set_childData IS set_childData
+                eventIn  SFBool  load
+                eventIn  SFBool  show
+                eventOut SFVec3f newTranslation
+                eventOut MFVec3f lineCoords
+
+                field MFString the_url IS url
+
+                field SFInt32  myChildNumber 0
+                field SFInt32  numSiblings 0
+                field MFString parm [ "target=external" ]
+
+                field SFNode vp USE VP
+                
+                field SFNode vptimer USE    VP-T
+
+                field SFBool isOver FALSE
+                eventIn SFBool vptimer_isactive
+                ### no route parsing here
+                ##ROUTE VP-T.isActive   TO LINK.vptimer_isactive
+
+                field SFFloat theta 0.0
+                field SFFloat ntheta 0.0
+                field SFFloat r 0.0
+
+                url "javascript:
+                function initialize() {
+                }
+
+                function load(value) {
+                    if (value) {
+                        Browser.loadURL (the_url, parm);
+                    }
+                
+                }
+                function show(value,t) {
+                    
+                    isOver = value;
+
+                    if (value) {
+                        Browser.setDescription(the_url[0]);
+                        vptimer.set_startTime=t+2.0;
+
+                    }
+                    else {
+                        vptimer.set_stopTime=t;
+                        Browser.setDescription('');
+                    }
+                }
+                
+                function vptimer_isactive(value,t) {
+                    if (value && isOver) {
+                        vp.set_bind = true;
+                        vptimer.set_stopTime=t;
+                    }
+
+                }
+
+                // This event is sent to this node from its TreeCone parent.
+                function set_childData(value) {
+                    numSiblings = value[0];
+                    myChildNumber = value[1];
+                    lineCoords = new MFVec3f(new SFVec3f(0,0,0), new SFVec3f(0,0,0));
+                    if (numSiblings > 0) {
+                        theta = 3.14159*2/numSiblings;
+                        if (numSiblings > 2)
+                        ntheta = (myChildNumber*theta)-1.570795;
+                        else
+                        ntheta = myChildNumber*theta;
+                        if (numSiblings > 1) {
+                            r = 3.5/Math.sin(theta/2.0);
+                            newTranslation = new SFVec3f(
+                            r * Math.cos(ntheta), -4.0, -r * Math.sin(ntheta));
+                        }
+                        lineCoords[1] = newTranslation;
+                        lineCoords[1][1] += 0.5;
+                    }
+                }
+                "
+            }
+        ]
+    }
+    ROUTE TOUCHED.isActive TO LINK.load
+    ROUTE TOUCHED.isOver TO LINK.show
+    ROUTE VP-T.isActive TO LINK.vptimer_isactive
+
+    ROUTE LINK.newTranslation TO ME.set_translation
+    ROUTE LINK.lineCoords TO LINECOORDS.set_point
+}
+
+# A leaf object
+
+PROTO ObjectLeaf [
+    exposedField   MFString label [ ]
+    exposedField   MFNode   children [ ]
+    eventIn MFFloat  set_childData
+]
+{
+    Transform {
+        children [
+            DEF ME Transform {
+                translation 0 -4 0
+                children [
+                    Group {
+                        children IS children
+                    }
+                    Billboard {
+                        axisOfRotation 0 0 0
+                        children [
+                            Transform {
+                                translation 0 0 1
+                                children [
+                                    Shape {
+                                        appearance DEF textAppearance Appearance {
+                                            material Material {
+                                                diffuseColor 0.9412 0.9725 1.0000
+                                            }
+                                        }
+                                        geometry Text {
+                                            string IS label
+                                            fontStyle FontStyle {
+                                                family "SANS"
+                                                justify "MIDDLE"
+                                                size 0.6
+                                                spacing 1.2
+                                                style "BOLD"
+                                            }
+                                            length 0
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                    DEF TOUCHED TouchSensor {enabled FALSE }
+                ]
+            }
+            Shape {
+                appearance Appearance {
+                    material Material {
+                        emissiveColor 0.85 0.85 0.10
+                    }
+                }
+                geometry IndexedLineSet {
+                    coord DEF LINECOORDS Coordinate {
+                        point [ 0 0 0, 0 0 0 ]
+                    }
+                    coordIndex [ 0 1 -1 ]
+                    colorPerVertex FALSE
+                }
+            }
+            DEF LINK Script {
+                eventIn  MFFloat set_childData IS set_childData
+                eventIn  SFBool  load
+                eventIn  SFBool  show
+                eventOut SFVec3f newTranslation
+                eventOut MFVec3f lineCoords
+
+
+                field SFInt32  myChildNumber 0
+                field SFInt32  numSiblings 0
+
+                field SFFloat theta 0.0
+                field SFFloat ntheta 0.0
+                field SFFloat r 0.0
+
+                url "javascript:
+                function initialize() {
+                }
+                function load(value) {
+                    if (value) {
+                    }
+                }
+                function show(value) {
+                }
+
+                // This event is sent to this node from its TreeCone parent.
+                function set_childData(value) {
+                    numSiblings = value[0];
+                    myChildNumber = value[1];
+                    lineCoords = new MFVec3f(new SFVec3f(0,0,0), new SFVec3f(0,0,0));
+                    if (numSiblings > 0) {
+                        theta = 3.14159*2/numSiblings;
+                        if (numSiblings > 2)
+                        ntheta = (myChildNumber*theta)-1.570795;
+                        else
+                        ntheta = myChildNumber*theta;
+                        if (numSiblings > 1) {
+                            r = 3.5/Math.sin(theta/2.0);
+                            newTranslation = new SFVec3f(
+                            r * Math.cos(ntheta), -4.0, -r * Math.sin(ntheta));
+                        }
+                        lineCoords[1] = newTranslation;
+                        lineCoords[1][1] += 0.5;
+                    }
+                }
+                "
+            }
+        ]
+    }
+    ROUTE TOUCHED.isActive TO LINK.load
+    ROUTE TOUCHED.isOver TO LINK.show
+    ROUTE LINK.newTranslation TO ME.set_translation
+    ROUTE LINK.lineCoords TO LINECOORDS.set_point
+}
+
+
+#
+# End of PROTOs, start of world
+#
+
+NavigationInfo {
+
+    headlight FALSE # TRUE 
+    type [ "FLY" "EXAMINE", "ANY" ]
+}
+Background {
+    groundAngle [ 0.9, 1.5, 1.57 ]
+    groundColor [
+        0 0.333 0,
+        0 0.4 0,
+        0 0.5 0,
+        0.62 0.67 0.60
+    ]
+    skyAngle [ 0.9, 1.5, 1.57 ]
+    skyColor [
+        0 0 0.1
+        0.21 0.18 0.66,
+        0.2 0.44 0.85,
+        0.77 0.8 0.82
+    ]
+}
+
+
+Viewpoint {
+    position 0 -1 18 
+    orientation -1 0 0 0.2
+    description "Entry"
+    jump FALSE
+}
+DirectionalLight {
+    intensity 0.9
+    direction -1 -0.5 -1
+}
+DirectionalLight {
+    intensity 0.7
+    direction 1 -0.5 -1
+}
+DirectionalLight {
+    on TRUE
+    intensity 0.6
+    direction 0 0 1
+}
+
+
+Group {
+    children [
+        WorldInfo {
+            title "TreeCone"
+            info [
+                "Author     : Bob Crispen
+                Email      : crispen@hiwaay.net
+                Date       : 3 June 1998
+                Description: A directory or website map in VRML"
+            ]
+        }
+
+        Transform {
+            translation 0 1 0
+            children [
+                DEF TREE-ROOT TreeCone {
+                    label "VRML"
+                    longLabel "VRML"
+                    children [
+                        TreeCone {
+                            label "Spec"
+                            longLabel "Family members"
+                            children [
+                                UrlBall {
+                                    label "VRML97 spec"
+                                    url [ "http://www.web3d.org/x3d/specifications/vrml/ISO-IEC-14772-VRML97/index.htm" ]
+                                }
+                                UrlBall {
+                                    label "Nodes"
+                                    url [ "http://www.web3d.org/x3d/specifications/vrml/ISO-IEC-14772-VRML97/part1/nodesRef.html" ]
+                                }
+                                UrlBall {
+                                    label "6.3 Appearance"
+                                    url [ "http://www.web3d.org/x3d/specifications/vrml/ISO-IEC-14772-VRML97/part1/nodesRef.html#Appearance" ]
+                                }
+                            ]
+                        }
+                        TreeCone {
+                            label "Tech"
+                            longLabel "Technical Stuff"
+                            children [
+                                TreeCone {
+                                    label "VRML"
+                                    longLabel "VRML samples"
+
+                                    children [
+                                        TreeCone {
+                                            label "Links"
+                                            longLabel "Links to Reference Sites"
+                                            children [
+                                                UrlBall {
+                                                    label "The VRML works "
+                                                    url [ "http://vrmlworks.crispen.org/index.html" ]
+                                                }
+                                            ]
+                                        }
+                                        ObjectLeaf {
+                                            label "Teapot"
+                                            children MyObject  { title "Teapot" url [ "../../cell_portal/objects/teapot.wrl" ] }
+                                        }
+
+                                        ObjectLeaf {
+                                            label "Venus"
+                                            children MyObject  { title "Venus" url [ "../../cell_portal/objects/venus.wrl" ] }
+                                        }
+                                        ObjectLeaf {
+                                            label "Geosphere"
+                                            children MyObject  { title "geosphere4" url [ "../../objects/geosphere4.wrl" ] }
+                                        }
+
+                                        UrlBall {
+                                            label "Models"
+                                            url [ "http://vrmlworks.crispen.org/models.html" ]
+                                        }
+                                        UrlBall {
+                                            label "FAQ"
+                                            url [ "http://vrmlworks.crispen.org/faq/index.html" ]
+                                        }
+                                        UrlBall {
+                                            label "History"
+                                            url [ "http://vrmlworks.crispen.org/history.html" ]
+                                        }
+                                        UrlBall {
+                                            label "Technical"
+                                            url [ "http://vrmlworks.crispen.org/tech.html" ]
+                                        }
+                                        UrlBall {
+                                            label "Cyberspace"
+                                            url [ "http://vrmlworks.crispen.org/cyberspace.html" ]
+                                        }
+                                        UrlBall {
+                                            label "Icons"
+                                            url [ "http://vrmlworks.crispen.org/icons.html" ]
+                                        }
+                                        UrlBall {
+                                            label "Essays"
+                                            url [ "http://vrmlworks.crispen.org/essays/index.html" ]
+                                        }
+                                        UrlBall {
+                                            label "Search"
+                                            url [ "http://hiwaay.net:8000/~crispen/uncgi-bin/vrml_search.html" ]
+                                        }
+                                        TreeCone {
+                                            label "Building"
+                                            longLabel [ "Building VRML Worlds" ]
+                                            children [
+                                                UrlBall {
+                                                    label "Main"
+                                                    url [ "http://vrmlworks.crispen.org/building2.html" ]
+                                                }
+                                                UrlBall {
+                                                    label [ "VRML" "1 or 2" ]
+                                                    url [ "http://vrmlworks.crispen.org/vrml1or2.html" ]
+                                                }
+                                                UrlBall {
+                                                    label "Books"
+                                                    url [ "http://vrmlworks.crispen.org/books/index.html" ]
+                                                }
+                                                UrlBall {
+                                                    label "Tutorials"
+                                                    url [ "http://vrmlworks.crispen.org/tutorials.html" ]
+                                                }
+                                                UrlBall {
+                                                    label "Examples"
+                                                    url [ "http://vrmlworks.crispen.org/examples.html" ]
+                                                }
+                                                UrlBall {
+                                                    label "Tools"
+                                                    url [ "http://vrmlworks.crispen.org/tools.html" ]
+                                                }
+                                                TreeCone {
+                                                    label "Process"
+                                                    longLabel [ "A VRML world building process" ]
+                                                    children [
+                                                        UrlBall {
+                                                            label [ "Main" ]
+                                                            url [ "http://vrmlworks.crispen.org/process.html" ]
+                                                        }
+                                                        UrlBall {
+                                                            label [ "Model" "Objects" ]
+                                                            url [ "http://vrmlworks.crispen.org/model_objs.html" ]
+                                                        }
+                                                        UrlBall {
+                                                            label [ "Convert" ]
+                                                            url [ "http://vrmlworks.crispen.org/convert.html" ]
+                                                        }
+                                                        UrlBall {
+                                                            label [ "Build" "Scene" ]
+                                                            url [ "http://vrmlworks.crispen.org/build_scene.html" ]
+                                                        }
+                                                        UrlBall {
+                                                            label [ "Tweak" "Scene" ]
+                                                            url [ "http://vrmlworks.crispen.org/tweak_scene.html" ]
+                                                        }
+                                                        UrlBall {
+                                                            label [ "Export" "to ISP" ]
+                                                            url [ "http://vrmlworks.crispen.org/export.html" ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                                UrlBall {
+                                    label [ "Free" "Software" ]
+                                    url [ "http://home.hiwaay.net/~crispen/src/index.html" ]
+                                }
+                                UrlBall {
+                                    label "Ada"
+                                    url [ "http://home.hiwaay.net/~crispen/ada/index.html" ]
+                                }
+                                UrlBall {
+                                    label "Java"
+                                    url [ "http://home.hiwaay.net/~crispen/java/index.html" ]
+                                }
+                            ]
+                        }
+
+                        TreeCone {
+                            label "Fun"
+                            longLabel "Fun Stuff"
+                            children [
+                                UrlBall {
+                                    label [ "VCR", "Simulator" ]
+                                    url [ "us/vcr_sim.html" ]
+                                }
+                                UrlBall {
+                                    label "Raves"
+                                    url [ "raves/index.html" ]
+                                }
+                                UrlBall {
+                                    label "Rants"
+                                    url [ "rants/index.html" ]
+                                }
+                            ]
+                        }
+
+
+                        TreeCone {
+                            label "Links"
+                            longLabel "Miscellaneous Links"
+                            children [
+                                UrlBall {
+                                    label "Roadmap"
+                                    url [ "http://rs.internic.net/roadmap96/" ]
+                                }
+                                UrlBall {
+                                    label "The Net"
+                                    url [ "http://home.hiwaay.net/~crispen/us/net.html" ]
+                                }
+                                UrlBall {
+                                    label [ "What's", "New" ]
+                                    url [ "http://home.hiwaay.net/~crispen/us/whatsnew.html" ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+
+
+
+
+
+
+
+DEF inputHandler Script 
+{
+	eventIn SFNode onEvent
+
+	field SFNode root USE TREE-ROOT
+	field SFString backslash "\\"
+
+
+	url "javascript:
+	function onEvent(e,t)
+	{
+    	if (e.type == 'mousemove' && e.button == 0) {  
+    		//  return; // to many prints
+    	}
+
+    	print('Event type='+e.type+' at='+t);
+    	print(' button='+e.button+' shiftKey='+e.shiftKey+' ctrlKey='+e.ctrlKey+' altKey='+e.altKey);
+    	print(' position='+e.position+' keyCode='+e.keyCode+' ctrlKey='+e.ctrlKey+' altKey='+e.altKey);
+    	if (e.type == 'mouseup' && e.button == 2) {  // test we want to handle rbutton  menu
+        	e.returnValue = 0;
+
+    	}
+    	if (e.type == 'drop') { // ***** handle a DROP event  
+
+        	print('Dropdata'+e.data);
+        	print('Droptype'+e.dataType);
+
+        	// insert a new ObjectLeaf MyObject instance into scene 
+
+        	n = Browser.createVrmlFromString('ObjectLeaf { children MyObject {} }');
+        
+        	leaf = n[0];
+        	ob = leaf.children[0];
+
+        	// create some title
+        	//ob.title =    e.dataType +' Object';
+        
+
+        	// add the file name as title 
+        	var i1 = e.data.lastIndexOf('/');
+        	var i2 = e.data.lastIndexOf(backslash);
+        	if (i2>i1) i1=i2;
+
+
+        	if (i1>0) {
+            	//ob.title += ' '+e.data.substring(i1+1);
+            	leaf.label[0] = e.data.substring(i1+1);
+        	} 
+        	else {
+            	leaf.label[0] = e.dataType +' Object';
+        	}
+        
+        	// check the data type
+        	var worldUrl = Browser.getWorldURL();
+
+        	if (e.dataType == 'File') {// it's an local file
+            	ob.url[0]= e.data;
+        	}   
+        	else if (e.dataType == 'URL') // it's an URL dragged 
+            ob.url[0]= e.data;
+        	else ob.url[0]= e.dataType+':'+e.data;  // some special data like HTML Text 
+
+
+        	// place the object in cone tree
+
+        	var hit = Browser.mouseSelect(e.position);
+        	var cone=root;
+        	if (hit)  {
+            	path = hit.hitPath; // MFNode
+            	l= path.length;
+            	//print('Hit');
+            	while (l>0) {
+                	l--;
+                	if (path[l].getType() == 'TreeCone') {
+                    	cone = path[l];
+                    	break;
+                	}
+            	}
+
+        	}
+        
+        	//cone.children[cone.children.length]=leaf; // so that VRML can be saved 
+        	cone.addChild = leaf;
+
+
+        	// ok done, we have handled the drop event
+        	e.returnValue = 0;
+
+    	}
+
+	}
+	"
+}
+
+
+#
+# setup the input handler
+#
+
+DEF ds DeviceSensor
+{
+    enabled TRUE
+    eventType "drop"
+}
+
+ROUTE ds.event TO inputHandler.onEvent

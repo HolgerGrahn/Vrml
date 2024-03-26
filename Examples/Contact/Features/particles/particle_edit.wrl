@@ -1,0 +1,631 @@
+#VRML V2.0 utf8
+
+WorldInfo{
+	title "Particles"
+	info[
+ 		"Contact 4.4 Particle system test"
+		"use drag/drop to change texture"
+	]
+}
+
+NavigationInfo {
+	visibilityLimit 200
+	headlight TRUE
+	speed 1
+	type [ "WALK" "EXAMINE" "ANY" ]
+	avatarSize [ 0.25 1.75 0.6 ]
+}
+
+DEF TS TimeSensor {
+	enabled TRUE
+	loop TRUE
+}
+
+Viewpoint 
+{
+	position 0 1.75 15	
+	fieldOfView 1.0
+}
+
+DEF Background Background { skyColor 0.2 0.2 0.4 }
+
+EXTERNPROTO DrawGroup[
+	exposedField SFVec3f bboxSize
+	exposedField SFVec3f bboxCenter
+	exposedField SFBool sortedAlpha
+	## exposedField MFNode drawOp
+	exposedField MFNode children
+	eventIn MFNode addChildren
+	eventIn MFNode removeChildren
+	]
+["urn:inet:blaxxun.com:node:DrawGroup","http://www.blaxxun.com/vrml/protos/nodes.wrl#DrawGroup","nodes.wrl#DrawGroup"]
+
+EXTERNPROTO Particles[
+					exposedField SFVec3f bboxSize
+					exposedField SFVec3f bboxCenter
+					exposedField SFFloat lodRange
+					exposedField SFBool enabled
+					exposedField SFFloat particleRadius
+					exposedField SFNode geometry
+					exposedField SFVec3f emitterPosition
+					exposedField SFFloat emitterRadius
+					exposedField SFFloat emitterSpread
+					exposedField SFVec3f emitVelocity
+					exposedField SFFloat emitVelocityVariation
+					exposedField SFRotation emitterOrientation
+					exposedField SFFloat creationRate
+					exposedField SFFloat creationRateVariation
+					exposedField SFInt32 maxParticles
+					exposedField SFTime maxLifeTime
+					exposedField SFFloat maxLifeTimeVariation
+					exposedField SFVec3f gravity
+					exposedField SFVec3f acceleration
+					exposedField SFColor emitColor
+					exposedField SFColor fadeColor
+					exposedField SFFloat fadeAlpha
+					exposedField SFFloat fadeRate
+					exposedField SFInt32 numTrails
+					exposedField SFInt32 numSparks
+					exposedField SFVec3f sparkGravity
+					exposedField SFColor sparkFadeColor
+					]
+				["urn:inet:blaxxun.com:node:Particles","http://www.blaxxun.com/vrml/protos/nodes.wrl#Particles","nodes.wrl#Particles"]
+
+EXTERNPROTO DropHandler [
+	field SFNode root  
+	field SFNode rootShape 
+
+] "../event/drop/drophandler.wrl#DropHandler"
+
+DEF ROOT  Group	{
+
+}
+
+DrawGroup {
+	sortedAlpha FALSE
+children [
+	DEF Ground Transform {
+		scale 50 50 50
+		children [
+			Shape {
+				appearance Appearance { 
+					material Material { diffuseColor 0 0 0 emissiveColor 1 1 1 transparency 0.2 }
+					texture ImageTexture { url "../textures/gray_ground.jpg" }
+					textureTransform TextureTransform { scale 10 10 }
+				}
+				geometry DEF Square IndexedFaceSet {
+					solid FALSE
+					coord Coordinate {
+						point [ -1 0 -1,
+							1 0 -1,
+							1 0 1,
+							-1 0 1 ]
+					}
+					texCoord TextureCoordinate {
+						point [ 0 0, 
+							1 0,
+							1 1,
+							0 1 ]
+					}
+					coordIndex [ 0, 1, 2, 3, -1 ]
+				}
+			}
+		]
+	}
+	DEF PS-T Transform {
+		children DEF ROOT-SHAPE Shape {
+			appearance 	Appearance {
+				##material Material { transparency 0.0  ##emissiveColor 1 0.5 0.5 }
+				texture DEF PS-TEX ImageTexture { url [
+						"../textures/particle.png"
+						#"../textures/part5g.png"
+			    		#"../textures/flarergba1.png"
+						# "../textures/grayspot.png"
+						"../textures/part2gray.png" 
+
+		        		"../textures/hgspikeballg.png" 
+
+						## "../textures/shine1.png" 
+						##"../textures/flare2.png"
+					]
+				}
+			
+			}
+			geometry DEF PS Particles 
+			{
+				bboxSize -1 -1 -1 
+				lodRange 0
+				particleRadius 0.4  ## 0.3
+				emitColor  1 0.5 0.5 # 1 0.05 0.05
+				fadeColor 0.5 0.25 0.25
+				sparkFadeColor 0.5 0.25 1
+				fadeRate 0.1
+				fadeAlpha 1.0
+				emitterPosition 0 10 0
+				emitterRadius 2
+				emitterSpread 1
+				creationRate 500
+				maxParticles 3500
+				creationRateVariation 0.4
+				maxLifeTime 4
+
+				emitVelocity 7 10 7 
+				emitVelocity 15 15 15
+				gravity	0 -20 0	
+				emitVelocityVariation 2	
+				sparkGravity 0 7 0	
+		
+		
+				numTrails 0
+				numSparks 3
+			}
+		}
+	}
+
+	Switch {
+		whichChoice -1
+		choice 
+		DEF Mirror  Transform {
+			#translation 10 0 0
+			scale 1 -1 1 # to do cullcheck on PS  does not work with neg scale !
+			children 
+			#USE PS-T
+			Shape {		
+				appearance 	Appearance {
+					material Material { transparency 0.7  diffuseColor 0 0 0 emissiveColor 1 0.5 0.5 
+					}
+					texture USE PS-TEX 
+				}
+				geometry USE PS 
+			}		
+	
+		}
+	}
+
+	Switch {
+		whichChoice -1
+		choice 
+		DEF Shadow  Transform {
+			#translation 10 0 0
+			scale 1 0 1 
+			children 
+			Shape {		
+				appearance 	Appearance {
+					material Material { transparency 0.5  diffuseColor 0 0 0 emissiveColor 0.5 0.5 0.5 
+					}
+					#texture USE PS-TEX 
+				}
+				geometry USE PS 
+			}		
+	
+		}
+	}
+
+
+]
+}
+
+
+DEF PS-translation PositionInterpolator {
+keyValue [ 0 0 0,0 0 0]
+}
+
+ROUTE TS.fraction_changed TO PS-translation.set_fraction
+ROUTE PS-translation.value_changed TO PS-T.set_translation
+
+
+
+## UI 
+
+## SFInt32 up/down Button
+PROTO UpDownButton [ 
+	field SFFloat current 0
+	eventIn SFFloat set_current
+	eventOut SFFloat current_changed
+	
+	field SFFloat minValue -10
+	field SFFloat maxValue 10
+	field SFFloat step 1
+	
+	field SFString description ""
+]
+{
+
+	Group {
+		children [
+			Transform {
+				translation 0 -0.05 0
+				children [
+					DEF UP TouchSensor { description IS description}
+					Shape {
+						appearance DEF UP_APP Appearance { material DEF DEF_MAT Material {} }
+						geometry Extrusion { 
+							ccw TRUE
+							crossSection [ -1 0, 1 0, 0 1, -1 -0 ]
+							spine [ 0 0 0, 0 0.01 0.2]
+							scale [ 1.0 1.0, 0.7 0.7 ]
+							solid FALSE
+						}
+					}
+				]
+			}
+			Transform {
+				translation 0 0.05 0
+				children [
+					DEF DOWN TouchSensor {description IS description}
+					Shape {
+						appearance DEF DOWN_APP Appearance { material USE DEF_MAT }
+						geometry Extrusion { 
+							crossSection [ -1 0, 1 0, 0 -1, -1 -0 ]
+							spine [ 0 0 0, 0 0.01 0.2]
+							solid FALSE
+							scale [ 1.0 1.0, 0.7 0.7 ]
+							ccw FALSE
+						}
+					}
+				]
+			}
+		]
+    }
+	
+	DEF S Script {
+
+		field SFFloat current IS current
+		eventOut SFFloat current_changed IS current_changed
+		eventIn SFFloat set_current IS set_current
+		
+		
+		field SFFloat minValue IS minValue
+		field SFFloat maxValue IS maxValue
+		
+		field SFFloat step IS step
+		
+		eventIn SFTime up
+		eventIn SFTime down
+
+		field SFString description IS description
+		
+		
+		directOutput TRUE
+		field MFNode nodes [USE UP_APP USE DOWN_APP
+			USE DEF_MAT 
+			DEF OVER_MAT Material { diffuseColor 0.9 0.6 0.6 } 
+		]
+		
+		eventIn SFBool overUp 
+		eventIn SFBool overDown
+		
+		
+		url "javascript:
+		function set_current(v) {
+			current = v;
+		}
+		
+		function up() {
+			current += step;
+			if (current>=maxValue) 
+				current = maxValue;
+			current_changed = current;
+			Browser.setDescription(description + ' = '+current);
+		}
+		function down() {
+			current -= step;
+			
+			if (current<=minValue) 
+				 current= minValue;
+
+			current_changed = current;
+			Browser.setDescription(description + ' = '+current);
+		}
+		
+		function overUp(v) {
+			nodes[0].set_material = nodes[2+v];
+			if (v) Browser.setDescription(description + ' up'+ ' = '+current);
+		}
+	
+		function overDown(v) {
+			nodes[1].set_material = nodes[2+v];
+			if (v) Browser.setDescription(description + ' down'+ ' = '+current);
+		}
+
+		
+		"
+	}
+	ROUTE UP.touchTime TO S.up
+	ROUTE DOWN.touchTime TO S.down
+
+	ROUTE UP.isOver TO S.overUp
+	ROUTE DOWN.isOver TO S.overDown
+}
+
+PROTO UpDownButtonInt [ 
+	field SFInt32 current 0
+	eventIn SFInt32 set_current
+	eventOut SFInt32 current_changed
+	
+	field SFInt32 minValue -10
+	field SFInt32 maxValue 10
+	field SFInt32 step 1
+	
+	field SFString description ""
+]
+{
+
+	Group {
+		children [
+			Transform {
+				translation 0 -0.05 0
+				children [
+					DEF UP TouchSensor {description IS description}
+					Shape {
+						appearance DEF UP_APP Appearance { material DEF DEF_MAT Material {} }
+						geometry Extrusion { 
+							ccw TRUE
+							crossSection [ -1 0, 1 0, 0 1, -1 -0 ]
+							spine [ 0 0 0, 0 0.01 0.2]
+							scale [ 1.0 1.0, 0.7 0.7 ]
+							solid FALSE
+						}
+					}
+				]
+			}
+			Transform {
+				translation 0 0.05 0
+				children [
+					DEF DOWN TouchSensor {description IS description}
+					Shape {
+						appearance DEF DOWN_APP Appearance { material USE DEF_MAT }
+						geometry Extrusion { 
+							crossSection [ -1 0, 1 0, 0 -1, -1 -0 ]
+							spine [ 0 0 0, 0 0.01 0.2]
+							solid FALSE
+							scale [ 1.0 1.0, 0.7 0.7 ]
+							ccw FALSE
+						}
+					}
+				]
+			}
+		]
+    }
+	
+	DEF S Script {
+
+		field SFInt32 current IS current
+		eventOut SFInt32 current_changed IS current_changed
+		eventIn SFInt32 set_current IS set_current
+		
+		
+		field SFInt32 minValue IS minValue
+		field SFInt32 maxValue IS maxValue
+		
+		field SFInt32 step IS step
+		
+		eventIn SFTime up
+		eventIn SFTime down
+
+		field SFString description IS description
+		
+		
+		directOutput TRUE
+		field MFNode nodes [USE UP_APP USE DOWN_APP
+			USE DEF_MAT 
+			DEF OVER_MAT Material { diffuseColor 0.9 0.6 0.6 } 
+		]
+		
+		eventIn SFBool overUp 
+		eventIn SFBool overDown
+		
+		
+		url "javascript:
+		function set_current(v) {
+			current = v;
+		}
+		
+		function up() {
+			if (current>=maxValue) return;
+			current += step;
+			current_changed = current;
+			Browser.setDescription(description + ' = '+current);
+		}
+		function down() {
+			if (current<=minValue) return;
+			current -= step;
+			current_changed = current;
+			Browser.setDescription(description + ' = '+current);
+		}
+		
+		function overUp(v) {
+			nodes[0].set_material = nodes[2+v];
+			if (v) Browser.setDescription(description + ' up');
+		}
+	
+		function overDown(v) {
+			nodes[1].set_material = nodes[2+v];
+			if (v) Browser.setDescription(description + ' down');
+		}
+
+		
+		"
+	}
+	ROUTE UP.touchTime TO S.up
+	ROUTE DOWN.touchTime TO S.down
+
+	ROUTE UP.isOver TO S.overUp
+	ROUTE DOWN.isOver TO S.overDown
+}
+
+
+DEF PROX ProximitySensor {
+	size 1E6 1E6 1E6
+	enabled	TRUE
+}
+
+DEF	HUD-Switch 	Switch {
+	whichChoice 0
+	choice
+	DEF HUD
+	Transform  {
+		children  [
+			Transform {
+				translation -2 -1 -4
+				rotation 0 0 1 1.5708
+				scale 0.1 0.1 0.1
+				children [
+					Transform {
+						translation 0 -2 0 
+						children DEF Button_particleRadius UpDownButton { current 0.5 minValue 0 maxValue 50 step 0.1 description "particle Radius" }
+					}			
+
+					Transform {
+						translation 0 0 0 
+						children DEF Button_fadeAlpha UpDownButton { current 0.5 minValue 0 maxValue 1 step 0.05 description "Fade alpha" }
+					}			
+					Transform {
+						translation 0 2 0 
+						children DEF Button_emitterSpread UpDownButton { current 0.5 minValue -1 maxValue 1 step 0.05 description "Cone spread" }
+					}				
+
+					Transform {
+						translation 0 4 0 
+						children DEF Button_creationRate UpDownButton { current 300 minValue 0 maxValue 2000 step 50 description "creation rate / parts per second" }
+					}		
+					Transform {
+						translation 0 6 0 
+						children DEF Button_maxParts UpDownButtonInt { current 2000 minValue 0 maxValue 5000 step 50 description "Maximum particles" }
+					}		
+					Transform {
+						translation 0 8 0 
+						children DEF Button_emitterRadius UpDownButton { current 0 minValue -0 maxValue 10 step 0.05 description "Emitting sphere radius" }
+					}				
+					Transform {
+						translation 0 10 0 
+						children DEF Button_maxLifeTime UpDownButton { current 0 minValue -0 maxValue 10 step 0.1 description "Max lifetime" }
+					}				
+
+					###vel
+					Transform {
+						translation -2 -2 0 
+						children DEF Button_velz UpDownButton { current 10  minValue -50 maxValue 50 step 0.5 description "velocity z" }
+					}				
+					Transform {
+						translation -2 0 0 
+						children DEF Button_vely UpDownButton { current 10  minValue -50 maxValue 50 step 0.5 description "velocity y" }
+					}				
+					Transform {
+						translation -2 2 0 
+						children DEF Button_velx UpDownButton { current 10  minValue -50 maxValue 50 step 0.5 description "velocity x" }
+					}				
+
+					#gravity
+					Transform {
+						translation -4 -2 0 
+						children DEF Button_gravityz UpDownButton { current 0  minValue -50 maxValue 50 step 0.5 description "gravity z" }
+					}				
+					Transform {
+						translation -4 0 0 
+						children DEF Button_gravityy UpDownButton { current 10  minValue -50 maxValue 50 step 0.5 description "gravity y" }
+					}				
+					Transform {
+						translation -4 2 0 
+						children DEF Button_gravityx UpDownButton { current 0  minValue -50 maxValue 50 step 0.5 description "gravity x" }
+					}				
+
+					
+				]
+			}
+		]
+	}
+}
+
+ROUTE PROX.position_changed TO HUD.set_translation
+ROUTE PROX.orientation_changed TO HUD.set_rotation
+
+
+
+ROUTE Button_particleRadius.current_changed TO PS.particleRadius
+ROUTE Button_creationRate.current_changed TO PS.creationRate
+ROUTE Button_maxParts.current_changed TO PS.maxParticles
+ROUTE Button_emitterSpread.current_changed TO PS.emitterSpread
+ROUTE Button_emitterRadius.current_changed TO PS.emitterRadius
+ROUTE Button_fadeAlpha.current_changed TO PS.fadeAlpha
+
+#ROUTE Knot-IPS.knotu_changed TO Button1.set_current
+
+DEF BS Script {
+	field SFNode ps USE PS
+	field MFNode bts [
+			USE Button_particleRadius
+			USE Button_fadeAlpha
+			USE Button_emitterSpread
+			USE Button_creationRate
+			USE Button_maxParts
+			USE Button_emitterRadius
+			
+			USE Button_maxLifeTime
+
+			USE Button_velx	USE Button_vely USE Button_velz
+			USE Button_gravityx USE Button_gravityy USE Button_gravityz
+	
+	]
+
+	eventIn	SFFloat	velx
+	eventIn	SFFloat	vely
+	eventIn	SFFloat	velz
+
+	eventIn	SFFloat	gravityx
+	eventIn	SFFloat	gravityy
+	eventIn	SFFloat	gravityz
+
+	eventIn	SFFloat	maxLifeTime
+
+	directOutput TRUE
+	url	"vrmlscript:
+	function initialize() {
+		// setup initial values of buttons 
+		i=0;
+		bts[i++].set_current = ps.particleRadius;
+		bts[i++].set_current = ps.fadeAlpha;
+		bts[i++].set_current = ps.emitterSpread;
+		bts[i++].set_current = ps.creationRate;
+		bts[i++].set_current = ps.maxParticles;
+		bts[i++].set_current = ps.emitterRadius;
+		bts[i++].set_current = ps.maxLifeTime;
+
+		bts[i++].set_current = ps.emitVelocity.x;
+		bts[i++].set_current = ps.emitVelocity.y;
+		bts[i++].set_current = ps.emitVelocity.z;
+
+		bts[i++].set_current = ps.gravity.x;
+		bts[i++].set_current = ps.gravity.y;
+		bts[i++].set_current = ps.gravity.z;
+
+	}
+	function velx(v) { ps.emitVelocity.x = v; }
+	function vely(v) { ps.emitVelocity.y = v; }
+	function velz(v) { ps.emitVelocity.z = v; }
+	function gravityx(v) { ps.gravity.x = v; }
+	function gravityy(v) { ps.gravity.y = v; }
+	function gravityz(v) { ps.gravity.z = v; }
+	function maxLifeTime(v) { ps.maxLifeTime = v; }
+	"
+
+}
+ROUTE Button_velx.current_changed TO BS.velx
+ROUTE Button_vely.current_changed TO BS.vely
+ROUTE Button_velz.current_changed TO BS.velz
+
+ROUTE Button_gravityx.current_changed TO BS.gravityx
+ROUTE Button_gravityy.current_changed TO BS.gravityy
+ROUTE Button_gravityz.current_changed TO BS.gravityz
+ROUTE Button_maxLifeTime.current_changed TO BS.maxLifeTime
+
+################ DropHandler
+DropHandler	{ 
+	root USE ROOT	
+	rootShape	USE ROOT-SHAPE 
+}
+
+
+
+
+

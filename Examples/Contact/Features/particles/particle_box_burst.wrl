@@ -1,0 +1,157 @@
+#VRML V2.0 utf8
+
+WorldInfo{
+	title "Particles"
+	info[
+        "Contact 4.4 Particle system test using VRML Box"
+	]
+}
+EXTERNPROTO Particles[
+	exposedField SFVec3f bboxSize
+	exposedField SFVec3f bboxCenter
+	exposedField SFFloat lodRange
+	exposedField SFBool enabled
+	exposedField SFFloat particleRadius
+	exposedField SFFloat particleRadiusVariation
+	exposedField SFFloat particleRadiusRate
+	exposedField SFNode geometry
+	exposedField SFVec3f emitterPosition
+	exposedField SFFloat emitterRadius
+	exposedField SFFloat emitterSpread
+	exposedField SFVec3f emitVelocity
+	exposedField SFFloat emitVelocityVariation
+	exposedField SFRotation emitterOrientation
+	exposedField SFFloat creationRate
+	exposedField SFFloat creationRateVariation
+	exposedField SFInt32 maxParticles
+	exposedField SFTime maxLifeTime
+	exposedField SFFloat maxLifeTimeVariation
+	exposedField SFVec3f gravity
+	exposedField SFVec3f acceleration
+	exposedField SFColor emitColor
+	exposedField SFColor fadeColor
+	exposedField SFFloat fadeAlpha
+	exposedField SFFloat fadeRate
+	exposedField SFInt32 numTrails
+	exposedField SFInt32 numSparks
+	exposedField SFVec3f sparkGravity
+	exposedField SFColor sparkFadeColor
+]
+["urn:inet:blaxxun.com:node:Particles","http://www.blaxxun.com/vrml/protos/nodes.wrl#Particles","nodes.wrl#Particles"]
+
+
+Background {
+	frontUrl "../textures/background/nvidia/tron_negz.png"
+	backUrl "../textures/background/nvidia/tron_posz.png"
+
+	leftUrl "../textures/background/nvidia/tron_posx.png"
+	rightUrl "../textures/background/nvidia/tron_negx.png"
+
+	topUrl	 "../textures/background/nvidia/tron_posy.png"
+	bottomUrl "../textures/background/nvidia/tron_negy.png"
+}
+NavigationInfo {
+    visibilityLimit 1500
+}
+
+
+Fog	{
+	fogType	"LINEAR"
+	color  0.5 0.5 1
+	visibilityRange	1000
+}
+
+Viewpoint 
+{
+      position 0 5 30
+	  fieldOfView 1.5
+}
+
+DEF PS-T Transform {
+	children Shape {
+    	appearance  Appearance {
+        	material Material { 
+				diffuseColor  1 0.5 0.5
+				specularColor  0.9 0.9 1
+				shininess  0.27
+				#transparency 0.1 
+				##emissiveColor 1 0.5 0.5 
+			}
+           
+    	}
+    	geometry 
+		
+		DEF PS Particles 
+    	{
+        	bboxSize 150 150 150 ##  to be estimated
+        	bboxCenter 0 20 0
+        	lodRange 0 # 500 
+        	particleRadius 0.5
+        	
+			geometry Box {}
+        
+        	emitColor 1 1 1
+        	fadeColor 0.15 0.15 0.5
+        	fadeRate 1
+        	fadeAlpha 1
+        	emitterPosition 0 20 0
+        	emitterRadius 1
+        	emitterSpread 1
+        	creationRate 1500
+        	creationRateVariation 0.9
+        	maxParticles 2000
+        	maxLifeTime 5
+
+        	emitVelocity 50 50 50
+        	gravity 0 -20 0   
+        	#acceleration   -2 -2  -2
+        	#acceleration   0.5 -1  0.5
+        	emitVelocityVariation 0.5
+        
+        
+        	numTrails 0
+        	numSparks 0
+    	}
+	}
+}
+
+DEF PS-S Script {
+	field SFNode ps USE	PS
+	eventIn	SFFloat fraction
+
+	url	"vrmlscript:
+
+		function  fraction(t)
+		{
+			if (t<0.05) {
+				//ps.enabled = true;
+				ps.creationRate = 1000;
+			}
+			else { 
+				//ps.enabled = false;
+				ps.creationRate =0;
+			}	
+		}
+		"
+
+}
+
+DEF TS TimeSensor { 
+	startTime -1 stopTime -2
+	loop TRUE cycleInterval 5 
+}
+ROUTE TS.fraction_changed TO PS-S.fraction
+
+#world start
+DEF	WS TimeSensor {
+	loop TRUE
+
+}
+ROUTE WS.time TO TS.startTime
+ROUTE WS.time TO WS.stopTime
+
+
+
+
+
+

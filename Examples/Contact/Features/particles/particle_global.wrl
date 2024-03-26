@@ -1,0 +1,298 @@
+#VRML V2.0 utf8
+
+EXTERNPROTO Particles[
+
+  exposedField SFVec3f    bboxSize
+
+  exposedField SFVec3f    bboxCenter
+
+  exposedField SFBool     billboard
+
+  exposedField SFFloat    lodRange
+
+  exposedField SFBool     enabled 
+
+  exposedField SFFloat    particleRadius 
+
+  exposedField SFFloat    particleRadiusVariation 
+
+  exposedField SFFloat    particleRadiusRate 
+
+  exposedField SFNode     geometry
+
+  exposedField SFVec3f    emitterPosition 
+
+  exposedField SFFloat    emitterRadius 
+
+  exposedField SFFloat    emitterSpread 
+
+  exposedField SFVec3f    emitVelocity  
+
+  exposedField SFFloat    emitVelocityVariation 
+
+  exposedField SFRotation emitterOrientation
+
+  exposedField SFFloat    creationRate 
+
+  exposedField SFFloat    creationRateVariation 
+
+  exposedField SFInt32    maxParticles 
+
+  exposedField SFTime     maxLifeTime 
+
+  exposedField SFFloat    maxLifeTimeVariation 
+
+  exposedField SFVec3f    gravity 
+
+  exposedField SFVec3f    acceleration 
+
+  exposedField SFColor    emitColor 
+
+  exposedField SFFloat    emitColorVariation 
+
+  exposedField SFColor    fadeColor 
+
+  exposedField SFFloat    fadeAlpha 
+
+  exposedField SFFloat    fadeRate 
+
+  exposedField SFInt32    numTrails  
+
+  exposedField SFInt32    numSparks 
+
+  exposedField SFBool     sort 
+
+  exposedField SFVec3f    sparkGravity 
+
+  exposedField SFColor    sparkFadeColor
+  
+  exposedField SFBool	  emitLocal
+
+]
+
+[
+
+  "urn:inet:bitmanagement.de:node:Particles",
+
+  "http://www.bitmanagement.de/vrml/protos/nodes.wrl#Particles",
+
+]
+
+#VRML V2.0 utf8
+
+EXTERNPROTO DrawGroup [
+	exposedField SFVec3f bboxSize
+	exposedField SFVec3f bboxCenter
+	exposedField SFBool sortedAlpha
+	exposedField MFNode drawOp
+	exposedField MFNode children
+	eventIn MFNode addChildren
+	eventIn MFNode removeChildren
+]
+["urn:inet:blaxxun.com:node:DrawGroup","http://www.blaxxun.com/vrml/protos/nodes.wrl#DrawGroup","nodes.wrl#DrawGroup"]
+
+
+
+WorldInfo{
+    title "Particles"
+    info[
+        "BS Contact 7.1 Particle system test"
+    ]
+}
+
+NavigationInfo {
+    visibilityLimit 200
+}
+
+
+Viewpoint 
+{
+    position 0 1.75 15  
+    fieldOfView 1.0
+}
+
+DEF Background Background { skyColor 0.2 0.2 0.4 }
+
+DEF PARTS Switch 
+{
+    whichChoice -1
+    choice [ 
+        DEF PS Particles 
+        {
+			particleRadius 0.3
+			maxLifeTime 10
+			gravity 0 0 0
+			emitLocal FALSE
+           	emitColor 1 0.05 0.05
+            fadeColor 1 1 0.5
+            fadeRate 0.5
+            fadeAlpha 1 # 0.2
+
+        }
+		DEF PS2 Particles 
+        {
+			particleRadius 0.3
+			maxLifeTime 10
+			gravity 0 0 0
+			emitLocal TRUE
+           	emitColor 1 0.05 0.05
+            fadeColor 1 1 0.5
+            fadeRate 0.5
+            fadeAlpha 1 # 0.2
+
+        }
+        DEF PS-Shape Shape {
+            appearance  Appearance {
+                ##material Material { transparency 0.1 } ##emissiveColor 1 0.5 0.5 
+                texture DEF PS-TEX ImageTexture { url [
+                        "../textures/part2gray.png" 
+                        ##"../textures/flare1.png" 
+                        ##"../textures/particlel.png" 
+                        ## "shine1.png" 
+                        ##"flare2.png"
+                    ]
+                }
+            }
+            geometry USE PS 
+        }
+        
+    ]
+}
+
+DrawGroup {
+    sortedAlpha FALSE
+
+    children [
+
+        DEF Mirror  Transform {
+            #translation 10 0 0
+            scale 1 -1 1 # to do cullcheck on PS  does not work with neg scale !
+            children 
+            Shape {     
+                appearance  Appearance {
+                    material Material { transparency 0.7  diffuseColor 0 0 0 emissiveColor 1 0.5 0.5 
+                    }
+                    texture USE PS-TEX 
+                }
+                geometry USE PS 
+            }       
+    
+        }
+
+        DEF Ground Transform {
+            scale 50 50 50
+            children [
+                Shape {
+                    appearance Appearance { 
+                        material Material { 
+                            ##diffuseColor 0 0 0 
+                            emissiveColor 1 1 1 
+                            transparency 0.3 
+                        }
+                        texture ImageTexture { url "../textures/gray_ground.jpg" }
+                        textureTransform TextureTransform { scale 10 10 }
+                    }
+                    geometry DEF Square IndexedFaceSet {
+                        solid TRUE # FALSE
+                        ccw FALSE # test ??????? 
+                        coord Coordinate {
+                            point [ -1 0 -1,
+                                1 0 -1,
+                                1 0 1,
+                                -1 0 1 ]
+                        }
+                        texCoord TextureCoordinate {
+                            point [ 0 0, 
+                                1 0,
+                                1 1,
+                                0 1 ]
+                        }
+                        coordIndex [ 0, 1, 2, 3, -1 ]
+                    }
+                }
+            ]
+        }
+
+        DEF PS-T Transform {
+            children USE PS-Shape
+        }
+
+        Switch {
+            whichChoice -1
+            choice 
+            DEF Shadow  Transform {
+                #translation 10 0 0
+                scale 1 0 1 
+                children 
+                Shape {     
+                    appearance  Appearance {
+                        material Material { transparency 0.5  diffuseColor 0 0 0 emissiveColor 0.5 0.5 0.5 
+                        }
+                        #texture USE PS-TEX 
+                    }
+                    geometry USE PS 
+                }       
+    
+            }
+        }
+
+    ]
+}
+
+DEF	PosInt PositionInterpolator
+{
+	key	[0,0.25,0.5,0.75,1]
+	keyValue [0 0 0, 6 0 6, 0 0 12, -6 0 6,0 0 0]
+}
+DEF	Timer TimeSensor
+{
+	enabled	TRUE
+	loop TRUE
+}
+ROUTE Timer.fraction_changed TO	PosInt.set_fraction
+#ROUTE Timer.fraction_changed TO	PosInt2.set_fraction
+ROUTE PosInt.value_changed TO PS-T.translation
+#ROUTE PosInt2.value_changed TO TRANS2.translation
+
+
+
+
+
+
+#DEF	PosInt PositionInterpolator
+#{
+#	key	[0,0.25,0.5,0.75,1]
+#	keyValue [0 0 0, 6 0 6, 0 0 12, -6 0 6,0 0 0]
+#}
+
+#DEF	PosInt2 PositionInterpolator
+#{
+#	key	[0,0.25,0.5,0.75,1]
+#	keyValue [20 0 0, 26 0 6, 20 0 12, 14 0 6,20 0 0]
+#}
+#DEF	Timer TimeSensor
+#{
+#	enabled	TRUE
+#	loop TRUE
+#}
+#ROUTE Timer.fraction_changed TO	PosInt.set_fraction
+#ROUTE Timer.fraction_changed TO	PosInt2.set_fraction
+#ROUTE PosInt.value_changed TO TRANS.translation
+#ROUTE PosInt2.value_changed TO TRANS2.translation
+
+#Transform 
+#{
+#	children
+#	Shape
+#	{
+#		geometry Box {size 30 0 30}
+#		appearance Appearance {
+#			material Material {
+#				diffuseColor .31 .22 0
+#				specularColor .73 .65 0
+#				ambientIntensity .00333
+#				shininess .03
+#			}
+#		}
+#	}
+#}

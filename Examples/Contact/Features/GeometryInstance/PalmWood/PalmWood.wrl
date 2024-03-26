@@ -1,5 +1,20 @@
 #VRML V2.0 utf8
 
+EXTERNPROTO GeometryInstance[
+	exposedField SFNode metadata
+	exposedField SFVec3f bboxSize
+	exposedField SFVec3f bboxCenter
+	exposedField SFVec2f range
+	exposedField SFNode shader
+	exposedField MFBool enabled
+	exposedField MFVec3f translation
+	exposedField MFRotation rotation
+	exposedField MFVec3f scale
+	exposedField MFRotation scaleOrientation
+	exposedField SFNode color
+	exposedField SFNode shape
+	]
+["urn:inet:bitmanagement.de:node:GeometryInstance","http://www.bitmanagement.de/vrml/protos/nodes.wrl#GeometryInstance","nodes.wrl#GeometryInstance"]
 
 Background {
 						skyColor [ .792 .792 .827 ]

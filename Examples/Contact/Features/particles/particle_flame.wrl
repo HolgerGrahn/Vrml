@@ -1,0 +1,251 @@
+#VRML V2.0 utf8
+
+WorldInfo{
+	title "Particles"
+	info[
+ 		"Contact 4.4 Particle system test"
+	]
+}
+
+		EXTERNPROTO Particles[
+			exposedField SFVec3f bboxSize
+			exposedField SFVec3f bboxCenter
+			exposedField SFFloat lodRange
+			exposedField SFBool enabled
+			exposedField SFFloat particleRadius
+			exposedField SFFloat particleRadiusVariation
+			exposedField SFFloat particleRadiusRate
+			exposedField SFNode geometry
+			exposedField SFVec3f emitterPosition
+			exposedField SFFloat emitterRadius
+			exposedField SFFloat emitterSpread
+			exposedField SFVec3f emitVelocity
+			exposedField SFFloat emitVelocityVariation
+			exposedField SFRotation emitterOrientation
+			exposedField SFFloat creationRate
+			exposedField SFFloat creationRateVariation
+			exposedField SFInt32 maxParticles
+			exposedField SFTime maxLifeTime
+			exposedField SFFloat maxLifeTimeVariation
+			exposedField SFVec3f gravity
+			exposedField SFVec3f acceleration
+			exposedField SFColor emitColor
+			exposedField SFColor fadeColor
+			exposedField SFFloat fadeAlpha
+			exposedField SFFloat fadeRate
+			exposedField SFInt32 numTrails
+			exposedField SFInt32 numSparks
+			exposedField SFVec3f sparkGravity
+			exposedField SFColor sparkFadeColor
+			]
+		["urn:inet:blaxxun.com:node:Particles","http://www.blaxxun.com/vrml/protos/nodes.wrl#Particles","nodes.wrl#Particles"]
+EXTERNPROTO DrawGroup[
+	exposedField SFVec3f bboxSize
+	exposedField SFVec3f bboxCenter
+	exposedField SFBool sortedAlpha
+	exposedField MFNode drawOp
+	exposedField MFNode children
+	eventIn MFNode addChildren
+	eventIn MFNode removeChildren
+	]
+["urn:inet:blaxxun.com:node:DrawGroup","http://www.blaxxun.com/vrml/protos/nodes.wrl#DrawGroup","nodes.wrl#DrawGroup"]
+
+
+NavigationInfo {
+	visibilityLimit 200
+}
+
+DEF TS TimeSensor {
+	enabled TRUE
+	loop TRUE
+	cycleInterval 10
+}
+
+Viewpoint 
+{
+	position 0 2.75 35	
+	fieldOfView 1.0
+}
+
+DEF Background Background { skyColor 0.2 0.2 0.4 }
+PointLight {
+	on FALSE
+	location 0 2 0
+	color 1 0.05 0.05
+}
+
+DEF	Objects Switch {
+	whichChoice	-1
+	choice [ DEF PS Particles 
+				{
+					bboxSize -1 -1 -1 
+					lodRange 300 
+					particleRadius 0.75
+					particleRadiusRate 1 # +0.4
+					particleRadiusVariation 0.1
+
+
+#					emitColor 1 0.05 0.05
+					emitColor 0.95 0.95 0.95
+					fadeColor 0.8 0.9 0.1
+
+					fadeRate 0.5
+					fadeAlpha 0
+					emitterPosition 0 2 0
+					emitterRadius 1.5
+					emitterSpread 0.05
+					
+					creationRate 200
+
+					maxParticles 600
+					maxLifeTime 2
+
+					emitVelocity 4 4 4
+					emitVelocity 8 8 8 
+					#emitVelocity 15 15 15
+					gravity	0 0 0
+					emitVelocityVariation 0.25		
+		
+		
+					numTrails 0 #4
+					numSparks 0
+				}
+				DEF PS-S Shape {
+				appearance 	Appearance {
+					##material Material { transparency 0.1 } ##emissiveColor 1 0.5 0.5 }
+					texture DEF PS-TEX 
+					ImageTexture 
+					#MovieTexture 
+					{	# loop TRUE speed	2
+						#repeatS	FALSE repeatT FALSE
+						url [
+							#"../textures/lod_tesslar.png"
+						"../textures/fire.png"
+						#	"../textures/flame.png"
+						#"../textures/anim/fire_ani.gif" 
+						##"../textures/particle.png" 
+						"../textures/particlel.png" 
+						## "../textures/shine1.png" 
+						##"../textures/flare2.png"
+						]
+					}
+					textureTransform TextureTransform { rotation 3.14 }
+			
+				}
+				geometry  USE PS
+			}
+
+			DEF PS2 Transform {
+				translation	0 -2 0 
+				children [
+					#Transform { translation -5 0 4 children	USE	PS-S }
+					#Transform { translation 7 0 -8 children	USE	PS-S }
+					Transform { translation 2 0 15 children	USE	PS-S }
+
+
+				]
+			}
+		]
+}	
+
+
+DrawGroup {
+	sortedAlpha FALSE
+	children [
+		DEF Mirror-SW Switch {
+		whichChoice	0
+		choice
+		DEF Mirror  Transform {
+			#translation 10 0 0
+			scale 1 -1 1 # to do cullcheck on PS  does not work with neg scale !
+			children 
+			USE PS2 ##USE PS-T
+#			Shape {		
+#				appearance 	Appearance {
+#					material Material { transparency 0.7  diffuseColor 0 0 0 emissiveColor 1 0.5 0.5 
+#					}
+#					texture USE PS-TEX 
+#				}
+#				geometry USE PS 
+#			}		
+	
+		}
+		}
+
+		DEF Ground Transform {
+			scale 50 50 50
+			children [
+				Shape {
+					appearance Appearance { 
+						material Material { diffuseColor 0 0 0 emissiveColor 1 1 1 
+								transparency 0.2 
+						}
+						texture ImageTexture { url "../textures/gray_ground.jpg" }
+						textureTransform TextureTransform { scale 10 10 }
+					}
+					geometry DEF Square IndexedFaceSet {
+						solid FALSE
+						coord Coordinate {
+							point [ -1 0 -1,
+								1 0 -1,
+								1 0 1,
+								-1 0 1 ]
+						}
+						texCoord TextureCoordinate {
+							point [ 0 0, 
+								1 0,
+								1 1,
+								0 1 ]
+						}
+						coordIndex [ 0, 1, 2, 3, -1 ]
+					}
+				}
+			]
+		}
+		DEF Shadow-SW Switch {
+			whichChoice -1
+			choice 
+			DEF Shadow  Transform {
+				#translation 10 0 0
+				scale 1 0 1 
+				children 
+				Shape {		
+					appearance 	Appearance {
+						material Material { transparency 0.5  diffuseColor 0 0 0 emissiveColor 0.5 0.5 0.5 
+						}
+						#texture USE PS-TEX 
+					}
+					geometry USE PS 
+				}		
+	
+			}
+		}
+
+
+		DEF PS-T Transform {
+			children USE PS2  ## USE PS-S
+		}
+
+
+	]
+}
+
+
+DEF PS-translation PositionInterpolator {
+	keyValue [ 0 0 0,0 0 0]
+}
+DEF PS-rate ScalarInterpolator {
+	keyValue [ 200  350 200  100 200  ]
+}
+DEF PS-spread ScalarInterpolator {
+	keyValue [ 0.25 0.35 0.3 0.1 0.25 ]
+}
+
+
+ROUTE TS.fraction_changed TO PS-rate.set_fraction
+ROUTE PS-rate.value_changed TO PS.creationRate
+ROUTE TS.fraction_changed TO PS-spread.set_fraction
+ROUTE PS-spread.value_changed TO PS.emitterSpread
+
+
+
