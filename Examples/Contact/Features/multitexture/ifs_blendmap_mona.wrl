@@ -99,7 +99,7 @@ DEF rumpf Transform {
 					texture [
 						DEF ITX1 ImageTexture{ url "../textures/mona.jpg"}
 
-						DEF ITX2 ImageTexture{ url "../../labs/images/brush_4.png"}
+						DEF ITX2 ImageTexture{ url "../textures/brush_4.png"}
 					   	#DEF ITX2 ImageTexture { url "../textures/giraffe.png" parameter "format=A8" }
 						DEF ITX3 ImageTexture{ url "../textures/stripes.jpg"}	
 						#DEF ITX3 MovieTexture{ loop TRUE startTime 0 url "../media/demos/rlh_e3_2002.mpg" repeatS FALSE repeatT FALSE}	
