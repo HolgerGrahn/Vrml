@@ -1,0 +1,12 @@
+[InternetShortcut]
+URL=https://raw.githubusercontent.com/HolgerGrahn/Vrml/main/Examples/Contact/Features/multitexture/underwater/underwater_bubble.wrl
+Title=Underwater Example with Particles
+Description=hg@snafu.de|inspired by 
+		http://www.ati.com/developer/sdk/RadeonSDK/Html/Samples/Direct3D/RadeonUnderwater.html
+		|fish from http://www.toucan.co.jp/indexE.html| TextureCoordGen { mode "CAMERASPACEPOSITION" } is used to created projected texture coordinates
+
+		
+Viewpoint=cam
+LastModified=2024-03-26T14:49:59Z
+ContentType=text/plain
+LastVisited=2024-03-26T14:51:03Z
