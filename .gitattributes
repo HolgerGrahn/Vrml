@@ -1,0 +1,20 @@
+
+# Mimetypes
+*.html text/html
+*.pdf application/pdf
+*.wrl model/vrml
+*.wrz model/vrml
+*.x3d model/x3d+xml
+*.x3dv model/x3d+vrml
+*.dae model/collada+xml
+
+*.dds image/x-dds
+*.gif image/gif
+*.jps image/x-jps
+
+
+# Binary files
+#*.jpg binary
+#*.png binary
+#*.gif binary
+#*.zip binary
