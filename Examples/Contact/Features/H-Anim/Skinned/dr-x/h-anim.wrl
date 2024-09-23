@@ -1,0 +1,337 @@
+#VRML V2.0 utf8
+
+
+PROTO Joint [
+   exposedField     SFVec3f      center              0 0 0
+   exposedField     MFNode       children            [ ]
+   exposedField     MFFloat      llimit              [ ]
+   exposedField     SFRotation   limitOrientation    0 0 1 0
+   exposedField     SFString     name                ""
+   exposedField     SFRotation   rotation            0 0 1 0
+   exposedField     SFVec3f      scale               1 1 1
+   exposedField     SFRotation   scaleOrientation    0 0 1 0
+   exposedField     MFInt32      skinCoordIndex      [ ]
+   exposedField     MFFloat      skinCoordWeight     [ ]
+   exposedField     MFFloat      stiffness           [ 0 0 0 ]
+   exposedField     SFVec3f      translation         0 0 0
+   exposedField     MFFloat      ulimit              [ ]
+]
+{
+   Transform {
+      center           IS center
+      children         IS children
+      rotation         IS rotation
+      scale            IS scale
+      scaleOrientation IS scaleOrientation
+      translation      IS translation
+   }
+}
+
+
+PROTO Segment [
+   exposedField   SFString name             ""
+   exposedField   SFVec3f  centerOfMass     0 0 0
+   exposedField   SFVec3f  momentsOfInertia 1 1 1
+   exposedField   SFFloat  mass             0
+   exposedField   MFNode   children         [ ]
+   exposedField   MFNode   displacers       [ ]
+   eventIn        MFNode   addChildren
+   eventIn        MFNode   removeChildren
+]
+{
+	Group {
+		children IS children
+		addChildren IS addChildren
+		removeChildren IS removeChildren
+	}
+}
+
+
+PROTO Site [
+	eventIn MFNode addChildren
+	eventIn MFNode removeChildren
+	exposedField MFNode children []
+	exposedField SFString name ""
+	exposedField SFVec3f center 0 0 0
+	exposedField SFRotation rotation 0 0 1 0
+	exposedField SFVec3f scale 1 1 1
+	exposedField SFRotation scaleOrientation 0 0 1 0
+	exposedField SFVec3f translation 0 0 0
+]
+{
+	Transform {
+		children IS children
+		addChildren IS addChildren
+		removeChildren IS removeChildren
+		center IS center
+		rotation IS rotation
+		scale IS scale
+		scaleOrientation IS scaleOrientation
+		translation IS translation
+	}
+}
+
+
+PROTO Humanoid [
+   eventIn         SFFloat    set_fraction
+   eventIn         MFNode     set_joints
+   eventIn         MFNode     set_skeleton
+   eventIn         SFNode     set_skinCoord
+   field           SFVec3f    bboxCenter            0 0 0
+   field           SFVec3f    bboxSize              -1 -1 -1
+   field           MFNode     joints                [ ]
+   field           MFNode     skeleton              [ ]
+   field           SFNode     skinCoord             NULL
+   exposedField    SFVec3f    center                0 0 0
+   exposedField    MFString   info                  [ ]
+   exposedField    SFString   name                  ""
+   exposedField    SFRotation rotation              0 0 1 0
+   exposedField    SFVec3f    scale                 1 1 1
+   exposedField    SFRotation scaleOrientation      0 0 1 0
+   exposedField    MFNode     segments              [ ]
+   exposedField    MFNode     sites                 [ ]
+   exposedField    MFNode     skin                  [ ]
+   exposedField    SFNode     skinNormal            NULL
+   exposedField    SFVec3f    translation           0 0 0
+   exposedField    SFString   version               "2.0"
+   exposedField    MFNode     viewpoints            [ ]
+   eventOut        MFNode     joints_changed
+   eventOut        MFNode     skeleton_changed
+   eventOut        SFNode     skinCoord_changed
+]
+{
+   Group {
+      children [
+         Transform {
+            bboxCenter       IS bboxCenter
+            bboxSize         IS bboxSize
+            center           IS center
+            rotation         IS rotation
+            scale            IS scale
+            scaleOrientation IS scaleOrientation
+            translation      IS translation
+            children [
+               Group {
+                  children IS viewpoints
+               }
+               Group {
+                  children IS skeleton 
+               }
+               Group {
+                  children IS skin
+               }
+            ]
+         }
+         Script {
+            eventIn SFFloat    update            IS set_fraction
+            field   MFNode     skeleton          IS skeleton
+            field   MFVec3f    coordList         []
+            field   SFInt32    iNumJoints        0
+            field   SFNode     nextjoint         NULL
+            field   MFNode     joints            IS joints
+            field   SFRotation rotation          1 0 0 0
+            field   SFVec3f    translation       0 0 0
+            field   SFVec3f    scale             1 1 1
+            field   SFNode     skinCoord         IS skinCoord
+
+
+			#contact 5.1
+			field SFBool	   contact51		FALSE
+
+			# linear transform array 
+
+			field	MFVec3f	   translations 	[]
+			field	MFRotation   rotations		[]
+			field	MFVec3f      centers        []
+			field   MFVec3f      scales         []
+			field   MFRotation   scaleOrientations[]
+			#
+			field MFInt32	   vgroup []	# joint info level, startIndex endIndex
+			field MFInt32	   vindex  []	# all skinCoordIndex   concatenated 
+			field MFFloat	   vweight []	# corresponding skinWeight
+
+
+            directOutput TRUE
+            url "javascript:
+               // Initialises the script
+               function initialize() {
+                  // Copy coord list into local storage
+                  coordList = skinCoord.point;
+
+                  // should be moved to update, if it is desired that the
+                  // system can adjust to joints being added dynamically
+                  iNumJoints = joints.length;
+
+				  if( Browser.getName()=='blaxxunCC3D' && parseFloat(Browser.getVersion())>=5.1)
+				  {
+					  contact51 = true;	  
+				  }		
+
+				  if (contact51) {
+					  // optimize, one time setup of v* arrays 
+				  }
+
+               }
+               // Transforms the vertices related to a joint
+               function Transform() {
+                  // Make sure that this is a joint
+                  var j;
+                  for (j=0; ((j<iNumJoints) && (joints[j].name != nextjoint.name)); j++);
+
+                  // If it is, we process the data
+                  if (j<iNumJoints) {
+                     // Read in current next joint
+                     var currentJoint = nextjoint;
+                     // Read in current matrix
+                     var currentMatrix = new VrmlMatrix();
+                     currentMatrix.setTransform(translation,
+                                                rotation,
+                                                scale,
+                                                new SFRotation(1,0,0,0),
+                                                new SFVec3f(0,0,0));
+                     // Create matrix corresponding to this joints transform
+                     var newMatrix = new VrmlMatrix();
+                     newMatrix.setTransform(currentJoint.translation,
+                                            currentJoint.rotation,
+                                            currentJoint.scale,
+                                            currentJoint.scaleOrientation,
+                                            currentJoint.center);
+                     // Update current matrix with matrix from this joint
+                     currentMatrix = newMatrix.multRight(currentMatrix);
+                     // Transform all vertices associated with this joint
+                     var iNumAffectedVertices = currentJoint.skinCoordIndex.length;
+                     var v;
+                     for (v=0; v<iNumAffectedVertices; v++) {
+                        var newVertex = currentMatrix.multVecMatrix(coordList[currentJoint.skinCoordIndex[v]]).multiply(currentJoint.skinCoordWeight[v]);
+                        skinCoord.point[currentJoint.skinCoordIndex[v]] = skinCoord.point[currentJoint.skinCoordIndex[v]].add(newVertex);
+                     }
+                     // Transform all children
+                     var children = currentJoint.children;
+                     var c;
+                     for (c=0; c<children.length; c++) {
+                        nextjoint = children[c];
+                        currentMatrix.getTransform(translation,rotation,scale);
+                        Transform();
+                     }
+                  }
+               }
+               // Update event handler
+               function update(value,time) 
+			   {
+
+
+				   if (contact51) {
+					    bxupdate(value,time);
+						return;
+					}
+
+                  // Zero output data.
+                  var v;
+                  for (v=0; v<skinCoord.point.length; v++) {
+                     skinCoord.point[v].x = 0;
+                     skinCoord.point[v].y = 0;
+                     skinCoord.point[v].z = 0;
+                  }
+                  // Initialise transform data
+                  translation = new SFVec3f(0,0,0);
+                  scale       = new SFVec3f(1,1,1);
+                  rotation    = new SFRotation(0,0,1,0);
+                  // First (and only) item in skeleton should be the HumanoidRoot.
+                  // This is stored as the joint we want to do next
+                  // This could do with being more robust, rather than a 'should be ok'.
+                  nextjoint = skeleton[0];
+                  // Call transform function
+                  Transform();
+               }
+
+				// Contact 5.1
+
+
+               // store Transforms for the vertices related to a joint
+               function bxTransform(group,nextjoint) 
+			   {
+                  // Make sure that this is a joint
+                  var j;
+                  for (j=0; ((j<iNumJoints) && (joints[j].name != nextjoint.name)); j++);
+
+                  // If it is, we process the data
+                  if (j<iNumJoints) {
+
+                     // Read in current next joint
+                     var currentJoint = nextjoint;
+					 var gtarget = vgroup.length;
+					 var gtargeti=gtarget/3;
+
+
+					 // store the stack level, will be combined with upper level 
+					 // 
+		             vgroup[gtarget++]= group;
+
+					 // store matrix transform corresponding to this joints transform
+					 translations[gtargeti]=currentJoint.translation;
+					 rotations[gtargeti]=currentJoint.rotation;
+					 scales[gtargeti]=currentJoint.scale;
+					 scaleOrientations[gtargeti]=currentJoint.scaleOrientation;
+					 centers[gtargeti]=currentJoint.center;
+
+                     // Update current matrix with matrix from this joint
+                     //currentMatrix = newMatrix.multRight(currentMatrix);
+                     // Transform all vertices associated with this joint
+                     var iNumAffectedVertices = currentJoint.skinCoordIndex.length;
+
+					 // store start index into vindex & vweight
+					 var target = vindex.length;
+					 vgroup[gtarget++]=target;
+
+
+					 // store skin coordIndex & weight
+                     for (var v=0; v<iNumAffectedVertices; v++) 
+					 {
+						 vindex[target]= currentJoint.skinCoordIndex[v];
+						 vweight[target]= currentJoint.skinCoordWeight[v];
+						 target++;
+                     }
+
+					 // store end index 
+					 vgroup[gtarget++]=target;
+
+                     // Recurse for children 
+                     var children = currentJoint.children;
+                     for (var c=0; c<children.length; c++) 
+					 {
+                        bxTransform(group+1,children[c]);
+                     }
+                  }
+               }
+
+               // Update event handler
+               function bxupdate(value,time) 
+			   {
+                  // Zero joint arrays 
+				  vgroup.length = 0;
+				  vindex.length = 0;
+				  vweight.length = 0;
+
+                  // First (and only) item in skeleton should be the HumanoidRoot.
+                  // This is stored as the joint we want to do next
+                  // This could do with being more robust, rather than a 'should be ok'.
+                  nextjoint = skeleton[0];
+                  
+				  // copy joint & info transforms to format for extensions function below 
+                  bxTransform(0,skeleton[0]);
+
+				  //print('field MFInt32 vgroup ' +vgroup);
+				  //print('field MFInt32 vindex ' +vindex);
+				  //print('field MFFloat vweight' +vweight);
+
+				  // now transform on block optimized 
+                  skinCoord.point.setByVertexTransformWeighted(coordList,vgroup,vindex,vweight,translations,rotations,scales,scaleOrientations,centers);
+
+
+               }
+
+            "
+         }
+      ]
+   }
+}

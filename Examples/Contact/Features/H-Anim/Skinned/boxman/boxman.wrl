@@ -1,0 +1,959 @@
+#VRML V2.0 utf8
+
+WorldInfo 
+{
+  title "BoxMan - A Seamless VRML Human"
+  info ["(C) 2000 James Smith - james@vapourtech.com"
+    "http://www.vapourtech.com/team/james/boxman.wrl"
+    "Blaxxun compatibility by Tu Lam - TuL@seamless-solutions.com"
+	"Proto's changed to Contact 6 native proto implementation - hgr@x79.net - 2011"
+  ]
+}
+
+
+#H-ANIM 2001 native in Contact 6.0
+
+EXTERNPROTO Joint [
+   exposedField     SFVec3f      center
+   exposedField     MFNode       children
+   exposedField     MFFloat      llimit
+   exposedField     SFRotation   limitOrientation
+   exposedField     SFString     name
+   exposedField     SFRotation   rotation
+   exposedField     SFVec3f      scale
+   exposedField     SFRotation   scaleOrientation
+   exposedField     MFInt32      skinCoordIndex
+   exposedField     MFFloat      skinCoordWeight
+   exposedField     MFFloat      stiffness
+   exposedField     SFVec3f      translation
+   exposedField     MFFloat      ulimit
+]
+[ "urn:inet:bitmanagement.de:node:Joint","h-anim.wrl#Joint","http://www.bitmanagement.de/vrml/protos/nodes.wrl#Joint" ]
+EXTERNPROTO Segment [
+   field          SFVec3f bboxCenter
+   field          SFVec3f bboxSize
+   exposedField   SFNode coord
+   exposedField   SFString name
+   exposedField   SFVec3f  centerOfMass
+   exposedField   SFVec3f  momentsOfInertia
+   exposedField   SFFloat  mass
+   exposedField   MFNode   children
+   exposedField   MFNode   displacers
+   eventIn        MFNode   addChildren
+   eventIn        MFNode   removeChildren
+]
+[ "urn:inet:bitmanagement.de:node:Segment" "h-anim.wrl#Segment","http://www.bitmanagement.de/vrml/protos/nodes.wrl#Segment" ]
+EXTERNPROTO Site [
+	eventIn MFNode addChildren
+	eventIn MFNode removeChildren
+	exposedField MFNode children
+	exposedField SFString name
+	exposedField SFVec3f center
+	exposedField SFRotation rotation
+	exposedField SFVec3f scale
+	exposedField SFRotation scaleOrientation
+	exposedField SFVec3f translation
+]
+[ "urn:inet:bitmanagement.de:node:Site" "h-anim.wrl#Site","http://www.bitmanagement.de/vrml/protos/nodes.wrl#Site" ]
+EXTERNPROTO Humanoid [
+   eventIn         SFFloat    set_fraction
+   field           SFVec3f    bboxCenter
+   field           SFVec3f    bboxSize
+   field           MFNode     joints
+   field           MFNode     skeleton
+   field           SFNode     skinCoord
+   exposedField    SFVec3f    center
+   exposedField    MFString   info
+   exposedField    SFString   name
+   exposedField    SFRotation rotation
+   exposedField    SFVec3f    scale
+   exposedField    SFRotation scaleOrientation
+   exposedField    MFNode     segments
+   exposedField    MFNode     sites
+   exposedField    MFNode     skin
+   exposedField    SFNode     skinNormal
+   exposedField    SFVec3f    translation
+   exposedField    SFString   version
+   exposedField    MFNode     viewpoints
+]
+[ "urn:inet:bitmanagement.de:node:Humanoid" "h-anim.wrl#Humanoid","http://www.bitmanagement.de/vrml/protos/nodes.wrl#Humanoid" ]
+
+
+
+EXTERNPROTO LOA1NancyWalkAnimation [
+  exposedField     SFTime     cycleInterval
+  exposedField     SFBool     enabled
+  exposedField     SFBool     loop
+  exposedField     SFTime     startTime
+  exposedField     SFTime     stopTime
+  eventOut         SFFloat    fraction_changed
+  eventOut         SFVec3f    HumanoidRoot_translation_changed
+  eventOut         SFRotation HumanoidRoot_rotation_changed
+  eventOut         SFRotation l_hip_rotation_changed
+  eventOut         SFRotation l_knee_rotation_changed
+  eventOut         SFRotation l_ankle_rotation_changed
+  eventOut         SFRotation l_midtarsal_rotation_changed
+  eventOut         SFRotation r_hip_rotation_changed
+  eventOut         SFRotation r_knee_rotation_changed
+  eventOut         SFRotation r_ankle_rotation_changed
+  eventOut         SFRotation r_midtarsal_rotation_changed
+  eventOut         SFRotation vl5_rotation_changed
+  eventOut         SFRotation skullbase_rotation_changed
+  eventOut         SFRotation l_shoulder_rotation_changed
+  eventOut         SFRotation l_elbow_rotation_changed
+  eventOut         SFRotation l_wrist_rotation_changed
+  eventOut         SFRotation r_shoulder_rotation_changed
+  eventOut         SFRotation r_elbow_rotation_changed
+  eventOut         SFRotation r_wrist_rotation_changed
+  eventOut         SFBool     isActive
+]
+[
+  "protos/LOA1NancyWalkAnimation.wrl"
+]
+
+Background {
+  skyColor [ 0.75 0.75 0.75 ]
+}
+
+NavigationInfo {
+  type [
+    "EXAMINE"
+    "ANY"
+  ]
+}
+
+DEF HUMANOID Humanoid {
+  name "Humanoid"
+  skeleton [
+    DEF hanim_HumanoidRoot Joint {
+      name "HumanoidRoot"
+      center 0 .9723 -.0728
+      skinCoordIndex [
+        0 1 2 3 4 5 6 7 8 9 10 11
+      ]
+      skinCoordWeight [
+        1 1 1 1 1 1 1 1 1 1 1 1
+      ]
+      children [
+        DEF hanim_sacrum Segment {
+          name "sacrum"
+          children [
+            Inline {
+              url "centres/sacrum.wrl"
+            }
+          ]
+        }
+        # hanim_sacrum
+        DEF hanim_l_hip Joint {
+          name "l_hip"
+          center .0956 .9364 0
+          skinCoordIndex [
+            12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43
+          ]
+          skinCoordWeight [
+            1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5
+          ]
+          children [
+            DEF hanim_l_thigh Segment {
+              name "l_thigh"
+              children [
+                Inline {
+                  url "centres/l_thigh.wrl"
+                }
+              ]
+            }
+            # hanim_l_thigh
+            DEF hanim_l_knee Joint {
+              name "l_knee"
+              center .0956 .5095 -.0036
+              skinCoordIndex [
+                36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63
+              ]
+              skinCoordWeight [
+                0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+              ]
+              children [
+                DEF hanim_l_calf Segment {
+                  name "l_calf"
+                  children [
+                    Inline {
+                      url "centres/l_calf.wrl"
+                    }
+                  ]
+                }
+                # hanim_l_calf
+                DEF hanim_l_ankle Joint {
+                  name "l_ankle"
+                  center .0946 .0762 -.0261
+                  skinCoordIndex [
+                    64 65 66 67 68 69 70 71
+                  ]
+                  skinCoordWeight [
+                    1 1 1 1 1 1 1 1
+                  ]
+                  children [
+                    DEF hanim_l_hindfoot Segment {
+                      name "l_hindfoot"
+                      children [
+                        Inline {
+                          url "centres/l_hindfoot.wrl"
+                        }
+                      ]
+                    }
+                    # hanim_l_hindfoot
+                    DEF hanim_l_midtarsal Joint {
+                      name "l_midtarsal"
+                      center .1079 .0317 .067
+                      skinCoordIndex [
+                        72 73 74 75 76 77 78 79
+                      ]
+                      skinCoordWeight [
+                        1 1 1 1 1 1 1 1
+                      ]
+                      children [
+                        DEF hanim_l_middistal Segment {
+                          name "l_middistal"
+                          children [
+                            Inline {
+                              url "centres/l_middistal.wrl"
+                            }
+                            DEF hanim_l_middistal_tip Site {
+                              name "l_middistal_tip"
+                              translation .095 .0005 .1924
+                            }
+                            # hanim_l_middistal_tip
+                            Inline {
+                              url "centres/l_middistal_tip.wrl"
+                            }
+                          ]
+                        }
+                        # hanim_l_middistal
+                      ]
+                    }
+                    # hanim_l_midtarsal
+                  ]
+                }
+                # hanim_l_ankle
+              ]
+            }
+            # hanim_l_knee
+          ]
+        }
+        # hanim_l_hip
+        DEF hanim_r_hip Joint {
+          name "r_hip"
+          center -.0956 .9364 0
+          skinCoordIndex [
+            80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111
+          ]
+          skinCoordWeight [
+            1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5
+          ]
+          children [
+            DEF hanim_r_thigh Segment {
+              name "r_thigh"
+              children [
+                Inline {
+                  url "centres/r_thigh.wrl"
+                }
+              ]
+            }
+            # hanim_r_thigh
+            DEF hanim_r_knee Joint {
+              name "r_knee"
+              center -.0956 .5095 -.0036
+              skinCoordIndex [
+                104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131
+              ]
+              skinCoordWeight [
+                0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+              ]
+              children [
+                DEF hanim_r_calf Segment {
+                  name "r_calf"
+                  children [
+                    Inline {
+                      url "centres/r_calf.wrl"
+                    }
+                  ]
+                }
+                # hanim_r_calf
+                DEF hanim_r_ankle Joint {
+                  name "r_ankle"
+                  center -.0946 .0762 -.0261
+                  skinCoordIndex [
+                    132 133 134 135 136 137 138 139
+                  ]
+                  skinCoordWeight [
+                    1 1 1 1 1 1 1 1
+                  ]
+                  children [
+                    DEF hanim_r_hindfoot Segment {
+                      name "r_hindfoot"
+                      children [
+                        Inline {
+                          url "centres/r_hindfoot.wrl"
+                        }
+                      ]
+                    }
+                    # hanim_r_hindfoot
+                    DEF hanim_r_midtarsal Joint {
+                      name "r_midtarsal"
+                      center -.1079 .0317 .067
+                      skinCoordIndex [
+                        140 141 142 143 144 145 146 147
+                      ]
+                      skinCoordWeight [
+                        1 1 1 1 1 1 1 1
+                      ]
+                      children [
+                        DEF hanim_r_middistal Segment {
+                          name "r_middistal"
+                          children [
+                            Inline {
+                              url "centres/r_middistal.wrl"
+                            }
+                            DEF hanim_r_middistal_tip Site {
+                              name "r_middistal_tip"
+                              translation -.095 .0005 .1924
+                            }
+                            # hanim_r_middistal_tip
+                            Inline {
+                              url "centres/r_middistal_tip.wrl"
+                            }
+                          ]
+                        }
+                        # hanim_r_middistal
+                      ]
+                    }
+                    # hanim_r_midtarsal
+                  ]
+                }
+                # hanim_r_ankle
+              ]
+            }
+            # hanim_r_knee
+          ]
+        }
+        # hanim_r_hip
+        DEF hanim_vl5 Joint {
+          name "vl5"
+          center 0 1.0817 -.0728
+          skinCoordIndex [
+            148 149 150 151 152 153 154 155 156 157 158 159 160 161 162 163 164 165 166 167
+          ]
+          skinCoordWeight [
+            1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+          ]
+          children [
+            DEF hanim_l5 Segment {
+              name "l5"
+              children [
+                Inline {
+                  url "centres/l5.wrl"
+                }
+              ]
+            }
+            # hanim_l5
+            DEF hanim_skullbase Joint {
+              name "skullbase"
+              center 0 1.644 .036
+              skinCoordIndex [
+                168 169 170 171 172 173 174 175 
+              ]
+              skinCoordWeight [
+                1 1 1 1 1 1 1 1
+              ]
+              children [
+                DEF hanim_skull Segment {
+                  name "skull"
+                  children [
+                    Inline {
+                      url "centres/skull.wrl"
+                    }
+                    DEF hanim_skull_tip Site {
+                      name "skull_tip"
+                      translation -.0029 1.7771 .0274
+                    }
+                    # hanim_skull_tip
+                    Inline {
+                      url "centres/skull_tip.wrl"
+                    }
+                  ]
+                }
+                # hanim_skull
+              ]
+            }
+            # hanim_skullbase
+            DEF hanim_l_shoulder Joint {
+              name "l_shoulder"
+              center .1968 1.4642 -.0265
+              skinCoordIndex [
+                176 177 178 179 180 181 182 183 
+              ]
+              skinCoordWeight [
+                1 1 1 1 1 1 1 1
+              ]
+              children [
+                DEF hanim_l_upperarm Segment {
+                  name "l_upperarm"
+                  children [
+                    Inline {
+                      url "centres/l_upperarm.wrl"
+                    }
+                  ]
+                }
+                # hanim_l_upperarm
+                DEF hanim_l_elbow Joint {
+                  name "l_elbow"
+                  center .1982 1.1622 -.0557
+                  skinCoordIndex [
+                    184 185 186 187 188 189 190 191 
+                  ]
+                  skinCoordWeight [
+                    1 1 1 1 1 1 1 1
+                  ]
+                  children [
+                    DEF hanim_l_forearm Segment {
+                      name "l_forearm"
+                      children [
+                        Inline {
+                          url "centres/l_forearm.wrl"
+                        }
+                      ]
+                    }
+                    # hanim_l_forearm
+                    DEF hanim_l_wrist Joint {
+                      name "l_wrist"
+                      center .1972 .8929 -.069
+                      skinCoordIndex [
+                        192 193 194 195 196 197 198 199 
+                      ]
+                      skinCoordWeight [
+                        1 1 1 1 1 1 1 1
+                      ]
+                      children [
+                        DEF hanim_l_hand Segment {
+                          name "l_hand"
+                          children [
+                            Inline {
+                              url "centres/l_hand.wrl"
+                            }
+                            DEF hanim_l_hand_tip Site {
+                              name "l_hand_tip"
+                              translation .1912 .6976 -.071
+                            }
+                            # hanim_l_hand_tip
+                            Inline {
+                              url "centres/l_hand_tip.wrl"
+                            }
+                          ]
+                        }
+                        # hanim_l_hand
+                      ]
+                    }
+                    # hanim_l_wrist
+                  ]
+                }
+                # hanim_l_elbow
+              ]
+            }
+            # hanim_l_shoulder
+            DEF hanim_r_shoulder Joint {
+              name "r_shoulder"
+              center -.1968 1.4642 -.0265
+              skinCoordIndex [
+                200 201 202 203 204 205 206 207 
+              ]
+              skinCoordWeight [
+                1 1 1 1 1 1 1 1
+              ]
+              children [
+                DEF hanim_r_upperarm Segment {
+                  name "r_upperarm"
+                  children [
+                    Inline {
+                      url "centres/r_upperarm.wrl"
+                    }
+                  ]
+                }
+                # hanim_r_upperarm
+                DEF hanim_r_elbow Joint {
+                  name "r_elbow"
+                  center -.1982 1.1622 -.0557
+                  skinCoordIndex [
+                    208 209 210 211 212 213 214 215 
+                  ]
+                  skinCoordWeight [
+                    1 1 1 1 1 1 1 1
+                  ]
+                  children [
+                    DEF hanim_r_forearm Segment {
+                      name "r_forearm"
+                      children [
+                        Inline {
+                          url "centres/r_forearm.wrl"
+                        }
+                      ]
+                    }
+                    # hanim_r_forearm
+                    DEF hanim_r_wrist Joint {
+                      name "r_wrist"
+                      center -.1972 .8929 -.069
+                      skinCoordIndex [
+                        216 217 218 219 220 221 222 223
+                      ]
+                      skinCoordWeight [
+                        1 1 1 1 1 1 1 1
+                      ]
+                      children [
+                        DEF hanim_r_hand Segment {
+                          name "r_hand"
+                          children [
+                            Inline {
+                              url "centres/r_hand.wrl"
+                            }
+                            DEF hanim_r_hand_tip Site {
+                              name "r_hand_tip"
+                              translation -.1912 .6976 -.071
+                            }
+                            # hanim_r_hand_tip
+                            Inline {
+                              url "centres/r_hand_tip.wrl"
+                            }
+                          ]
+                        }
+                        # hanim_r_hand
+                      ]
+                    }
+                    # hanim_r_wrist
+                  ]
+                }
+                # hanim_r_elbow
+              ]
+            }
+            # hanim_r_shoulder
+          ]
+        }
+        # hanim_v15
+      ]
+    }
+    # hanim_HumanoidRoot
+  ]
+  joints [
+    USE hanim_r_wrist
+    USE hanim_r_elbow
+    USE hanim_r_shoulder
+    USE hanim_l_wrist
+    USE hanim_l_elbow
+    USE hanim_l_shoulder
+    USE hanim_skullbase
+    USE hanim_vl5
+    USE hanim_r_midtarsal
+    USE hanim_r_ankle
+    USE hanim_r_knee
+    USE hanim_r_hip
+    USE hanim_l_midtarsal
+    USE hanim_l_ankle
+    USE hanim_l_knee
+    USE hanim_l_hip
+    USE hanim_HumanoidRoot
+  ]
+  sites [
+    USE hanim_l_middistal_tip
+    USE hanim_r_middistal_tip
+    USE hanim_skull_tip
+    USE hanim_l_hand_tip
+    USE hanim_r_hand_tip
+  ]
+  segments [
+    USE hanim_sacrum
+    USE hanim_l_thigh
+    USE hanim_l_calf
+    USE hanim_l_hindfoot
+    USE hanim_l_middistal
+    USE hanim_r_thigh
+    USE hanim_r_calf
+    USE hanim_r_hindfoot
+    USE hanim_r_middistal
+    USE hanim_l5
+    USE hanim_skull
+    USE hanim_l_upperarm
+    USE hanim_l_forearm
+    USE hanim_l_hand
+    USE hanim_r_upperarm
+    USE hanim_r_forearm
+    USE hanim_r_hand
+  ]
+  skinCoord DEF hanim_skin_coord Coordinate {
+    point [
+      # sacrum (12)
+      -.05 1 .05, .05 1 .05, .03 .97 -.1, -.03 .97 -.1,
+      .03 .94 -.075, -.03 .94 -.075, 0 .92 0, 0 .94 .03,
+      -0.12 1.06 .05, 0.12 1.06 .05, 0.12 1.06 -.1, -0.12 1.06 -.1,
+      # l_thigh (28)
+      .0456 .9364 .05, .1456 .9364 .05, .1456 .9364 -.05, .0456 .9364 -.05,
+      .0456 .9 .05, .1456 .9 .05, .1456 .9 -.05, .0456 .9 -.05,
+      .0456 .8 .05, .1456 .8 .05, .1456 .8 -.05, .0456 .8 -.05,
+      .0456 .7 .05, .1456 .7 .05, .1456 .7 -.05, .0456 .7 -.05,
+      .0456 .6 .05, .1456 .6 .05, .1456 .6 -.05, .0456 .6 -.05,
+      .0456 .55 .05, .1456 .55 .05, .1456 .55 -.05, .0456 .55 -.05,
+      .0456 .52 .05, .1456 .52 .05, .1456 .52 -.05, .0456 .52 -.05,
+      # l_calf (24)
+      .0456 .5 .05, .1456 .5 .05, .1456 .5 -.05, .0456 .5 -.05,
+      .0454 .43 .045, .1454 .43 .045, .1454 .43 -.055, .0454 .43 -.055,
+      .0452 .36 .04, .1452 .36 .04, .1452 .36 -.06, .0452 .36 -.06,
+      .045 .29 .035, .145 .29 .035, .145 .29 -.065, .045 .29 -.065,
+      .0448 .21 .03, .1448 .21 .03, .1448 .21 -.07, .0448 .21 -.07,
+      .0446 .1262 .025, .1446 .1262 .025, .1446 .1262 -.075, .0446 .1262 -.075,
+      # l_hindfoot (8)
+      .0446 .0762 .025, .1446 .0762 .025, .1446 0 -.075, .0446 0 -.075,
+      .0446 .0562 .057, .1446 .0562 .057, .1446 0 .057, .0446 0 .057,
+      # l_middistal (8)
+      .0446 .0562 .087, .1446 .0562 .087, .1446 0 .087, .0446 0 .087,
+      .0446 .0562 .1924, .1446 .0562 .1924, .1446 0 .1924, .0446 0 .1924,
+      # r_thigh (28)
+      -.0456 .9364 .05, -.1456 .9364 .05, -.1456 .9364 -.05, -.0456 .9364 -.05,
+      -.0456 .9 .05, -.1456 .9 .05, -.1456 .9 -.05, -.0456 .9 -.05,
+      -.0456 .8 .05, -.1456 .8 .05, -.1456 .8 -.05, -.0456 .8 -.05,
+      -.0456 .7 .05, -.1456 .7 .05, -.1456 .7 -.05, -.0456 .7 -.05,
+      -.0456 .6 .05, -.1456 .6 .05, -.1456 .6 -.05, -.0456 .6 -.05,
+      -.0456 .55 .05, -.1456 .55 .05, -.1456 .55 -.05, -.0456 .55 -.05,
+      -.0456 .52 .05, -.1456 .52 .05, -.1456 .52 -.05, -.0456 .52 -.05,
+      # r_calf (24)
+      -.0456 .5 .05, -.1456 .5 .05, -.1456 .5 -.05, -.0456 .5 -.05,
+      -.0454 .43 .045, -.1454 .43 .045, -.1454 .43 -.055, -.0454 .43 -.055,
+      -.0452 .36 .04, -.1452 .36 .04, -.1452 .36 -.06, -.0452 .36 -.06,
+      -.045 .29 .035, -.145 .29 .035, -.145 .29 -.065, -.045 .29 -.065,
+      -.0448 .21 .03, -.1448 .21 .03, -.1448 .21 -.07, -.0448 .21 -.07,
+      -.0446 .1262 .025, -.1446 .1262 .025, -.1446 .1262 -.075, -.0446 .1262 -.075,
+      # r_hindfoot (8)
+      -.0446 .0762 .025, -.1446 .0762 .025, -.1446 0 -.075, -.0446 0 -.075,
+      -.0446 .0562 .057, -.1446 .0562 .057, -.1446 0 .057, -.0446 0 .057,
+      # r_middistal (8)
+      -.0446 .0562 .087, -.1446 .0562 .087, -.1446 0 .087, -.0446 0 .087,
+      -.0446 .0562 .1924, -.1446 .0562 .1924, -.1446 0 .1924, -.0446 0 .1924,
+      # l5 (20)
+      -0.12 1.10 .05, 0.12 1.10 .05, 0.12 1.10 -.1, -0.12 1.10 -.1,
+      -.14 1.42 0.045, .14 1.42 0.045, .14 1.42 -0.09, -.14 1.42 -0.09, 
+      -.24 1.52 0.035, .24 1.52 0.035, .24 1.52 -0.09, -.24 1.52 -0.09,
+      -.05 1.56 0.030, .05 1.56 0.030, .05 1.56 -0.06, -.05 1.56 -0.06,
+      -.05 1.60 0.060, .05 1.60 0.060, .05 1.62 -0.03, -.05 1.62 -0.03,
+      # skull (8)
+      -0.07 1.777 0.13, 0.07 1.777 0.13, 0.07 1.777 -0.03, -0.07 1.777 -0.03
+      -0.07 1.60 0.13, 0.07 1.60 0.13, 0.07 1.66 -0.03, -0.07 1.66 -0.03
+      # l_upperarm (8)
+      .16 1.42 0.015, .24 1.5 0.015, .24 1.5 -0.075, .16 1.42 -0.075,
+      .17 1.18 -0.025, .23 1.18 -0.025, .23 1.18 -0.085, .17 1.18 -0.085,
+      # l_forearm (8)
+      .17 1.14 -0.025, .23 1.14 -0.025, .23 1.14 -0.085, .17 1.14 -0.085,
+      .18 .91 -0.05, .22 .91 -0.05, .22 .91 -0.09, .18 .91 -0.09,
+      # l_hand (8)
+      .18 .87 -0.02, .22 .87 -0.02, .22 .87 -0.1, .18 .87 -0.1,
+      .18 .6976 -0.02, .22 .6976 -0.02, .22 .6976 -0.1, .18 .6976 -0.1,
+      # r_upperarm (8)
+      -.16 1.42 0.015, -.24 1.5 0.015, -.24 1.5 -0.075, -.16 1.42 -0.075,
+      -.17 1.18 -0.025, -.23 1.18 -0.025, -.23 1.18 -0.085, -.17 1.18 -0.085,
+      # r_forearm (8)
+      -.17 1.14 -0.025, -.23 1.14 -0.025, -.23 1.14 -0.085, -.17 1.14 -0.085,
+      -.18 .91 -0.05, -.22 .91 -0.05, -.22 .91 -0.09, -.18 .91 -0.09,
+      # r_hand (8)     
+      -.18 .87 -0.02, -.22 .87 -0.02, -.22 .87 -0.1, -.18 .87 -0.1,
+      -.18 .6976 -0.02, -.22 .6976 -0.02, -.22 .6976 -0.1, -.18 .6976 -0.1,
+    ]
+  }
+  skin [
+    Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0 0 1
+          transparency 0.5
+        }
+      }
+      geometry IndexedFaceSet {
+        coord USE hanim_skin_coord
+        coordIndex [
+          # 0: sacrum (8)
+          0 7 1 -1, 8 0 1 -1, 1 9 8 -1, 10 2 3 -1, 3 11 10 -1, 2 4 5 -1, 5 3 2 -1, 4 6 5 -1,
+          # 1: l_hip joint (8)
+          7 12 1 -1, 1 12 13 -1, 13 9 1 -1, 9 13 14 -1, 14 10 9 -1, 10 14 15 -1, 15 2 10 -1, 12 7 6 -1, 6 15 12 -1, 15 6 4 -1, 4 2 15 -1,
+          # 2: r_hip joint (8)
+          0 80 7 -1, 81 80 0 -1, 0 8 81 -1, 82 81 8 -1, 8 11 82 -1, 83 82 11 -1, 11 3 83 -1, 6 7 80 -1, 80 83 6 -1, 5 6 83 -1, 83 3 5 -1,
+          # 3: l_thigh (48)
+          12 16 17 -1, 17 13 12 -1, 13 17 18 -1, 18 14 13 -1, 14 18 19 -1, 19 15 14 -1, 15 19 16 -1, 16 12 15 -1,
+          16 20 21 -1, 21 17 16 -1, 17 21 22 -1, 22 18 17 -1, 18 22 23 -1, 23 19 18 -1, 19 23 20 -1, 20 16 19 -1,
+          20 24 25 -1, 25 21 20 -1, 21 25 26 -1, 26 22 21 -1, 22 26 27 -1, 27 23 22 -1, 23 27 24 -1, 24 20 23 -1,
+          24 28 29 -1, 29 25 24 -1, 25 29 30 -1, 30 26 25 -1, 26 30 31 -1, 31 27 26 -1, 27 31 28 -1, 28 24 27 -1,
+          28 32 33 -1, 33 29 28 -1, 29 33 34 -1, 34 30 29 -1, 30 34 35 -1, 35 31 30 -1, 31 35 32 -1, 32 28 31 -1,
+          32 36 37 -1, 37 33 32 -1, 33 37 38 -1, 38 34 33 -1, 34 38 39 -1, 39 35 34 -1, 35 39 36 -1, 36 32 35 -1,
+          # 4: l_knee joint (8)
+          36 40 41 -1, 41 37 36 -1, 37 41 42 -1, 42 38 37 -1, 38 42 43 -1, 43 39 38 -1, 39 43 40 -1, 40 36 39 -1,
+          # 5: l_calf (40)
+          40 44 45 -1, 45 41 40 -1, 41 45 46 -1, 46 42 41 -1, 42 46 47 -1, 47 43 42 -1, 43 47 44 -1, 44 40 43 -1,
+          44 48 49 -1, 49 45 44 -1, 45 49 50 -1, 50 46 45 -1, 46 50 51 -1, 51 47 46 -1, 47 51 48 -1, 48 44 47 -1,
+          48 52 53 -1, 53 49 48 -1, 49 53 54 -1, 54 50 49 -1, 50 54 55 -1, 55 51 50 -1, 51 55 52 -1, 52 48 51 -1,
+          52 56 57 -1, 57 53 52 -1, 53 57 58 -1, 58 54 53 -1, 54 58 59 -1, 59 55 54 -1, 55 59 56 -1, 56 52 55 -1,
+          56 60 61 -1, 61 57 56 -1, 57 61 62 -1, 62 58 57 -1, 58 62 63 -1, 63 59 58 -1, 59 63 60 -1, 60 56 59 -1,
+          # 10: r_thigh (48)
+          81 85 84 -1, 84 80 81 -1, 82 86 85 -1, 85 81 82 -1, 83 87 86 -1, 86 82 83 -1, 80 84 87 -1, 87 83 80 -1,
+          85 89 88 -1, 88 84 85 -1, 86 90 89 -1, 89 85 86 -1, 87 91 90 -1, 90 86 87 -1, 84 88 91 -1, 91 87 84 -1,
+          89 93 92 -1, 92 88 89 -1, 90 94 93 -1, 93 89 90 -1, 91 95 94 -1, 94 90 91 -1, 88 92 95 -1, 95 91 88 -1,
+          93 97 96 -1, 96 92 93 -1, 94 98 97 -1, 97 93 94 -1, 95 99 98 -1, 98 94 95 -1, 92 96 99 -1, 99 95 92 -1,
+          97 101 100 -1, 100 96 97 -1, 98 102 101 -1, 101 97 98 -1, 99 103 102 -1, 102 98 99 -1, 96 100 103 -1, 103 99 96 -1,
+          101 105 104 -1, 104 100 101 -1, 102 106 105 -1, 105 101 102 -1, 103 107 106 -1, 106 102 103 -1, 100 104 107 -1, 107 103 100 -1,
+          # 11: r_knee joint (8)
+          105 109 108 -1, 108 104 105 -1, 106 110 109 -1, 109 105 106 -1, 107 111 110 -1, 110 106 107 -1, 104 108 111 -1, 111 107 104 -1,
+          # 12: r_calf (40)
+          109 113 112 -1, 112 108 109 -1, 110 114 113 -1, 113 109 110 -1, 111 115 114 -1, 114 110 111 -1, 108 112 115 -1, 115 111 108 -1,
+          113 117 116 -1, 116 112 113 -1, 114 118 117 -1, 117 113 114 -1, 115 119 118 -1, 118 114 115 -1, 112 116 119 -1, 119 115 112 -1,
+          117 121 120 -1, 120 116 117 -1, 118 122 121 -1, 121 117 118 -1, 119 123 122 -1, 122 118 119 -1, 116 120 123 -1, 123 119 116 -1,
+          121 125 124 -1, 124 120 121 -1, 122 126 125 -1, 125 121 122 -1, 123 127 126 -1, 126 122 123 -1, 120 124 127 -1, 127 123 120 -1,
+          125 129 128 -1, 128 124 125 -1, 126 130 129 -1, 129 125 126 -1, 127 131 130 -1, 130 126 127 -1, 124 128 131 -1, 131 127 124 -1,
+        ]
+      }
+    }
+    Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0 0 0
+          transparency 0.5
+        }
+      }
+      geometry IndexedFaceSet {
+        coord USE hanim_skin_coord
+        coordIndex [
+          # 6: l_ankle joint (8)
+          60 64 65 -1, 65 61 60 -1, 61 65 66 -1, 66 62 61 -1, 62 66 67 -1, 67 63 62 -1, 63 67 64 -1, 64 60 63 -1,
+          # 7: l_hindfoot (8)
+          64 68 69 -1, 69 65 64 -1, 65 69 70 -1, 70 66 65 -1, 66 70 71 -1, 71 67 66 -1, 67 71 68 -1, 68 64 67 -1,
+          # 8: l_midtarsal joint (8)
+          68 72 73 -1, 73 69 68 -1, 69 73 74 -1, 74 70 69 -1, 70 74 75 -1, 75 71 70 -1, 71 75 72 -1, 72 68 71 -1,
+          # 9: l_middistal (10)
+          72 76 77 -1, 77 73 72 -1, 73 77 78 -1, 78 74 73 -1, 74 78 79 -1, 79 75 74 -1, 75 79 76 -1, 76 72 75 -1, 76 79 78 -1, 78 77 76 -1,
+          # 13: r_ankle joint (8)
+          129 133 132 -1, 132 128 129 -1, 130 134 133 -1, 133 129 130 -1, 131 135 134 -1, 134 130 131 -1, 128 132 135 -1, 135 131 128 -1,
+          # 14: r_hindfoot (8)
+          133 137 136 -1, 136 132 133 -1, 134 138 137 -1, 137 133 134 -1, 135 139 138 -1, 138 134 135 -1, 132 136 139 -1, 139 135 132 -1,
+          # 15: r_midtarsal joint (8)
+          137 141 140 -1, 140 136 137 -1, 138 142 141 -1, 141 137 138 -1, 139 143 142 -1, 142 138 139 -1, 136 140 143 -1, 143 139 136 -1,
+          # 16: r_middistal (10)
+          141 145 144 -1, 144 140 141 -1, 142 146 145 -1, 145 141 142 -1, 143 147 146 -1, 146 142 143 -1, 140 144 147 -1, 147 143 140 -1, 145 146 147 -1, 147 144 145 -1,
+        ]
+      }
+    }
+    Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 1 1 0
+          transparency 0.5
+        }
+      }
+      geometry IndexedFaceSet {
+        coord USE hanim_skin_coord
+        coordIndex [
+          # 17: vl5_joint (8)
+          148 8 9 -1, 9 149 148 -1, 149 9 10 -1, 10 150 149 -1, 150 10 11 -1, 11 151 150 -1, 151 11 8 -1, 8 148 151 -1, 
+          # 18: l5 (28)
+          152 148 149 -1, 149 153 152 -1, 153 149 150 -1, 150 154 153 -1, 154 150 151 -1, 151 155 154 -1, 155 151 148 -1, 148 152 155 -1,
+          156 152 153 -1, 153 157 156 -1, 158 154 155 -1, 155 159 158 -1,
+          160 156 157 -1, 157 161 160 -1, 161 157 158 -1, 158 162 161 -1, 162 158 159 -1, 159 163 162 -1, 163 159 156 -1, 156 160 163 -1,
+          164 160 161 -1, 161 165 164 -1, 165 161 162 -1, 162 166 165 -1, 166 162 163 -1, 163 167 166 -1, 167 163 160 -1, 160 164 167 -1,
+          # 21: l_shoulder joint (8)
+          153 176 177 -1, 177 157 153 -1, 157 177 178 -1, 178 158 157 -1, 158 178 179 -1, 179 154 158 -1, 154 179 176 -1, 176 153 154 -1,
+          # 22: l_upperarm (8)
+          176 180 181 -1, 181 177 176 -1, 177 181 182 -1, 182 178 177 -1, 178 182 183 -1, 183 179 178 -1, 179 183 180 -1, 180 176 179 -1,
+          # 23: l_elbow joint (8)
+          180 184 185 -1, 185 181 180 -1, 181 185 186 -1, 186 182 181 -1, 182 186 187 -1, 187 183 182 -1, 183 187 184 -1, 184 180 183 -1,
+          # 24: l_forearm (8)
+          184 188 189 -1, 189 185 184 -1, 185 189 190 -1, 190 186 185 -1, 186 190 191 -1, 191 187 186 -1, 187 191 188 -1, 188 184 187 -1,
+          # 27: r_shoulder joint (8)
+          152 156 201 -1, 201 200 152 -1, 156 159 202 -1, 202 201 156 -1, 159 155 203 -1, 203 202 159 -1, 155 152 200 -1, 200 203 155 -1,
+          # 28: r_upperarm (8)
+          201 205 204 -1, 204 200 201 -1, 202 206 205 -1, 205 201 202 -1, 203 207 206 -1, 206 202 203 -1, 200 204 207 -1, 207 203 200 -1,
+          # 29: r_elbow joint (8)
+          205 209 208 -1, 208 204 205 -1, 206 210 209 -1, 209 205 206 -1, 207 211 210 -1, 210 206 207 -1, 204 208 211 -1, 211 207 204 -1,
+          # 30: r_forearm (8)
+          209 213 212 -1, 212 208 209 -1, 210 214 213 -1, 213 209 210 -1, 211 215 214 -1, 214 210 211 -1, 208 212 215 -1, 215 211 208 -1,
+        ]
+      }
+    }
+    Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 1 0.75 0.75
+          transparency 0.5
+        }
+      }
+      geometry IndexedFaceSet {
+        coord USE hanim_skin_coord
+        coordIndex [
+          # 19: skullbase joint (8)
+          172 164 165 -1, 165 173 172 -1, 173 165 166 -1, 166 174 173 -1, 174 166 167 -1, 167 175 174 -1, 175 167 164 -1, 164 172 175 -1,
+          # 20: skull (10)
+          168 172 173 -1, 173 169 168 -1, 169 173 174 -1, 174 170 169 -1, 170 174 175 -1, 175 171 170 -1, 171 175 172 -1, 172 168 171 -1, 171 168 169 -1, 169 170 171 -1,
+          # 25: l_wrist joint (8)
+          188 192 193 -1, 193 189 188 -1, 189 193 194 -1, 194 190 189 -1, 190 194 195 -1, 195 191 190 -1, 191 195 192 -1, 192 188 191 -1,
+          # 26: l_hand (10)
+          192 196 197 -1, 197 193 192 -1, 193 197 198 -1, 198 194 193 -1, 194 198 199 -1, 199 195 194 -1, 195 199 196 -1, 196 192 195 -1, 196 199 198 -1, 198 197 196 -1,
+          # 31: r_wrist joint (8)
+          213 217 216 -1, 216 212 213 -1, 214 218 217 -1, 217 213 214 -1, 215 219 218 -1, 218 214 215 -1, 212 216 219 -1, 219 215 212 -1,
+          # 32: r_hand (10)
+          217 221 220 -1, 220 216 217 -1, 218 222 221 -1, 221 217 218 -1, 219 223 222 -1, 222 218 219 -1, 216 220 223 -1, 223 219 216 -1, 221 222 223 -1, 223 220 221 -1,
+        ]
+      }
+    }
+    Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0 0 0
+        }
+      }
+      geometry IndexedLineSet {
+        coord USE hanim_skin_coord
+        coordIndex [
+          # 0: sacrum (8)
+          0 7 1 -1, 8 0 1 -1, 1 9 8 -1, 10 2 3 -1, 3 11 10 -1, 2 4 5 -1, 5 3 2 -1, 4 6 5 -1,
+          # 1: l_hip joint (8)
+          7 12 1 -1, 1 12 13 -1, 13 9 1 -1, 9 13 14 -1, 14 10 9 -1, 10 14 15 -1, 15 2 10 -1, 12 7 6 -1, 6 15 12 -1, 15 6 4 -1, 4 2 15 -1,
+          # 2: r_hip joint (8)
+          0 80 7 -1, 81 80 0 -1, 0 8 81 -1, 82 81 8 -1, 8 11 82 -1, 83 82 11 -1, 11 3 83 -1, 6 7 80 -1, 80 83 6 -1, 5 6 83 -1, 83 3 5 -1,
+          # 3: l_thigh (48)
+          12 16 17 -1, 17 13 12 -1, 13 17 18 -1, 18 14 13 -1, 14 18 19 -1, 19 15 14 -1, 15 19 16 -1, 16 12 15 -1,
+          16 20 21 -1, 21 17 16 -1, 17 21 22 -1, 22 18 17 -1, 18 22 23 -1, 23 19 18 -1, 19 23 20 -1, 20 16 19 -1,
+          20 24 25 -1, 25 21 20 -1, 21 25 26 -1, 26 22 21 -1, 22 26 27 -1, 27 23 22 -1, 23 27 24 -1, 24 20 23 -1,
+          24 28 29 -1, 29 25 24 -1, 25 29 30 -1, 30 26 25 -1, 26 30 31 -1, 31 27 26 -1, 27 31 28 -1, 28 24 27 -1,
+          28 32 33 -1, 33 29 28 -1, 29 33 34 -1, 34 30 29 -1, 30 34 35 -1, 35 31 30 -1, 31 35 32 -1, 32 28 31 -1,
+          32 36 37 -1, 37 33 32 -1, 33 37 38 -1, 38 34 33 -1, 34 38 39 -1, 39 35 34 -1, 35 39 36 -1, 36 32 35 -1,
+          # 4: l_knee joint (8)
+          36 40 41 -1, 41 37 36 -1, 37 41 42 -1, 42 38 37 -1, 38 42 43 -1, 43 39 38 -1, 39 43 40 -1, 40 36 39 -1,
+          # 5: l_calf (40)
+          40 44 45 -1, 45 41 40 -1, 41 45 46 -1, 46 42 41 -1, 42 46 47 -1, 47 43 42 -1, 43 47 44 -1, 44 40 43 -1,
+          44 48 49 -1, 49 45 44 -1, 45 49 50 -1, 50 46 45 -1, 46 50 51 -1, 51 47 46 -1, 47 51 48 -1, 48 44 47 -1,
+          48 52 53 -1, 53 49 48 -1, 49 53 54 -1, 54 50 49 -1, 50 54 55 -1, 55 51 50 -1, 51 55 52 -1, 52 48 51 -1,
+          52 56 57 -1, 57 53 52 -1, 53 57 58 -1, 58 54 53 -1, 54 58 59 -1, 59 55 54 -1, 55 59 56 -1, 56 52 55 -1,
+          56 60 61 -1, 61 57 56 -1, 57 61 62 -1, 62 58 57 -1, 58 62 63 -1, 63 59 58 -1, 59 63 60 -1, 60 56 59 -1,
+          # 6: l_ankle joint (8)
+          60 64 65 -1, 65 61 60 -1, 61 65 66 -1, 66 62 61 -1, 62 66 67 -1, 67 63 62 -1, 63 67 64 -1, 64 60 63 -1,
+          # 7: l_hindfoot (8)
+          64 68 69 -1, 69 65 64 -1, 65 69 70 -1, 70 66 65 -1, 66 70 71 -1, 71 67 66 -1, 67 71 68 -1, 68 64 67 -1,
+          # 8: l_midtarsal joint (8)
+          68 72 73 -1, 73 69 68 -1, 69 73 74 -1, 74 70 69 -1, 70 74 75 -1, 75 71 70 -1, 71 75 72 -1, 72 68 71 -1,
+          # 9: l_middistal (10)
+          72 76 77 -1, 77 73 72 -1, 73 77 78 -1, 78 74 73 -1, 74 78 79 -1, 79 75 74 -1, 75 79 76 -1, 76 72 75 -1, 76 79 78 -1, 78 77 76 -1,
+          # 10: r_thigh (48)
+          81 85 84 -1, 84 80 81 -1, 82 86 85 -1, 85 81 82 -1, 83 87 86 -1, 86 82 83 -1, 80 84 87 -1, 87 83 80 -1,
+          85 89 88 -1, 88 84 85 -1, 86 90 89 -1, 89 85 86 -1, 87 91 90 -1, 90 86 87 -1, 84 88 91 -1, 91 87 84 -1,
+          89 93 92 -1, 92 88 89 -1, 90 94 93 -1, 93 89 90 -1, 91 95 94 -1, 94 90 91 -1, 88 92 95 -1, 95 91 88 -1,
+          93 97 96 -1, 96 92 93 -1, 94 98 97 -1, 97 93 94 -1, 95 99 98 -1, 98 94 95 -1, 92 96 99 -1, 99 95 92 -1,
+          97 101 100 -1, 100 96 97 -1, 98 102 101 -1, 101 97 98 -1, 99 103 102 -1, 102 98 99 -1, 96 100 103 -1, 103 99 96 -1,
+          101 105 104 -1, 104 100 101 -1, 102 106 105 -1, 105 101 102 -1, 103 107 106 -1, 106 102 103 -1, 100 104 107 -1, 107 103 100 -1,
+          # 11: r_knee joint (8)
+          105 109 108 -1, 108 104 105 -1, 106 110 109 -1, 109 105 106 -1, 107 111 110 -1, 110 106 107 -1, 104 108 111 -1, 111 107 104 -1,
+          # 12: r_calf (40)
+          109 113 112 -1, 112 108 109 -1, 110 114 113 -1, 113 109 110 -1, 111 115 114 -1, 114 110 111 -1, 108 112 115 -1, 115 111 108 -1,
+          113 117 116 -1, 116 112 113 -1, 114 118 117 -1, 117 113 114 -1, 115 119 118 -1, 118 114 115 -1, 112 116 119 -1, 119 115 112 -1,
+          117 121 120 -1, 120 116 117 -1, 118 122 121 -1, 121 117 118 -1, 119 123 122 -1, 122 118 119 -1, 116 120 123 -1, 123 119 116 -1,
+          121 125 124 -1, 124 120 121 -1, 122 126 125 -1, 125 121 122 -1, 123 127 126 -1, 126 122 123 -1, 120 124 127 -1, 127 123 120 -1,
+          125 129 128 -1, 128 124 125 -1, 126 130 129 -1, 129 125 126 -1, 127 131 130 -1, 130 126 127 -1, 124 128 131 -1, 131 127 124 -1,
+          # 13: r_ankle joint (8)
+          129 133 132 -1, 132 128 129 -1, 130 134 133 -1, 133 129 130 -1, 131 135 134 -1, 134 130 131 -1, 128 132 135 -1, 135 131 128 -1,
+          # 14: r_hindfoot (8)
+          133 137 136 -1, 136 132 133 -1, 134 138 137 -1, 137 133 134 -1, 135 139 138 -1, 138 134 135 -1, 132 136 139 -1, 139 135 132 -1,
+          # 15: r_midtarsal joint (8)
+          137 141 140 -1, 140 136 137 -1, 138 142 141 -1, 141 137 138 -1, 139 143 142 -1, 142 138 139 -1, 136 140 143 -1, 143 139 136 -1,
+          # 16: r_middistal (10)
+          141 145 144 -1, 144 140 141 -1, 142 146 145 -1, 145 141 142 -1, 143 147 146 -1, 146 142 143 -1, 140 144 147 -1, 147 143 140 -1, 145 146 147 -1, 147 144 145 -1,
+          # 17: vl5_joint (8)
+          148 8 9 -1, 9 149 148 -1, 149 9 10 -1, 10 150 149 -1, 150 10 11 -1, 11 151 150 -1, 151 11 8 -1, 8 148 151 -1, 
+          # 18: l5 (28)
+          152 148 149 -1, 149 153 152 -1, 153 149 150 -1, 150 154 153 -1, 154 150 151 -1, 151 155 154 -1, 155 151 148 -1, 148 152 155 -1,
+          156 152 153 -1, 153 157 156 -1, 158 154 155 -1, 155 159 158 -1,
+          160 156 157 -1, 157 161 160 -1, 161 157 158 -1, 158 162 161 -1, 162 158 159 -1, 159 163 162 -1, 163 159 156 -1, 156 160 163 -1,
+          164 160 161 -1, 161 165 164 -1, 165 161 162 -1, 162 166 165 -1, 166 162 163 -1, 163 167 166 -1, 167 163 160 -1, 160 164 167 -1,
+          # 19: skullbase joint (8)
+          172 164 165 -1, 165 173 172 -1, 173 165 166 -1, 166 174 173 -1, 174 166 167 -1, 167 175 174 -1, 175 167 164 -1, 164 172 175 -1,
+          # 20: skull (10)
+          168 172 173 -1, 173 169 168 -1, 169 173 174 -1, 174 170 169 -1, 170 174 175 -1, 175 171 170 -1, 171 175 172 -1, 172 168 171 -1, 171 168 169 -1, 169 170 171 -1,
+          # 21: l_shoulder joint (8)
+          153 176 177 -1, 177 157 153 -1, 157 177 178 -1, 178 158 157 -1, 158 178 179 -1, 179 154 158 -1, 154 179 176 -1, 176 153 154 -1,
+          # 22: l_upperarm (8)
+          176 180 181 -1, 181 177 176 -1, 177 181 182 -1, 182 178 177 -1, 178 182 183 -1, 183 179 178 -1, 179 183 180 -1, 180 176 179 -1,
+          # 23: l_elbow joint (8)
+          180 184 185 -1, 185 181 180 -1, 181 185 186 -1, 186 182 181 -1, 182 186 187 -1, 187 183 182 -1, 183 187 184 -1, 184 180 183 -1,
+          # 24: l_forearm (8)
+          184 188 189 -1, 189 185 184 -1, 185 189 190 -1, 190 186 185 -1, 186 190 191 -1, 191 187 186 -1, 187 191 188 -1, 188 184 187 -1,
+          # 25: l_wrist joint (8)
+          188 192 193 -1, 193 189 188 -1, 189 193 194 -1, 194 190 189 -1, 190 194 195 -1, 195 191 190 -1, 191 195 192 -1, 192 188 191 -1,
+          # 26: l_hand (10)
+          192 196 197 -1, 197 193 192 -1, 193 197 198 -1, 198 194 193 -1, 194 198 199 -1, 199 195 194 -1, 195 199 196 -1, 196 192 195 -1, 196 199 198 -1, 198 197 196 -1,
+          # 27: r_shoulder joint (8)
+          152 156 201 -1, 201 200 152 -1, 156 159 202 -1, 202 201 156 -1, 159 155 203 -1, 203 202 159 -1, 155 152 200 -1, 200 203 155 -1,
+          # 28: r_upperarm (8)
+          201 205 204 -1, 204 200 201 -1, 202 206 205 -1, 205 201 202 -1, 203 207 206 -1, 206 202 203 -1, 200 204 207 -1, 207 203 200 -1,
+          # 29: r_elbow joint (8)
+          205 209 208 -1, 208 204 205 -1, 206 210 209 -1, 209 205 206 -1, 207 211 210 -1, 210 206 207 -1, 204 208 211 -1, 211 207 204 -1,
+          # 30: r_forearm (8)
+          209 213 212 -1, 212 208 209 -1, 210 214 213 -1, 213 209 210 -1, 211 215 214 -1, 214 210 211 -1, 208 212 215 -1, 215 211 208 -1,
+          # 31: r_wrist joint (8)
+          213 217 216 -1, 216 212 213 -1, 214 218 217 -1, 217 213 214 -1, 215 219 218 -1, 218 214 215 -1, 212 216 219 -1, 219 215 212 -1,
+          # 32: r_hand (10)
+          217 221 220 -1, 220 216 217 -1, 218 222 221 -1, 221 217 218 -1, 219 223 222 -1, 222 218 219 -1, 216 220 223 -1, 223 219 216 -1, 221 222 223 -1, 223 220 221 -1,
+        ]
+      }
+    }
+  ]
+  viewpoints [
+    DEF Inclined_View Viewpoint {
+      description "Inclined View"
+      position 2 1 2
+      orientation 0 1 0 .78
+    }
+    DEF Best_View Viewpoint {
+      description "Best View"
+      position -2 .25 0
+      orientation 0 1 0 -1.57
+    }
+    DEF Front_View Viewpoint {
+      description "Front View"
+      position 0 1 3
+    }
+    DEF Side_View Viewpoint {
+      description "Side View"
+      position 3 1 0
+      orientation 0 1 0 1.57
+    }
+    DEF Top_View Viewpoint {
+      description "Top View"
+      position 0 3 0
+      orientation 1 0 0 -1.57
+    }
+  ]
+}
+
+
+DEF ANIMATOR LOA1NancyWalkAnimation {
+}
+
+# Animation ROUTEs
+ROUTE ANIMATOR.HumanoidRoot_translation_changed TO hanim_HumanoidRoot.set_translation
+ROUTE ANIMATOR.HumanoidRoot_rotation_changed TO hanim_HumanoidRoot.set_rotation
+ROUTE ANIMATOR.l_hip_rotation_changed TO hanim_l_hip.set_rotation
+ROUTE ANIMATOR.l_knee_rotation_changed TO hanim_l_knee.set_rotation
+ROUTE ANIMATOR.l_ankle_rotation_changed TO hanim_l_ankle.set_rotation
+ROUTE ANIMATOR.l_midtarsal_rotation_changed TO hanim_l_midtarsal.set_rotation
+ROUTE ANIMATOR.r_hip_rotation_changed TO hanim_r_hip.set_rotation
+ROUTE ANIMATOR.r_knee_rotation_changed TO hanim_r_knee.set_rotation
+ROUTE ANIMATOR.r_ankle_rotation_changed TO hanim_r_ankle.set_rotation
+ROUTE ANIMATOR.r_midtarsal_rotation_changed TO hanim_r_midtarsal.set_rotation
+ROUTE ANIMATOR.vl5_rotation_changed TO hanim_vl5.set_rotation
+ROUTE ANIMATOR.skullbase_rotation_changed TO hanim_skullbase.set_rotation
+ROUTE ANIMATOR.l_shoulder_rotation_changed TO hanim_l_shoulder.set_rotation
+ROUTE ANIMATOR.l_elbow_rotation_changed TO hanim_l_elbow.set_rotation
+ROUTE ANIMATOR.l_wrist_rotation_changed TO hanim_l_wrist.set_rotation
+ROUTE ANIMATOR.r_shoulder_rotation_changed TO hanim_r_shoulder.set_rotation
+ROUTE ANIMATOR.r_elbow_rotation_changed TO hanim_r_elbow.set_rotation
+ROUTE ANIMATOR.r_wrist_rotation_changed TO hanim_r_wrist.set_rotation
+# Trigger animation calculation after 
+#ROUTE hanim_r_wrist.rotation_changed TO ENGINE.update
+## not needed if native 
+ROUTE ANIMATOR.fraction_changed TO HUMANOID.set_fraction

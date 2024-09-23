@@ -1,0 +1,17 @@
+#VRML V2.0 utf8
+
+Transform {
+	translation 0.1982 1.1622 -0.0557
+	children [
+		Shape {
+			appearance Appearance {
+				material Material {
+					diffuseColor 1 1 0
+				}
+			}
+			geometry Sphere {
+				radius 0.02
+			}
+		}
+	]
+}
