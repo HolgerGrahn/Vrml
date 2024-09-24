@@ -17,7 +17,7 @@ More Bitmanagement developer info on
 http://sdk.bitmanagement.de/
 https://www.bitmanagement.de/developer/index.html
 
-Generell VRML / X3D information / Resources
+General VRML / X3D information / Resources
 https://www.web3d.org/what-x3d-graphics
 
 VRML 97  ISO/IEC 14772-1:1997 - The Virtual Reality Modeling Language
@@ -31,7 +31,7 @@ https://www.web3d.org/documents/specifications/19775-1/V3.3/
 
 Launching the Player
 
-Because drop of support for native plugins in Webbrowsers like Google Chrome, Microsoft Edge
+Because drop of support for native plugins in Webbrowsers like Google Chrome, Microsoft Edge, Firefox
 you would need to load url's in the BSContact Player->File Open Command.
 
 Microsoft Internet Explorer supported the hosting of the Active X compononent BSContactVmrl.ocx,
