@@ -1,0 +1,89 @@
+#VRML V2.0 utf8
+
+##D:\Bitmanagement\0test\JSON
+
+#	parseJSONFromString
+# testsupport vrmlscript access functions 
+
+# Contact 8.5 
+
+Script {
+
+
+									#	  true
+
+
+	 exposedField SFString jsonString  "{ \"test\" : null , \"test2\" : [ 1000, 2000] , \"test3\" : { \"property\" : \"value33\" } }"
+
+
+	 url "javascript:
+
+
+	 function initialize()
+	 {	   
+
+		 Browser.showConsole(true);
+		 print('JSON Parser test');
+
+		 print('JSON :'+jsonString);
+
+		 var r= Browser.parseJSONFromString(jsonString);
+
+
+		var	test2 = r.test2;
+
+		 print('test2='+test2);
+		 print('test2[1]='+test2[1]);
+		 print('test2.length='+test2.length);
+
+		   print('test2[99]='+test2[99]);
+
+
+		 var	test = r.test;
+		 print('Test='+test);
+
+	
+
+		 var	test3 = r.test3;
+
+		 print('test3='+test3);
+
+		 print('test3.getType()='+test3.getType());
+
+		 var	test4 = test3.property;
+		 
+		 print('test4='+test4);
+
+		  var	test5 = test3.propertyXYZ;
+		 
+		  if (test5)
+			print('test5='+test5);
+		else print('no prop :test3.propertyXYZ');
+
+
+		 print('r.test3.property='+r.test3.property);
+
+		 // add prop as string 
+		 r.newProp = '[1 false null true ]';
+
+
+
+		  print('r.toString='+r.toString());
+		  print('r.length()='+r.length());
+
+		  print('r.hasField(newProp)='+r.hasField('newProp'));
+		  r.remove('newProp');
+		  // add new object from JSON 
+		  r.newPropJSON =  Browser.parseJSONFromString('{\"a\" : false, \"b\" :null, \"c\" : \" 1 2 3 \" , \"d\": true, \"e\": [ 1, 2, 3 ] }');
+		  print('r.toString='+r.toString());
+
+
+	 }			  
+
+	 function shutdown()
+	 {
+	 }
+
+	 "
+ }
+

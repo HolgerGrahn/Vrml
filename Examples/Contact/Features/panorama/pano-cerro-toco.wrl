@@ -1,0 +1,114 @@
+#VRML V2.0 utf8
+#written by BS Contact Stereo (Developer)  8.401
+
+WorldInfo {
+	info ["options:stereoSeparation=0.0,relativeTime=true,wwwProgress=true",
+		"StereoImageLeft:https://pannellum.org/images/cerro-toco-0.jpg","StereoImageRight:",
+		"StereoFormat:MONO","panoramaFormat:SPHERICAL"]
+	title "StereoImage:https://pannellum.org/images/cerro-toco-0.jpg"
+}
+DEF NAVIGATIONINFO NavigationInfo {type ["PAN","ANY"]}
+EXTERNPROTO StereoTexture[
+			exposedField SFString type
+			exposedField MFInt32 viewMap
+			exposedField MFNode texture
+			exposedField SFNode metadata
+			]
+		["urn:inet:bitmanagement.de:node:StereoTexture","http://www.bitmanagement.de/vrml/protos/nodes.wrl#StereoTexture","nodes.wrl#StereoTexture"]
+
+		EXTERNPROTO ImageTextureLOD[
+				exposedField SFBool repeatS
+				exposedField SFBool repeatT
+				exposedField MFString url
+				exposedField SFVec2f maxSize
+				exposedField SFNode loadingTexture
+				eventIn SFInt32 set_lod
+				eventIn SFFloat set_priority
+				eventIn SFBool set_unload
+				exposedField MFString parameter
+				exposedField SFBool thumbEnabled
+				exposedField SFVec2f thumbSize
+				exposedField SFNode thumbTexture
+				exposedField SFBool showThumb
+				eventOut SFBool isLoaded
+				eventOut SFBool isFlipped
+				eventOut SFVec2f size
+				eventOut SFFloat aspect
+				exposedField SFNode textureProperties
+				exposedField SFNode metadata
+				]
+			["urn:inet:bitmanagement.de:node:ImageTextureLOD","http://www.bitmanagement.de/vrml/protos/nodes.wrl#ImageTextureLOD","nodes.wrl#ImageTextureLOD"]
+
+			EXTERNPROTO Panorama[
+		exposedField SFString type
+		exposedField SFVec3f center
+		exposedField MFFloat parameter
+		exposedField SFVec2f resolution
+		exposedField SFBool solid
+		exposedField SFInt32 useTransparentQuality
+		exposedField SFNode metadata
+		]
+	["urn:inet:bitmanagement.de:node:Panorama","http://www.bitmanagement.de/vrml/protos/nodes.wrl#Panorama","nodes.wrl#Panorama"]
+
+DEF PanoramaShape Shape {
+	appearance Appearance {texture 		DEF STEREOTEXTURE StereoTexture {
+			type "MONO"
+			texture[			ImageTextureLOD {
+				repeatS FALSE 
+				repeatT FALSE 
+				url [
+					"cerro-toco-0.jpg"
+					"https://pannellum.org/images/cerro-toco-0.jpg"
+				]
+				parameter "subtexture"
+				thumbTexture ImageTexture {
+					url "data:image/jpeg;base64,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"
+					repeatS FALSE 
+					repeatT FALSE 
+				}
+				showThumb FALSE 
+			}]
+		}}
+	geometry 	DEF Panorama Panorama {
+		type "SPHERICAL"
+		parameter [100,6.283185,3.141593,0,0]
+		resolution -1 -1
+	}
+}
+EXTERNPROTO ViewVolume[
+	eventIn SFBool set_bind
+	exposedField SFFloat fieldOfView
+	exposedField SFBool jump
+	exposedField SFRotation orientation
+	exposedField SFVec3f position
+	exposedField SFVec3f centerOfRotation
+	exposedField SFString description
+	exposedField SFTime bindTime
+	exposedField SFBool isBound
+	exposedField SFBool perspective
+	exposedField SFVec2f center
+	exposedField SFVec2f size
+	exposedField MFInt32 viewport
+	exposedField SFFloat nearDistance
+	exposedField SFFloat farDistance
+	exposedField SFFloat focalDistance
+	exposedField SFFloat eyeDistance
+	exposedField SFFloat eyeVertDistance
+	exposedField SFString aspectMode
+	exposedField SFMatrix projectionMatrix
+	exposedField SFBool projectionMatrixEnabled
+	exposedField SFNode metadata
+	]
+["urn:inet:bitmanagement.de:node:ViewVolume","http://www.bitmanagement.de/vrml/protos/nodes.wrl#ViewVolume","nodes.wrl#ViewVolume"]
+DEF Default ViewVolume {
+	fieldOfView 1.570796
+	orientation 0 0 1 0
+	position 0 0 0
+	description "Default"
+	perspective TRUE 
+	size 2 2
+	focalDistance 1
+	eyeDistance 0
+	eyeVertDistance 0
+	aspectMode "FIT"
+}
