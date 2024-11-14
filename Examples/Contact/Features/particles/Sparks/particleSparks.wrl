@@ -1,0 +1,224 @@
+#VRML V2.0 utf8
+
+EXTERNPROTO Particles[
+  exposedField SFVec3f    bboxSize
+  exposedField SFVec3f    bboxCenter
+  exposedField SFBool     billboard
+  exposedField SFFloat    lodRange
+  exposedField SFBool     enabled 
+  exposedField SFFloat    particleRadius 
+  exposedField SFFloat    particleRadiusVariation 
+  exposedField SFFloat    particleRadiusRate 
+  exposedField SFNode     geometry
+  exposedField SFVec3f    emitterPosition 
+  exposedField SFFloat    emitterRadius 
+  exposedField SFFloat    emitterSpread 
+  exposedField SFVec3f    emitVelocity  
+  exposedField SFFloat    emitVelocityVariation 
+  exposedField SFRotation emitterOrientation
+  exposedField SFFloat    creationRate 
+  exposedField SFFloat    creationRateVariation 
+  exposedField SFInt32    maxParticles 
+  exposedField SFTime     maxLifeTime 
+  exposedField SFFloat    maxLifeTimeVariation 
+  exposedField SFVec3f    gravity 
+  exposedField SFVec3f    acceleration 
+  exposedField SFColor    emitColor 
+  exposedField SFFloat    emitColorVariation 
+  exposedField SFColor    fadeColor 
+  exposedField SFFloat    fadeAlpha 
+  exposedField SFFloat    fadeRate 
+  exposedField SFInt32    numTrails  
+  exposedField SFInt32    numSparks 
+  exposedField SFBool     sort 
+  exposedField SFVec3f    sparkGravity 
+  exposedField SFColor    sparkFadeColor
+  exposedField SFBool	  directionAlign
+]
+[
+  "urn:inet:bitmanagement.de:node:Particles",
+  "http://www.bitmanagement.de/vrml/protos/nodes.wrl#Particles",
+]
+
+NavigationInfo {
+	type "EXAMINE"
+	headlight FALSE
+}
+
+PointLight {
+	location 0 3 0
+}
+
+Viewpoint 
+{
+    position     -3.753 3.854 4.473
+    orientation  -0.526 -0.840 -0.132 0.806
+    fieldOfView  0.716
+}
+
+Transform {
+				### does not seem to respond to translation
+	translation	1.6 0 0 
+	children [
+		Shape {
+			appearance Appearance {
+				material Material {
+					emissiveColor 1 1 1						
+				}
+				texture	ImageTexture {
+					url	"./particleSpark.png"
+				}
+				textureTransform TextureTransform {
+				#	rotation -1.57
+				}
+			}
+			geometry DEF	contactEmitter Particles {
+				
+				#billboard FALSE
+				acceleration 0 -1 0
+
+				creationRate 100
+				creationRateVariation 10
+
+				emitterRadius 0.1
+				emitterOrientation 0 0 1 0.7
+				emitVelocity 5 1 0
+				fadeRate 0.05
+				numSparks 2
+
+				particleRadius 0.05
+				
+				gravity	0 -9 0					
+
+				fadeAlpha 0.3
+
+				maxLifeTime	1
+				maxLifeTimeVariation 0.2
+
+				#sparkGravity	0 -2 0	# doesn't work for me			
+
+				emitterPosition	0 1 0
+				emitterSpread 0.25
+				directionAlign TRUE
+			}
+		}
+	]
+}
+
+Transform {
+  translation 0 -0.1 0
+  children [
+    Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.5882 0.5882 0.5882          
+          specularColor 0.57 0.57 0.57
+          shininess 0.4
+        }
+        texture ImageTexture {
+          url "floor018.jpg"
+        }
+      }
+      geometry IndexedFaceSet {
+        coord Coordinate { point [
+          -2 0 2, 2 0 2, -2 0 -2, 2 0 -2, -2 0.1 2, 2 0.1 2, -2 0.1 -2, 
+          2 0.1 -2]
+        }
+        normal Normal { vector [
+          1 0 0, -1 0 0, 0 1 0, 0 0 1, 0 -1 0, 0 0 -1, ] }
+        texCoord TextureCoordinate { point [
+          0 0, 1 0, 0 1, 1 1, 0 0, 1 0, 0 1, 1 1, 0 0, 1 0, 0 1, 
+          1 1]
+        }
+        coordIndex [
+          0, 2, 3, -1, 3, 1, 0, -1, 4, 5, 7, -1, 7, 6, 4, -1, 0, 1, 5, -1, 
+          5, 4, 0, -1, 1, 3, 7, -1, 7, 5, 1, -1, 3, 2, 6, -1, 
+          6, 7, 3, -1, 2, 0, 4, -1, 4, 6, 2, -1]
+        texCoordIndex [
+          9, 11, 10, -1, 10, 8, 9, -1, 8, 9, 11, -1, 11, 10, 8, -1, 
+          4, 5, 7, -1, 7, 6, 4, -1, 0, 1, 3, -1, 3, 2, 0, -1, 
+          4, 5, 7, -1, 7, 6, 4, -1, 0, 1, 3, -1, 3, 2, 0, -1]
+        normalIndex [
+          4, 4, 4, -1, 4, 4, 4, -1, 2, 2, 2, -1, 2, 2, 2, -1, 3, 
+          3, 3, -1, 3, 3, 3, -1, 0, 0, 0, -1, 0, 0, 0, -1, 5, 
+          5, 5, -1, 5, 5, 5, -1, 1, 1, 1, -1, 1, 1, 1, -1, ]
+        }
+    }
+  ]
+}
+Transform {
+  translation 1.941 0 0
+  children [
+    Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.5882 0.5882 0.5882          
+          specularColor 0.57 0.57 0.57
+          shininess 0.4
+        }
+        texture ImageTexture {
+          url "floor018.jpg"
+        }
+      }
+      geometry IndexedFaceSet {
+        coord Coordinate { point [
+          -0.05 0 2, 0.05 0 2, -0.05 0 -2, 0.05 0 -2, -0.05 2.5 2, 
+          0.05 2.5 2, -0.05 2.5 -2, 0.05 2.5 -2]
+        }
+        normal Normal { vector [
+          1 0 0, -1 0 0, 0 1 0, 0 0 1, 0 -1 0, 0 0 -1, ] }
+        texCoord TextureCoordinate { point [
+          0 0, 1 0, 0 1, 1 1, 0 0, 1 0, 0 1, 1 1, 0 0, 1 0, 0 1, 
+          1 1]
+        }
+        coordIndex [
+          0, 2, 3, -1, 3, 1, 0, -1, 4, 5, 7, -1, 7, 6, 4, -1, 0, 1, 5, -1, 
+          5, 4, 0, -1, 1, 3, 7, -1, 7, 5, 1, -1, 3, 2, 6, -1, 
+          6, 7, 3, -1, 2, 0, 4, -1, 4, 6, 2, -1]
+        texCoordIndex [
+          9, 11, 10, -1, 10, 8, 9, -1, 8, 9, 11, -1, 11, 10, 8, -1, 
+          4, 5, 7, -1, 7, 6, 4, -1, 0, 1, 3, -1, 3, 2, 0, -1, 
+          4, 5, 7, -1, 7, 6, 4, -1, 0, 1, 3, -1, 3, 2, 0, -1]
+        normalIndex [
+          4, 4, 4, -1, 4, 4, 4, -1, 2, 2, 2, -1, 2, 2, 2, -1, 3, 
+          3, 3, -1, 3, 3, 3, -1, 0, 0, 0, -1, 0, 0, 0, -1, 5, 
+          5, 5, -1, 5, 5, 5, -1, 1, 1, 1, -1, 1, 1, 1, -1, ]
+        }
+    }
+  ]
+}
+DEF Cylinder01 Transform {
+  translation 1.692 1 -2
+  rotation -1 0 0 -1.571
+  children [
+      Transform {
+        translation 0 2 0
+        children [
+          Shape {
+            appearance DEF rohr Appearance {
+              material Material {
+                diffuseColor 0.2 0.1 0.07
+               
+                specularColor 0.5 0.5 0.5
+                shininess 0.3
+              }
+            }
+            geometry Cylinder { radius 0.15 height 4 }
+          }
+    ] }
+  ]
+}
+DEF Cylinder02 Transform {
+  translation 1.692 1 -0.09866
+  rotation -1 0 0 -1.571
+  children [
+      Transform {
+        translation 0 0.1 0
+        children [
+          Shape {
+            appearance USE rohr
+            geometry Cylinder { radius 0.2 height 0.2 }
+          }
+    ] }
+  ]
+}
