@@ -1,0 +1,158 @@
+#X3D V3.0 utf8
+#written by BS Contact Geo Stereo (Developer)  8.400
+
+PROFILE Immersive
+DEF _1 NavigationInfo {type ["EXAMINE","ANY"]}
+WorldInfo {title "Hello world!"}
+DEF _2 Group {
+	children [
+		DEF ViewUpClose Viewpoint {
+			position 0 -1 7
+			description "Hello world!"
+			centerOfRotation 0 -1 0
+		}
+		
+		Transform {
+			rotation 0 1 0 3
+			children[Shape {
+				appearance DEF APP Appearance 
+				{
+					material DEF MaterialLightBlue Material {
+						##diffuseColor 0.1 0.5 1
+						diffuseColor 1 1 1		  # need white for texture modulate
+					
+					}
+					texture DEF ImageCloudlessEarth ImageTexture {url ["earth-topo.png","earth-topo.jpg","earth-topo-small.gif","http://www.web3d.org/x3d/content/examples/Basic/earth-topo.png","http://www.web3d.org/x3d/content/examples/Basic/earth-topo.jpg","http://www.web3d.org/x3d/content/examples/Basic/earth-topo-small.gif"]}
+					shaders[
+						
+						
+						PackagedShader {
+						language "HLSL"
+						url "hlsl://hlsl:4.1 BSContact Shader Generator: numLights=1 numTextures=1 lightingEnable=1 specularEnable=0 doubleSidedEnable=0 fogEnable=0 vertexLighting=1 pixelLighting=0 vertexColor=0 numTextureCoord=1
+// Texture enable & type: [0] = 1 t=3 
+cbuffer ModelViewProjectionConstantBuffer {
+float4x4 World				    	: WORLD;
+float4x4 View							: VIEW;
+float4x4 Projection					: PROJECTION;
+float4x4 WorldView                	: WORLDVIEW;
+float4x4 WorldViewProjection      	: WORLDVIEWPROJECTION;
+float4x4 WorldViewInverseTranspose	: worldViewInverseTranspose;
+};
+struct Material
+{
+	float4 diffuseColor;
+	float4 ambientColor;
+	float4 specularColor;
+	float4 emissiveColor;
+	float power;
+};
+cbuffer MaterialConstantBuffer {
+Material material  : MATERIAL;
+};
+struct Light
+{
+	float4 ambientColor;
+	float4 diffuseColor;
+	float4 specularColor;
+	float4 positionView;
+	float4 directionView;
+	float4 attenuation;
+	float4 spot;
+};
+cbuffer LightsConstantBuffer {
+Light light[1] 	: LIGHT;
+};
+float4 AmbientLightColor         	: ambientLightColor;
+float3 LambertLighting(float3 lightNormal,float3 surfaceNormal,float3 lightColor)
+{
+	float diffuseAmount = saturate(dot(lightNormal, surfaceNormal));
+	float3 diffuse = diffuseAmount * lightColor;
+	return diffuse;
+}
+float3 SpecularContribution(float3 toEye,float3 lightNormal,float3 surfaceNormal,float materialSpecularPower,float lightSpecularIntensity,float3 lightColor)
+{
+	float3 vHalf = normalize(lightNormal + toEye);
+	float specularAmount = saturate(dot(surfaceNormal, vHalf));
+	specularAmount = pow(specularAmount, max(materialSpecularPower,0.0001f)) * lightSpecularIntensity;
+	float3 specular = lightColor * specularAmount;
+	return specular;
+}
+float DistanceAttenuation(float distance,float4 attenuation)
+{
+	if (distance >= attenuation.w)  {  return 0.f; }
+	else { return 1.f/(attenuation.x + attenuation.y*distance + attenuation.z*distance*distance);  }
+}
+
+
+Texture2D   texture0;
+SamplerState samp_texture0;
+
+struct VSIn
+{
+	float3 Position  	: POSITION;
+	float3 Normal    	: NORMAL;
+	float2 Texture0 	: TEXCOORD0;
+};
+
+struct VSOut
+{
+	float4 Position : SV_POSITION;
+	float4 Diffuse 	: COLOR0;
+	float4 Specular	: COLOR1;
+	float2 Texture0	: TEXCOORD0;
+};
+
+struct PSIn
+{
+	float4 sv_position	: SV_POSITION;
+	float4 Diffuse  	: COLOR0;
+	float4 Specular 	: COLOR1;
+	float2 Texture0	: TEXCOORD0;
+};
+
+VSOut VS(VSIn input)
+{
+	VSOut output = (VSOut)0.0;
+	output.Position = mul(float4(input.Position,1.0),WorldViewProjection);
+	float3 positionView = mul(float4(input.Position,1.0),WorldView);
+	float3 eyeVector = normalize(-positionView);
+	float3 normal = normalize(mul(input.Normal,(float3x3)WorldViewInverseTranspose));
+	output.Texture0	 = input.Texture0;
+	float3 diffuse = 0.0f;
+	float3 specular = 0.0f;
+	float4 materialDiffuse = material.diffuseColor.rgba;
+	{
+	float3 lightDirection = -light[0].directionView.xyz;
+	float fAtten = 1.f;
+	diffuse+=fAtten*LambertLighting(lightDirection,normal,light[0].diffuseColor.rgb);
+	}
+	output.Diffuse = float4(material.ambientColor.rgb * AmbientLightColor.rgb+saturate(diffuse)*materialDiffuse.rgb+material.emissiveColor.rgb,materialDiffuse.a);
+	output.Specular = float4(saturate(specular)* material.specularColor.rgb,0.0f);
+	return output;
+}
+float4 PS(in PSIn input) : SV_TARGET
+{
+	float4 color;
+	color=input.Diffuse;
+	color *= texture0.Sample(samp_texture0,input.Texture0.xy);
+	color+=input.Specular;
+	return color;
+}
+"
+				}
+							
+				]
+				}
+				geometry Sphere {}
+			}]
+		}
+		
+		Transform {
+			translation 0 -2 0
+			children[Shape {
+				appearance USE APP
+				geometry Box {}
+			}]
+		}
+	]
+}

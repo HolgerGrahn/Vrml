@@ -1,0 +1,262 @@
+#VRML V2.0 utf8
+
+
+DEF WorldInfo WorldInfo {
+	title "Scene Rendering with PostProcessing node / 7.2"
+	info [ 
+	  	"(c) 2009 Holger Grahn - hg @ snafu.de"
+		"some Shader ideas from ATI RenderMonkey ScreenSpace Effects"
+	]
+}
+
+EXTERNPROTO GroupRenderToTexture[
+	exposedField SFVec3f bboxSize
+	exposedField SFVec3f bboxCenter
+	exposedField SFNode metadata
+	exposedField SFBool enabled
+	exposedField SFString path
+	exposedField MFNode outputTexture
+	exposedField SFNode outputDepthTexture
+	eventIn MFNode addChildren
+	eventIn MFNode removeChildren
+	exposedField MFNode children
+	exposedField MFNode outputChildren
+	exposedField SFNode background
+]
+["urn:inet:bitmanagement.de:node:GroupRenderToTexture","http://www.bitmanagement.de/vrml/protos/nodes.wrl#GroupRenderToTexture","nodes.wrl#GroupRenderToTexture"]
+
+EXTERNPROTO CompositeTexture3D[
+	eventIn MFNode addChildren
+	eventIn MFNode removeChildren
+	exposedField MFNode children
+	exposedField SFInt32 pixelWidth
+	exposedField SFInt32 pixelHeight
+	exposedField SFNode background
+	exposedField SFNode fog
+	exposedField SFNode navigationInfo
+	exposedField SFNode viewpoint
+	exposedField SFBool repeatS
+	exposedField SFBool repeatT
+	exposedField MFString parameter
+	exposedField SFString update
+	exposedField SFNode metadata
+]
+["urn:inet:bitmanagement.de:node:CompositeTexture3D","http://www.bitmanagement.de/vrml/protos/nodes.wrl#CompositeTexture3D","nodes.wrl#CompositeTexture3D"]
+
+EXTERNPROTO PostProcessing[
+	exposedField SFVec3f bboxSize
+	exposedField SFVec3f bboxCenter
+	exposedField SFNode metadata
+	exposedField SFBool enabled
+	exposedField MFNode inputTexture
+	exposedField MFNode outputTexture
+	exposedField SFNode outputDepthTexture
+	exposedField MFNode shaders
+	eventIn MFNode addChildren
+	eventIn MFNode removeChildren
+	exposedField MFNode children
+	exposedField MFNode outputChildren
+	exposedField SFNode background
+]
+["urn:inet:bitmanagement.de:node:PostProcessing","http://www.bitmanagement.de/vrml/protos/nodes.wrl#PostProcessing","nodes.wrl#PostProcessing"]
+
+EXTERNPROTO Layer3D[
+	eventIn MFNode addChildren
+	eventIn MFNode removeChildren
+	exposedField MFNode children
+	exposedField SFVec2f size
+	exposedField SFNode background
+	exposedField SFNode fog
+	exposedField SFNode navigationInfo
+	exposedField SFNode viewpoint
+	exposedField SFVec3f bboxSize
+	exposedField SFVec3f bboxCenter
+	exposedField SFNode metadata
+	eventIn MFNode addChildrenLayer
+	eventIn MFNode removeChildrenLayer
+	exposedField MFNode childrenLayer
+	exposedField SFVec2f translation
+	exposedField SFInt32 depth
+]
+["urn:inet:bitmanagement.de:node:Layer3D","http://www.bitmanagement.de/vrml/protos/nodes.wrl#Layer3D","nodes.wrl#Layer3D"]
+
+EXTERNPROTO Rectangle[
+	exposedField SFVec2f size
+]
+["urn:inet:bitmanagement.de:node:Rectangle","http://www.bitmanagement.de/vrml/protos/nodes.wrl#Rectangle","nodes.wrl#Rectangle"]
+
+
+Background {
+	skyColor  0.9 0.9 1
+}
+
+Viewpoint 
+{
+    position     0.000 0.000 1.967
+    orientation  0.000 0.000 1.000 0.000
+    fieldOfView  0.844
+	description	"1"
+}
+
+Viewpoint 
+{
+    position     1.518 0.872 0.898
+    orientation  -0.438 0.871 0.221 1.153
+    fieldOfView  0.9
+	description	"2" 
+}
+
+
+
+DEF	RESOURCES Switch {
+	whichChoice	-1
+	choice [
+	
+	]
+}
+
+
+Background { skyColor [ 0.2 0.2 0.2 ] }
+
+NavigationInfo { 
+	headlight FALSE speed 1.0 
+	type [ "WALK" "ANY" ]
+}
+
+
+Background { skyColor [ 0 0 0 ] }
+DEF VIEWPOINT  Viewpoint
+{
+	position	5 1.85 10
+	orientation	0 1 0  0.0405898
+	fieldOfView	0.95993
+	#description	"Meet_the_Spiderking"
+}
+
+
+DEF GROUP_RENDER GroupRenderToTexture 
+{
+	children [
+
+		# the scene to render 
+		DEF SCENE Inline { url [ "../../layer/spider2.wrl" "http://www.bitmanagement.de/developer/contact/examples/layer/spider2.wrl" ] }
+	]
+	
+
+	# scene is rendered to this texture 
+	outputTexture DEF FrameTexture CompositeTexture3D 
+	{ 
+		pixelWidth -1
+		pixelHeight -1
+	
+	}
+
+
+
+	
+}
+
+
+# process FameTexture with shader to render to screen 
+PostProcessing
+{ 
+
+	enabled	TRUE  
+	inputTexture USE FrameTexture	 # bound as texture0 by default 
+
+	shaders	DEF FrameShader 
+	PackagedShader 
+	{
+		language "HLSL"
+		#url "process_simple.fx"
+		#url "process_dizzy.hlsl"
+		url "process_dizzy.hlsl"
+		#	url "process_hblur7.fx"
+		
+		exposedField SFFloat time 1
+		field SFNode inputTexture USE FrameTexture
+
+	}
+	
+
+
+	children [ 
+		#		Shape {
+		#			appearance Appearance  { 
+		#					texture	USE	FrameTexture
+		#				#	material Material { transparency 0.5 }
+		#			}
+		#			geometry Rectangle { size  1 1 }
+		#		}
+	
+	]
+
+
+	# [] means frame buffer 
+	outputTexture [
+		DEF Output1Texture CompositeTexture3D 
+		{ 
+			pixelWidth -1 		pixelHeight -1
+	
+		}
+	] 
+	outputChildren [
+		#		Rectangle { size  0.5 0.5 }
+	]
+
+
+}
+
+#just render inputTexture to screen 
+PostProcessing
+{ 
+
+	enabled	TRUE  
+	inputTexture USE Output1Texture
+
+
+}
+
+
+
+DEF _TimeSensor TimeSensor {
+	cycleInterval 1
+	loop TRUE 
+	startTime 0
+
+}
+ROUTE _TimeSensor.fraction_changed TO FrameShader.time
+
+
+# show textures
+Layer3D	 {
+	size 1 0.2
+	translation	0 0.1
+	background Background { skyColor 0.1 0.1 0.2 }
+	children 
+	Transform {
+		translation	0 0 0 
+		scale 0.4 0.4 0.4
+		children [
+			Transform {
+				translation	-5 0 0 
+				children
+				Shape {
+					appearance Appearance { texture	USE	FrameTexture	 }
+					geometry Rectangle { size  5 5 }
+
+				}
+			}
+			Transform {
+				translation	2 0 0 
+				children
+				Shape {
+					appearance Appearance { texture	USE	Output1Texture	 }
+					geometry Rectangle { size  5 5 }
+
+				}
+			}
+
+		]
+	}
+}

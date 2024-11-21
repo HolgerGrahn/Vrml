@@ -1,0 +1,101 @@
+#VRML V2.0 utf8
+
+WorldInfo {
+	title "Shader Generator - BSContact 9.2"
+	info [
+		"Shader Generator generates shaders from VRML materials:"
+		" - DX9 renderer generates .fx files"
+		" - DX11 renderer generates .hlsl files"
+		""
+		"Note that shaders hardcode the number/type of lights in the scene."
+	]
+}
+
+
+###############################################################################
+# Example scene
+###############################################################################
+
+NavigationInfo {
+	headlight FALSE
+}
+
+Background {
+	skyColor [0 1 0]
+}
+
+Fog	{
+	visibilityRange	100
+	color 1 0 0
+	fogType	"LINEAR"
+}
+
+DirectionalLight {
+	direction -1 -1 -1
+	intensity 0.5
+}
+
+PointLight {
+	color 1 0 0
+	location -2 2 1
+}
+PointLight {
+	color 0 1 0
+	location 2 2 1
+}
+PointLight {
+	color 0 0 1
+	location 0 0 -1
+}
+
+Shape {
+	appearance Appearance {
+		material Material {
+			diffuseColor 1 1 1
+			emissiveColor 0 0 0
+			specularColor 0 1 0
+			shininess 0.2
+		}
+		texture	ImageTexture {
+			url	"Shader Generator is in Graphics context menu.png"
+		}
+	}
+	geometry Sphere {
+		radius 5
+	}
+}
+
+
+###############################################################################
+# Activate the Shader Generator
+###############################################################################
+
+
+Script {
+	directOutput TRUE
+	url "vrmlscript:
+
+	function initialize(){
+
+		// Per-pixel lighting
+		Browser.setOption('shaderGenerator.phong', 'true');
+
+		// Per-vertex lighting
+		//Browser.setOption('shaderGenerator.phong', 'false');
+
+		// Output folder
+		// Warning: the path shouldn't contain spaces !
+		//Browser.setOption('shaderGenerator.writeShaderDir','A:/RENDERED/');
+		Browser.setOption('shaderGenerator.writeShaderDir','C:/Temp/rendererShader/');
+		
+
+		// Activates writing files.
+		// If no files are generated, check that 'Context Menu > Graphics > Shader Generator' is enabled.
+		Browser.setOption('shaderGenerator.writeShaderToFile', 'true');
+	}
+
+	"
+}
+
+
+

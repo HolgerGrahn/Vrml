@@ -1,0 +1,258 @@
+#VRML V2.0 utf8
+
+
+WorldInfo {
+		title "Sphere with DX11 hlsl PackagedShader GeometryShader "
+}
+## See also 
+## https://msdn.microsoft.com/en-us/library/windows/desktop/mt787170(v=vs.85).aspx
+
+Shape {
+	appearance DEF APP Appearance 
+	{
+		material Material {
+			
+			diffuseColor 1 1 1		  # need white for texture modulate
+			
+		}
+		texture DEF ImageCloudlessEarth ImageTexture {url ["earth-topo.png","earth-topo.jpg","earth-topo-small.gif","http://www.web3d.org/x3d/content/examples/Basic/earth-topo.png","http://www.web3d.org/x3d/content/examples/Basic/earth-topo.jpg","http://www.web3d.org/x3d/content/examples/Basic/earth-topo-small.gif"]}
+		shaders[
+			
+			
+			DEF GeomShader PackagedShader {
+				language "HLSL"
+
+				exposedField SFFloat Explode 0.2
+
+				url "hlsl://hlsl:4.1
+				cbuffer ModelViewProjectionConstantBuffer {
+				float4x4 World				    	: WORLD;
+				float4x4 View						: VIEW;
+				float4x4 Projection					: PROJECTION;
+				float4x4 WorldView                	: WORLDVIEW;
+				float4x4 WorldViewProjection      	: WORLDVIEWPROJECTION;
+				float4x4 WorldViewInverseTranspose	: worldViewInverseTranspose;
+				};
+				struct Material
+				{
+				float4 diffuseColor;
+				float4 ambientColor;
+				float4 specularColor;
+				float4 emissiveColor;
+				float power;
+				};
+				cbuffer MaterialConstantBuffer {
+				Material material  : MATERIAL;
+				};
+				struct Light
+				{
+				float4 ambientColor;
+				float4 diffuseColor;
+				float4 specularColor;
+				float4 positionView;
+				float4 directionView;
+				float4 attenuation;
+				float4 spot;
+				};
+				cbuffer LightsConstantBuffer {
+				Light light[1] 	: LIGHT;
+				};
+				float4 AmbientLightColor         	: ambientLightColor;
+
+				float3 LambertLighting(float3 lightNormal,float3 surfaceNormal,float3 lightColor)
+				{
+				float diffuseAmount = saturate(dot(lightNormal, surfaceNormal));
+				float3 diffuse = diffuseAmount * lightColor;
+				return diffuse;
+				}
+				float3 SpecularContribution(float3 toEye,float3 lightNormal,float3 surfaceNormal,float materialSpecularPower,float lightSpecularIntensity,float3 lightColor)
+				{
+				float3 vHalf = normalize(lightNormal + toEye);
+				float specularAmount = saturate(dot(surfaceNormal, vHalf));
+				specularAmount = pow(specularAmount, max(materialSpecularPower,0.0001f)) * lightSpecularIntensity;
+				float3 specular = lightColor * specularAmount;
+				return specular;
+				}
+				float DistanceAttenuation(float distance,float4 attenuation)
+				{
+				if (distance >= attenuation.w)  {  return 0.f; }
+				else { return 1.f/(attenuation.x + attenuation.y*distance + attenuation.z*distance*distance);  }
+				}
+
+
+				Texture2D   texture0;
+				SamplerState samp_texture0;
+
+				//static const 
+				float Explode; //  = 0.2f;
+				float4x4 ViewProjection      	: VIEWPROJECTION;
+
+
+
+				struct VSOutGS
+				{
+    				float4 Position : SV_POSITION;	   //WORLD Space
+    				float3 Normal	: NORMAL;		   //WORLD Space
+    			
+
+					float4 Diffuse 		: COLOR0;
+					float4 Specular		: COLOR1;
+					float2 Texture0 	: TEXCOORD0;
+				};
+
+
+				struct VSIn
+				{
+				float3 Position  	: POSITION;
+				float3 Normal    	: NORMAL;
+				float2 Texture0 	: TEXCOORD0;
+				};
+
+				struct VSOut
+				{
+				float4 Position 	: SV_POSITION;
+				float3 Normal    	: NORMAL;
+				
+				float4 Diffuse 		: COLOR0;
+				float4 Specular		: COLOR1;
+				float2 Texture0		: TEXCOORD0;
+				};
+
+				struct PSIn
+				{
+				float4 Position	: SV_POSITION;
+				float3 Normal    	: NORMAL;
+				float4 Diffuse  	: COLOR0;
+				float4 Specular 	: COLOR1;
+				float2 Texture0		: TEXCOORD0;
+				};
+
+
+//--------------------------------------------------------------------------------------
+// Geometry Shader	 executed after vertex shader 
+//--------------------------------------------------------------------------------------
+[maxvertexcount(12)]
+void GS( triangle VSOutGS input[3], inout TriangleStream<VSOut> TriStream )
+{
+    VSOut output;
+    
+    //
+    // Calculate the face normal
+    //
+    float3 faceEdgeA = input[1].Position.xyz - input[0].Position.xyz;
+    float3 faceEdgeB = input[2].Position.xyz - input[0].Position.xyz;
+    float3 faceNormal = normalize( cross(faceEdgeA, faceEdgeB) );
+    float3 ExplodeAmt = faceNormal*Explode;
+    
+    //
+    // Calculate the face center
+    //
+    float3 centerPos = (input[0].Position.xyz + input[1].Position.xyz + input[2].Position.xyz)/3.0;
+    float2 centerTex = (input[0].Texture0 + input[1].Texture0 + input[2].Texture0)/3.0;
+    float4 centerDiffuse = (input[0].Diffuse + input[1].Diffuse + input[2].Diffuse)/3.0;
+  
+    centerPos += ExplodeAmt;
+    
+    //
+    // Output the pyramid
+    //
+	int i;
+    for (i=0; i<3; i++ )
+    {
+        output.Position = input[i].Position + float4(ExplodeAmt,0);
+        output.Position = mul( output.Position, View );
+        output.Position = mul( output.Position, Projection );
+        output.Normal = input[i].Normal;
+        output.Texture0 = input[i].Texture0;  output.Diffuse = input[i].Diffuse;   output.Specular = input[i].Specular;
+        TriStream.Append( output );
+        
+      
+        uint iNext = (i+1)%3;
+        output.Position = input[iNext].Position + float4(ExplodeAmt,0);
+        output.Position = mul( output.Position, View );
+        output.Position = mul( output.Position, Projection );
+        output.Normal = input[iNext].Normal;
+        output.Texture0 = input[iNext].Texture0;	  output.Diffuse = input[iNext].Diffuse;   output.Specular = input[iNext].Specular;
+        TriStream.Append( output ); 
+        
+        output.Position = float4(centerPos,1) + float4(ExplodeAmt,0);
+        output.Position = mul( output.Position, View );
+        output.Position = mul( output.Position, Projection );
+        output.Normal = faceNormal;
+        output.Texture0 = centerTex;    output.Diffuse = centerDiffuse;   output.Specular = input[i].Specular;	// center diffuse
+        TriStream.Append( output );
+        
+        TriStream.RestartStrip();
+    }
+    
+	
+    for (i=2; i>=0; i-- )
+    {
+        output.Position = input[i].Position + float4(ExplodeAmt,0);
+        output.Position = mul( output.Position, View );
+        output.Position = mul( output.Position, Projection );
+        output.Normal = -input[i].Normal;
+        output.Texture0 = input[i].Texture0;	output.Diffuse = input[i].Diffuse;   output.Specular = input[i].Specular;
+        TriStream.Append( output );
+    }
+
+    TriStream.RestartStrip();
+}
+
+
+VSOut VS(in VSIn input)
+{
+	VSOutGS output = (VSOut)0.0;
+	output.Position = mul(float4(input.Position,1.0),World);
+	output.Normal = normalize(mul(input.Normal,(float3x3)World));
+  	output.Texture0	 = input.Texture0;
+
+	// directional light 
+	float3 positionView = mul(float4(input.Position,1.0),WorldView);
+	float3 eyeVector = normalize(-positionView);
+	float3 normal = normalize(mul(input.Normal,(float3x3)WorldViewInverseTranspose));
+
+	float3 diffuse = 0.0f;
+	float3 specular = 0.0f;
+	float4 materialDiffuse = material.diffuseColor.rgba;
+	{
+	float3 lightDirection = -light[0].directionView.xyz;
+	float fAtten = 1.f;
+	diffuse+=fAtten*LambertLighting(lightDirection,normal,light[0].diffuseColor.rgb);
+	}
+	output.Diffuse = float4(material.ambientColor.rgb * AmbientLightColor.rgb+saturate(diffuse)*materialDiffuse.rgb+material.emissiveColor.rgb,materialDiffuse.a);
+	output.Specular = float4(saturate(specular)* material.specularColor.rgb,0.0f);
+	return output;
+}
+
+float4 PS(in PSIn input) : SV_TARGET
+{
+	float4 color;
+	color=input.Diffuse;
+	color *= texture0.Sample(samp_texture0,input.Texture0.xy);
+	color+=input.Specular;
+	return color;
+}
+				"
+			}
+			
+		]
+	}
+	geometry Sphere {}
+}
+
+
+
+DEF _TimeSensor TimeSensor {
+	cycleInterval 1
+	loop TRUE 
+	startTime 0
+
+}
+DEF	_Si ScalarInterpolator {
+	keyValue [0 0.4 0.0]
+
+}
+ROUTE _TimeSensor.fraction_changed TO _Si.set_fraction
+ROUTE _Si.value_changed	  TO  GeomShader.Explode 
+

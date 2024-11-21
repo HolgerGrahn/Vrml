@@ -13,10 +13,17 @@ Tthe BSContact Player is available
 https://www.bitmanagement.de/en/products/interactive-3d-clients/bs-contact
 
 BSContact Stereo adds support for 
-Stereo Rendering, MultiView Display and VR Occulus Rift support 
+Stereo Rendering, Stereo Video Rendering, MultiView Display and VR Occulus Rift support 
 https://www.bitmanagement.de/en/products/interactive-3d-clients/bs-contact-stereo
 
-
+Input Formats are
+WRL, X3D, OBJ, STL, PLY, Collada (DAE)
+Texture Fomats are
+jpeg, png, j2k, dds, bmp, tga, gif ..
+Video Formats are based on DirectShow and installed codecs
+avi, mpeg ...
+3D Videos can be opened directly in different format like side by side, above-below etc
+all 3D Files imported can be exported back as WRL, X3D ...
 
 More Bitmanagement developer info on 
 http://sdk.bitmanagement.de/
@@ -52,6 +59,9 @@ Examples:
 https://github.com/HolgerGrahn/Vrml/tree/main/Examples/bsurl
 
 click on a file, use the GitHub download button, double click in  the download file to open BSContact.exe or drag the link into an open BSContact.
+
+For the demos on this repositiory it might be easiest to download as ZIP.
+OBJ files are are refering MTL and texuture files, this is not currently supported via HTTP download, so the folders need to be downloaded as zip.
 
 
 
