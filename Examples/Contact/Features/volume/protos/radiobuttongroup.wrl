@@ -1,0 +1,230 @@
+#VRML V2.0 utf8
+
+EXTERNPROTO CheckButton
+[
+	exposedField MFString name
+	exposedField SFVec3f pos
+	exposedField MFInt32	state
+	eventOut MFInt32 state_out
+
+]
+["checkbutton.wrl#CheckButton"]
+
+
+Background
+{
+	skyColor 1 1 1
+}
+
+
+PROTO	RadioButtonGroup
+[
+	exposedField MFString	title ""
+	exposedField SFVec3f pos 50 0 300 # x,y: offset of the line; z : offset of the button
+	exposedField SFInt32 current	0 #the current check button
+	exposedField MFString	names []
+	exposedField SFInt32 visibility 0
+]
+{
+
+	Switch
+	{
+		whichChoice	IS visibility
+		choice
+		[
+			Group
+			{
+				children
+				[	
+					DEF buttons Group
+					{
+					}
+					# title
+					DEF titleLayer Layer2D
+					{
+						size 1 1
+						children[
+							DEF titleTextTrf Transform{
+								children[
+									Shape{
+										appearance DEF TxtApp Appearance{
+											material Material{
+												diffuseColor 0.8 0.8 0.8
+												emissiveColor	 0.3 0.3 0.3
+											}
+										}
+										geometry DEF titleText Text{
+											fontStyle DEF textFS FontStyle {
+												family ["TEXT_TEXTURE"]
+												justify	["BEGIN" "FIRST"]
+											}
+										}													 
+									}
+								]
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+
+
+
+
+
+
+	DEF cbg_script Script
+	{
+		directOutput TRUE
+		exposedField MFString	names IS names
+		exposedField SFVec3f	pos IS pos
+		exposedField SFInt32 current IS	current
+		exposedField MFString title IS title
+
+		field	MFNode childs []
+		field	SFNode buttons USE	buttons
+		field	SFString string ""
+		field	SFNode textFS USE textFS
+		field	SFNode titleTextTrf USE titleTextTrf
+		field	SFNode titleLayer USE titleLayer
+		field	SFNode titleText USE titleText
+				
+		eventIn	SFVec2f	getWindowSize
+		eventIn	MFInt32	stateChanges
+
+		# store the previous position (in case of panel movement)
+		# to get the increment and compute the move of the children
+		field	SFVec3f	prevPos 0 0 0
+
+
+		url	"javascript:
+	
+		function initialize()
+		{
+
+			var number = names.length;
+			for (i=0; i<number;++i)
+			{
+				var x = pos.x + 20; // shift relative the title
+				var y = pos.y - 30*(i+1); // the current line leave for Title
+				string += 'CheckButton{ pos ' + x + ' ' + y + ' ' + pos.z + ' state ['+ i + ' 0]}'; 
+			}
+			childs = Browser.createVrmlFromString(string);
+			buttons.addChildren = childs;
+
+			var len = buttons.children.length;
+			for(var j = 0; j<len ; j++)
+				Browser.addRoute(buttons.children[j], 'state_out', Browser.getScript(), 'stateChanges');
+
+			for (i=0; i<number; ++i)
+			{
+				childs[i].name = names[i];
+			}
+
+		//	print('set state current '+current );
+			// set the current checked button:
+			buttons.children[current].state[1] = 1;
+		//	print(buttons.children[current].state);
+		//	buttons.children[current].state = new MFInt32(buttons.children[current].state[0],1);
+
+		//	print(buttons.children[current]);
+		//	print(buttons.children[current].state);
+
+			prevPos = pos;
+
+			Browser.addRoute(Browser, 'windowSize', Browser.getScript(), 'getWindowSize');
+			getWindowSize(Browser.windowSize);
+		}
+
+
+
+		function shutdown()
+		{
+			var len = buttons.children.length;
+			Browser.deleteRoute(Browser, 'windowSize', Browser.getScript(), 'getWindowSize');
+			for(var j = 0; j<len ; j++)
+				Browser.deleteRoute(buttons.children[j], 'state', Browser.getScript(), 'stateChanges');
+		}
+
+
+
+		function getWindowSize(val)
+		{
+			var x = Browser.windowSize[0];
+			var y = Browser.windowSize[1];
+
+
+			textFS.size = 45/x;
+			titleLayer.translation[0] = -0.5 + pos[0]/x ;
+			
+			titleLayer.translation[1] = pos[1]/y ;
+			titleText.string = title; // update the node
+		}
+
+
+		// if a radio button is checked its state changes -> stateChanges is called
+		// in in case uncheck all radio buttons and check the selected button again
+		function stateChanges(val)
+		{
+			 var len = buttons.children.length;
+			 for(var i = 0; i<len; i++)
+			 {
+					buttons.children[i].state[1] = 0;
+			 }
+			 buttons.children[val[0]].state[1] = 1;
+			 current = val[0];
+		}
+
+
+		// position may be changed when the panel is animated (opening closing):
+		function pos(val)
+		{
+			incrX = pos.x - prevPos.x;
+			incrY = pos.y - prevPos.y;
+
+			var x = Browser.windowSize[0];
+			titleLayer.translation[0] = -0.5 + pos[0]/x ;
+
+			var len = buttons.children.length;			
+			var childs = buttons.children;
+			for (i=0; i<len; ++i)
+			{
+				buttons.children[i].pos = new SFVec3f(childs[i].pos[0]+incrX, childs[i].pos[1]+incrY, childs[i].pos[2]);
+			}
+
+			prevPos = pos;
+		}
+
+		function current(val)
+		{
+			var len = buttons.children.length;
+			//first disable previous
+			for(i=0; i<len ; i++)
+			{
+				if(buttons.children[i].state[1] == 1)
+				{
+					buttons.children[i].state[1] = 0;
+					break;
+				}
+			}
+
+			buttons.children[current].state[1] = 1;
+		}
+
+		"
+	}
+
+
+
+																 
+}
+
+
+RadioButtonGroup
+{
+	pos	0 100 300
+	current	0
+	title	"Texturing techniques"
+	names	["button one", "two", "three"]
+}

@@ -1,0 +1,295 @@
+#VRML V2.0 utf8
+
+
+EXTERNPROTO CheckButton
+[
+	exposedField MFString name
+	exposedField SFVec3f pos
+	exposedField MFInt32	state
+	eventOut MFInt32 state_out
+
+]
+["checkbutton.wrl#CheckButton"]
+
+EXTERNPROTO	RadioButtonGroup
+[
+	exposedField MFString	title
+	exposedField SFVec3f pos # x,y: offset of the line; z : offset of the button
+	exposedField SFInt32 current #the first check button
+	exposedField MFString	names
+	exposedField SFInt32 visibility
+]
+["radiobuttongroup.wrl#RadioButtonGroup"]
+
+
+EXTERNPROTO Slider[
+	exposedField MFString name
+	exposedField SFVec3f pos
+	eventOut MFInt32 state_out
+	exposedField SFVec2f range
+	exposedField SFInt32 current
+]
+"slider.wrl#Slider"
+
+
+
+
+
+
+PROTO	InterfaceLayer
+[
+	exposedField SFInt32 width 250
+	exposedField MFNode	elements []
+]{
+
+	DEF interfaceLayer Layer2D
+	{
+		size 1 1
+		children[
+			Shape
+			{
+				geometry DEF interfaceRec Rectangle {size 1 1}
+				appearance Appearance	{material DEF layerMat Material {diffuseColor 0.8 0.8 0.8 transparency 0.8 emissiveColor 0.8 0.8 0.8}}
+		  }
+			# The panel horizontal sliding button (open - close)
+			DEF	moveHorzTrf Transform
+			{
+				children
+				[
+					DEF	touch_s_moveHorz TouchSensor	{}
+					Shape
+					{
+						geometry DEF move_horz_rec Rectangle  {size 0.05 0.05}
+						appearance Appearance { texture DEF ImgTex ImageTexture { parameter "compress"  url "./interfaceMaps/move_button.png"} 
+							textureTransform DEF texTrf TextureTransform {}}
+					}
+				]
+			}
+		]
+	}
+
+	Group
+	{
+		children IS	elements
+	}
+
+
+	DEF ts TimeSensor
+	{
+		cycleInterval	1
+		loop FALSE
+	}
+
+	DEF	ms MouseSensor {}
+
+
+	DEF	ts_color TimeSensor
+	{
+		cycleInterval	0.5
+		loop FALSE
+	}
+
+
+	DEF script Script
+	{
+		directOutput TRUE
+		exposedField SFInt32 width IS width
+		exposedField MFNode	elements IS	elements
+		
+		field	SFNode interfaceLayer USE interfaceLayer
+		field	SFNode interfaceRec USE	interfaceRec
+		field	SFNode texTrf USE	texTrf
+		field	SFNode ImgTex USE	ImgTex
+		field	SFNode layerMat USE	layerMat 
+		
+
+		field	SFNode moveHorzTrf USE moveHorzTrf
+		field	SFNode move_horz_rec USE move_horz_rec
+
+		field	SFNode ts_color USE	ts_color
+
+
+		eventIn	SFVec2f	getWindowSize
+		eventIn	SFFloat move_in
+		eventIn	SFTime stopTime_in
+		eventIn	SFBool isOver_in
+		eventIn	SFVec2f	mouse_move_in
+		eventIn	SFFloat ts_color_in
+
+		field	SFNode touch_s_moveHorz USE touch_s_moveHorz
+		field	SFFloat	prevTime 0
+		field	SFInt32 horiz_move 0 # 0 = directed to the left, 1 = moves to the left, 2 = directed to the right, 3 = moves to the right
+
+
+		field	SFBool isMouseOnPanel FALSE
+
+
+		url	"javascript:
+
+		function initialize()
+		{
+			Browser.addRoute(Browser, 'windowSize', Browser.getScript(), 'getWindowSize');
+			getWindowSize(Browser.windowSize);
+
+		}
+
+		function shutdown()
+		{
+			Browser.deleteRoute(Browser, 'windowSize', Browser.getScript(), 'getWindowSize');
+		}
+
+
+		function getWindowSize(val)
+		{
+			var x = Browser.windowSize[0];
+			var y = Browser.windowSize[1];
+
+			//panel (layer):
+			interfaceRec.size = new SFVec2f(2*width/x, 2*y/x);
+			// move button:
+			move_horz_rec.size = new SFVec2f(50/x, 50/x);
+
+			// translation
+			if (horiz_move == 0) // panel is open
+			{
+				// panl:
+				interfaceLayer.translation[0] = -0.5 + 0.25*interfaceRec.size.x;
+				// move button:
+				moveHorzTrf.translation[0] = (width)/x - 0.5*move_horz_rec.size.x;
+			}
+			if (horiz_move == 2) // panel is closed
+			{
+				// panel:
+				interfaceLayer.translation[0] = -0.5 - 0.25*interfaceRec.size.x;
+				// move button:
+				moveHorzTrf.translation[0] = (width)/x + 0.25*move_horz_rec.size.x;
+			}
+
+		}
+
+
+		// animation of the panel movement:
+		function move_in(val)
+		{
+			var x = Browser.windowSize[0];
+			var y = Browser.windowSize[1];
+
+			if (horiz_move == 1) // move to the left
+			{
+				interfaceLayer.translation[0] = -0.5 + 0.25*interfaceRec.size.x - width*val/x;
+				var len = elements.length;
+				for (i=0; i<len; ++i)
+				{
+					elements[i].pos = new SFVec3f(elements[i].pos[0] - width*(val-prevTime), elements[i].pos[1], elements[i].pos[2]);
+				}
+			}
+			if (horiz_move == 3) // move to the right
+			{
+				interfaceLayer.translation[0] = -0.5 - 0.25*interfaceRec.size.x + width*val/x;
+				var len = elements.length;
+				for (i=0; i<len; ++i)
+				{
+					elements[i].pos = new SFVec3f(elements[i].pos[0] + width*(val-prevTime), elements[i].pos[1], elements[i].pos[2]);
+				}
+			}
+			prevTime = val;
+		}
+
+
+		// set the movement state of the panel
+		function stopTime_in(val)
+		{
+			var x = Browser.windowSize[0];
+			var y = Browser.windowSize[1];
+
+			horiz_move = (++horiz_move)%4;
+			if (horiz_move == 0)
+			{
+				moveHorzTrf.translation[0] = width/x - 0.5*move_horz_rec.size.x;
+				texTrf.rotation = 0;
+			}
+			if (horiz_move == 2)
+			{
+				moveHorzTrf.translation[0] = width/x + 0.5*move_horz_rec.size.x;
+				texTrf.rotation = Math.PI;
+			}
+
+			prevTime = 0;
+		}
+
+
+		// change the appearance of the horizontal move button:
+		function isOver_in(val)
+		{
+			if (val==0)
+				ImgTex.url = './interfaceMaps/move_button.png';
+			else
+				ImgTex.url = './interfaceMaps/move_over.png';
+
+		}
+
+
+		// change the transparancy of the panel:
+		function mouse_move_in(val)
+		{
+			var x = Browser.windowSize[0];
+
+			if (0.5*x*(val.x	+ 1) < width && !isMouseOnPanel)
+			{
+				isMouseOnPanel = true;
+				//layerMat.transparency = 0.2;
+				ts_color.startTime = Browser.time_changed;
+			}
+
+			if (0.5*x*(val.x	+ 1) > width && isMouseOnPanel)
+			{
+				isMouseOnPanel = false;
+				layerMat.transparency = 0.8;
+				ts_color.startTime = Browser.time_changed;
+			}
+		}
+
+
+			function ts_color_in(val)
+			{
+				if (isMouseOnPanel)
+					layerMat.transparency = 0.2 + 0.6*(1-val);
+				else
+					layerMat.transparency = 0.2 + 0.6*val;
+			}
+			
+
+
+		"
+	}
+
+	ROUTE	touch_s_moveHorz.touchTime	TO ts.startTime
+	ROUTE	ts.fraction_changed	TO script.move_in
+	ROUTE	ts.cycleTime TO script.stopTime_in
+	ROUTE	touch_s_moveHorz.isOver	TO script.isOver_in
+	ROUTE	ms.position TO script.mouse_move_in
+	ROUTE	ts_color.fraction_changed	TO script.ts_color_in
+
+}
+
+
+Background
+{
+	skyColor 1 0 0
+}
+
+
+InterfaceLayer
+{
+	elements
+	[
+		RadioButtonGroup { title "New and old buildings" names ["Old", "New"] pos 10 300 200}
+		RadioButtonGroup
+		{
+			pos	40 200 300
+			title	"Texturing techniques"
+			names	["Displacement" "Bump map" "Texture+Phong"]
+		} 
+		Slider { range 0 10 current 5 name "Trees animation" pos 20 -100 30}
+	]
+}

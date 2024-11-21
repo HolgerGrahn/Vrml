@@ -1,0 +1,222 @@
+#VRML V2.0 utf8
+
+EXTERNPROTO Rectangle [
+	exposedField SFVec2f size
+]
+["urn:inet:bitmanagement.de:node:Rectangle"]
+
+
+EXTERNPROTO	Button
+[
+	exposedField MFString name 
+	exposedField SFVec3f pos # x,y: offset of the line; z : offset of the button
+	exposedField MFInt32	state
+	eventOut MFInt32 state_out
+	exposedField MFString	textures
+]
+"button.wrl#Button"
+
+PROTO Slider[
+	exposedField MFString name "slider name"
+	exposedField SFVec3f pos 50 0 100 # x,y: offset of the line; z : offset of the button
+	eventOut MFInt32 state_out
+	exposedField SFVec2f range 0 10
+	exposedField SFInt32 current 5
+
+]
+{
+
+	DEF titleLayer Layer2D
+	{
+		size 1 1
+		children[
+			
+			# title of the slider
+			Shape{
+				appearance DEF TxtApp Appearance{
+					material Material{
+						diffuseColor .5 .5 .5
+						emissiveColor 0 0 0
+					}
+				}
+				geometry DEF titleText Text{
+					fontStyle DEF textFS FontStyle {
+						family "TEXT_TEXTURE"
+					}
+					string IS name
+				}													 
+			}
+			# slider bar
+			DEF barTrf Transform2D
+			{
+				children[
+					Shape {geometry DEF sliderRec Rectangle {}
+						appearance Appearance { texture DEF ImgTex ImageTexture { parameter "compress"  url "./interfaceMaps/slider_bar.png"} }
+					}
+				]
+			}
+
+			# slider pointer (indicator)
+			DEF pointerTrf Transform2D
+			{
+				children
+					Shape {
+						geometry DEF pointerRec Rectangle { }
+						appearance Appearance { texture DEF pointerImgTex ImageTexture { parameter "compress"  url "./interfaceMaps/slider_pointer.png"} }
+					}
+			}
+			
+		]
+	}
+
+
+	# Plus and minus buttons
+	DEF buttonMinus Button { name "" pos 50 -30 50 textures ["./interfaceMaps/slider_minus.png", "./interfaceMaps/slider_minus_over.png", "./interfaceMaps/slider_minus_pushed.png"] state [0 0]}
+	DEF buttonPlus  Button { name "" pos 150 -30 150 textures ["./interfaceMaps/slider_plus.png", "./interfaceMaps/slider_plus_over.png", "./interfaceMaps/slider_plus_pushed.png"] state [1 0]}	
+
+
+
+	DEF script Script
+	{
+		directOutput TRUE
+		exposedField MFString name IS	name
+		exposedField SFVec3f pos IS	pos
+		eventOut MFInt32 state_out IS	state_out
+		exposedField SFVec2f range IS	range
+		exposedField SFInt32 current IS	current
+
+		field	SFNode textFS USE textFS
+		field	SFNode titleLayer USE titleLayer
+		field	SFNode titleText USE titleText
+
+		field	SFNode barTrf USE	barTrf
+		field	SFNode sliderRec USE sliderRec
+
+		field	SFNode buttonM USE buttonMinus
+		field	SFNode buttonP USE	buttonPlus
+
+		field	SFNode pointerTrf USE	pointerTrf
+		field	SFNode pointerRec USE	pointerRec
+
+		eventIn	SFVec2f	getWindowSize
+		eventIn	SFBool touch_in
+		eventIn	SFBool isOver_in # changes the appearance of the Plus and Minus buttons
+		eventIn	MFInt32	stateChanges
+
+		field	SFInt32	barInLen 80
+		field	SFInt32	barLen 116 # 76 pixels
+		field	SFInt32	barLen2 58 # half of bar length
+		field	SFInt32	buttonSize 35
+		field	SFFloat	increment 1
+
+
+		# store the previous position (in case of panel movement)
+		# to get the increment and compute the move of the children
+		field	SFVec3f	prevPos 0 0 0
+
+
+		url	"javascript:
+
+		function initialize()
+		{
+			Browser.addRoute(buttonM, 'state_out', Browser.getScript(), 'stateChanges');
+			Browser.addRoute(buttonP, 'state_out', Browser.getScript(), 'stateChanges');
+			Browser.addRoute(Browser, 'windowSize', Browser.getScript(), 'getWindowSize');
+			// position the minus and plus buttons (they have no titles):
+			buttonM.pos = new SFVec3f(pos.x, pos.y - 30, pos.z);
+			buttonP.pos = new SFVec3f(pos.x, pos.y - 30, pos.z+2*barLen);
+
+			increment = barInLen/(range[1] - range[0]);
+
+			prevPos = pos;
+
+			getWindowSize(Browser.windowSize);
+		}
+
+		function shutdown()
+		{
+			Browser.deleteRoute(buttonM, 'state_out', Browser.getScript(), 'stateChanges');
+			Browser.deleteRoute(buttonP, 'state_out', Browser.getScript(), 'stateChanges');
+			Browser.deleteRoute(Browser, 'windowSize', Browser.getScript(), 'getWindowSize');
+		}
+
+
+		function stateChanges(val)
+		{
+			if (val[0] == 0 && val[1] == 1 && current > range[0] ) // minus button:
+			{
+				current--;
+				state_out = val;
+			}
+			else
+				if (val[0] == 1 && val[1] == 1 && current < range [1])
+				{
+					current++;
+					state_out = val;
+				}
+
+			var x = Browser.windowSize[0];
+
+			pointerTrf.translation[0] = (pos[2] + buttonSize + 2*current*increment)/x;
+			pointerTrf.translation[1] = -50/x;
+
+		}
+
+
+		function getWindowSize(val)
+		{
+			var x = Browser.windowSize[0];
+			var y = Browser.windowSize[1];
+
+			textFS.size = 40/x;
+			titleLayer.translation[0] = -0.5 + pos[0]/x ;
+			
+			titleLayer.translation[1] = pos[1]/y ;
+
+			barTrf.translation[0] = (pos[2] + barLen)/x;
+			barTrf.translation[1] = (-48)/x;
+			// The sliderRec is here adapted to the aspect of the texture
+			sliderRec.size = new SFVec2f(5.4*textFS.size, 2.3*textFS.size);
+
+			pointerTrf.translation[0] = (pos[2] + buttonSize + 2*current*increment)/x;
+			pointerTrf.translation[1] = -48/x;
+			pointerRec.size = new SFVec2f(1.5*textFS.size, 1.5*textFS.size);
+
+			titleText.string = name; // update the node
+
+		}
+
+
+		// pos may be handed over from the InterfaceLayer (panel) object
+		// when the panel is opening or closing, so moving all its elements:
+		function pos(val)
+		{
+			incrX = pos.x - prevPos.x;
+			incrY = pos.y - prevPos.y;
+
+			var x = Browser.windowSize[0];
+			var y = Browser.windowSize[1];
+
+			titleLayer.translation[0] = -0.5 + pos[0]/x ;
+
+			buttonM.pos = new SFVec3f(buttonM.pos[0]+incrX, buttonM.pos[1]+incrY, buttonM.pos[2]);
+			buttonP.pos = new SFVec3f(buttonP.pos[0]+incrX, buttonP.pos[1]+incrY, buttonP.pos[2]);
+
+			prevPos = pos;
+		}
+
+
+		"
+	}
+
+
+}
+
+
+Background
+{
+	skyColor 1 1 1
+}
+
+Slider { }
+

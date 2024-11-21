@@ -1,0 +1,110 @@
+#VRML V2.0 utf8
+
+PROTO TextPair[
+	exposedField MFString textTitle "text Title"
+	exposedField MFString textValue "text Value"
+	exposedField SFVec2f textTitleOffset 50 0
+	exposedField SFVec2f textValueOffset 300 0
+	exposedField SFInt32 enabled 0
+]
+{
+	Switch
+	{
+		whichChoice	IS enabled
+		choice
+		[
+			Group
+			{
+				children
+				[
+					DEF titleLayer Layer2D{
+						size 1 1
+						children[
+							DEF titleTextTrf Transform{
+								children[
+									Shape{
+										appearance DEF TxtApp Appearance{
+											material Material{
+												diffuseColor .5 .5 .5
+												emissiveColor 1 0 0
+											}
+										}
+										geometry DEF titleText Text{
+											fontStyle DEF textFS FontStyle {
+												family "Arial"
+												style "PLAIN"
+											}
+											string IS textTitle
+										}													 
+									}
+								]
+							}
+						]
+					}
+
+
+					DEF valueLayer Layer2D{
+						size 1 1
+						children[
+							DEF valueTextTrf Transform{
+								children[
+									Shape{
+										appearance USE TxtApp
+										geometry DEF valueText Text{
+											fontStyle USE	textFS
+											string IS textValue
+										}
+									}
+								]
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+
+	Script
+	{
+		exposedField MFString textTitle IS	textTitle
+		exposedField MFString textValue IS	textValue
+		exposedField SFVec2f textTitleOffset IS	textTitleOffset
+		exposedField SFVec2f textValueOffset IS	textValueOffset
+		field	SFNode textFS USE textFS
+		field	SFNode titleLayer USE titleLayer
+		field	SFNode valueLayer USE valueLayer
+		field	SFNode titleText USE titleText
+		field	SFNode valueText USE valueText
+
+		eventIn	SFVec2f	getWindowSize
+
+		url	"javascript:
+
+		function initialize()
+		{
+			Browser.addRoute(Browser, 'windowSize', Browser.getScript(), 'getWindowSize');
+			getWindowSize(Browser.windowSize);
+		}
+
+		function shutdown()
+		{
+			Browser.deleteRoute(Browser, 'windowSize', Browser.getScript(), 'getWindowSize');
+		}
+
+
+		function getWindowSize(val)
+		{
+			var x = Browser.windowSize[0];
+			var xf = x/1000;
+			textFS.size = 0.05/xf;
+			titleLayer.translation[0] = -0.5 + textTitleOffset[0]/x ;
+			valueLayer.translation[0] = -0.5 + textValueOffset[0]/x ;
+			titleText.string = textTitle; // update the node
+			valueText.string = textValue; // update the node
+		}
+
+		"
+	}
+}
+
+TextPair {}

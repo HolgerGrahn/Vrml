@@ -1,0 +1,179 @@
+#VRML V2.0 utf8
+
+EXTERNPROTO Rectangle [
+	exposedField SFVec2f size
+]
+["urn:inet:bitmanagement.de:node:Rectangle"]
+
+PROTO CheckButton[
+	exposedField MFString name "button name"
+	exposedField SFVec3f pos 50 0 300 # x,y: offset of the line; z : offset of the button
+	exposedField MFInt32	state [0,	0]				# first is ID second is state value
+	eventOut MFInt32 state_out
+]
+{
+
+	DEF titleLayer Layer2D
+	{
+		size 1 1
+		children[
+			DEF ts TouchSensor	{	}
+			
+			# title
+			Shape{
+				appearance DEF TxtApp Appearance{
+					material Material{
+						diffuseColor 0 0 0 #.5 .5 .5
+						emissiveColor .5 .5 .5 # 0 0 0
+					}
+				}
+				geometry DEF titleText Text{
+					fontStyle DEF textFS FontStyle {
+						family "TEXT_TEXTURE"
+						justify	["BEGIN" "FIRST"]
+					}
+					string IS name
+				}													 
+			}
+			
+			# check button
+			DEF buttonTrf Transform2D
+			{
+				children[
+					Shape {geometry DEF recFalse Rectangle  {size 0.05 0.05}
+						appearance Appearance { texture DEF ImgTex ImageTexture { parameter "compress" 
+							url ["./interfaceMaps/check_button_false.png" ]
+						} }
+					}
+				]
+			}
+
+		]
+	}
+
+
+
+
+	DEF script Script
+	{
+		directOutput TRUE
+		exposedField MFString name IS	name
+		exposedField SFVec3f pos IS	pos
+		exposedField MFInt32 state IS state
+		eventOut MFInt32 state_out IS	state_out
+
+		field	SFNode textFS USE textFS
+		field	SFNode titleLayer USE titleLayer
+		field	SFNode titleText USE titleText
+		field	SFNode buttonTrf USE	buttonTrf
+		field	SFNode recFalse USE recFalse
+		field	SFNode ImgTex USE	ImgTex
+
+
+		eventIn	SFVec2f	getWindowSize
+		eventIn	SFBool touch_in
+		eventIn	SFBool isOver_in
+
+
+		url	"javascript:
+
+		function initialize()
+		{
+			Browser.addRoute(Browser, 'windowSize', Browser.getScript(), 'getWindowSize');
+			getWindowSize(Browser.windowSize);
+			state(state);
+		}
+
+		function shutdown()
+		{
+			Browser.deleteRoute(Browser, 'windowSize', Browser.getScript(), 'getWindowSize');
+		}
+
+
+		function getWindowSize(val)
+		{
+			var x = Browser.windowSize[0];
+			var y = Browser.windowSize[1];
+
+			textFS.size = 40/x;
+			titleLayer.translation[0] = -0.5 + pos[0]/x ;
+			titleLayer.translation[1] = pos[1]/y ;
+
+			buttonTrf.translation[0] = pos[2]/x;
+			buttonTrf.translation[1] = 10/x;
+
+			recFalse.size = new SFVec2f(textFS.size, textFS.size);
+			titleText.string = name; // update the node
+
+		}
+
+
+		// checking/unckeking the button by pressing mouse:
+		function touch_in(val)
+		{
+			if (state[1] == 0 && val==1)
+			{
+				state[1] =	1;
+				ImgTex.url = './interfaceMaps/check_button_true.png';
+				state_out = state;
+			}
+			else if (val == 1)
+			{
+				state[1] =	0;
+				ImgTex.url = './interfaceMaps/check_button_false.png';
+				state_out = state;
+			}
+		}
+
+
+		// change the appearance of the check button:
+		function isOver_in(val)
+		{
+			if (state[1] == 0 && val == 1) // not checked
+				ImgTex.url = './interfaceMaps/check_button_false_over.png';
+			else if (state[1] == 0 && val == 0)
+				ImgTex.url = './interfaceMaps/check_button_false.png';
+			else if (state[1] == 1 && val == 1) // not checked
+				ImgTex.url = './interfaceMaps/check_button_true_over.png';
+			else if (state[1] == 1 && val == 0)
+				ImgTex.url = './interfaceMaps/check_button_true.png';
+		}
+
+
+		// check/uncheck the button (signal from outside like checkbox group):
+		function state(val)
+		{
+			if (val[1] == 0)
+				ImgTex.url = './interfaceMaps/check_button_false.png';
+			else
+				ImgTex.url = './interfaceMaps/check_button_true.png';
+		}
+
+
+		// change the position. This may happen when the Panel (InterfaceLayer)
+		// panel is animated (opening, closing)
+		function pos(val)
+		{
+			var x = Browser.windowSize[0];
+			var y = Browser.windowSize[1];
+
+			titleLayer.translation[0] = -0.5 + pos[0]/x ;
+			titleLayer.translation[1] = pos[1]/y ;
+		}
+
+
+		"
+	}
+
+	ROUTE	ts.isActive	TO script.touch_in
+	ROUTE	ts.isOver	TO script.isOver_in
+}
+
+
+Background
+{
+	skyColor 1 1 1
+}
+
+CheckButton { state [0,1]}
+

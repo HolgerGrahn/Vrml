@@ -1,0 +1,11 @@
+# File created by luuv TSX
+# Created on: Mon May 27 11:04:20 2013 -1
+
+newmtl Sphere,1
+Ns 0
+Ka 0.000000 0.000000 0.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+d 0.996078
+map_Kd ogre_eye_tex.png 
+# End

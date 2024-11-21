@@ -1,0 +1,246 @@
+#VRML V2.0 utf8
+
+###
+#	several points of interest protos
+##
+
+
+PROTO pointOfInterest [	
+	exposedField SFVec3f position 0 0 0
+
+	exposedField MFString textureUrl []
+]
+{
+	Transform	{
+		translation	 IS	position
+		children [
+			## vertical line creating a flag
+			Transform {
+				children [
+					Shape {
+						geometry IndexedLineSet	{
+							color Color	{
+								color [0 0 0]
+							}
+							colorIndex [0 0]
+							coord DEF flagCoords Coordinate {								
+								point [0 0 0, 0 5 0]
+							}
+							coordIndex [0 1]
+						}
+					}
+				]
+			}
+
+	
+			Transform {
+				translation	0 6 0
+				children																						
+				Billboard
+				{
+					axisOfRotation 0 0 0
+					children [
+
+						Shape {
+							geometry Rectangle { size 2 2 }
+							appearance DEF textAppearance Appearance {													
+								material Material {
+									emissiveColor 1 1 1
+								}
+								texture	ImageTexture { parameter "compress" 
+									url	IS textureUrl
+								}
+							}
+						}
+					]
+				}						
+			} 
+		]
+	}
+}
+
+
+
+
+
+PROTO	POIView
+[
+	exposedField SFVec3f poi_position 0 0 0 # POIView pisition (position of POI = point of interest)
+	exposedField SFVec3f vp_position 0 0 0 # viewpoint position (location of the viewpoint in the nearabouts of POIView)
+	exposedField SFRotation	vp_orientation 1 0 0 0 # viewpoint orientation
+	exposedField SFString	vp_name ""
+	exposedField MFString	title []	# title of the POIView (ex. "Stadtmuseum")
+	exposedField SFVec2f title_pos 0 0 
+	exposedField MFString	image_info ""
+	exposedField MFString	thumbnail ""
+	exposedField SFVec2f img_size 1 1
+	eventOut MFString	image_info_out
+]
+{
+	Transform
+	{
+		translation	IS poi_position
+		children
+		[
+			DEF TS TouchSensor	{}
+			DEF tf Transform
+			{
+				children
+				[
+					pointOfInterest
+					{
+						textureUrl IS	thumbnail
+					}
+					Transform
+					{
+						translation	0 4 0
+						children
+						[
+							Billboard		# Bilboard with the description of the pointOfInterest
+							{
+								axisOfRotation 0 0 0
+								children
+								[
+									Shape
+									{
+										geometry Text	{
+											fontStyle FontStyle { size 0.75 family "TEXT_TEXTURE"} string IS title
+										}
+										appearance Appearance	{ material DEF VS_material Material { diffuseColor 0 0 0 transparency 1 emissiveColor 1 0 0} }
+									}
+								]
+							}
+						]
+					}
+				]
+			}
+			DEF VP Viewpoint
+			{
+				position IS	vp_position
+				orientation	IS vp_orientation
+				description IS vp_name
+				jump FALSE
+			}
+		]
+	}
+
+
+	DEF photo Switch
+	{
+		whichChoice	-1
+		choice
+		[
+			DEF layer Layer3D		# Image of the POI (ex. Photo of the Stadtmuseum with the comments)
+			{
+				viewpoint	ViewVolume
+				{
+					perspective	FALSE
+					size 1 1
+					aspectMode "STRETCH"
+				}
+				size 1 1
+				children
+				[
+					DEF label Shape
+					{
+						geometry Rectangle { size 1 1 }
+						appearance Appearance	{ texture ImageTexture { parameter "compress" url IS image_info } }
+					}
+				]
+			}
+		]
+	}
+
+
+
+
+
+	DEF POIView_script Script
+	{
+		field	SFNode script USE	POIView_script
+		field	SFNode VP USE VP
+		eventIn	SFTime	vp_in
+		eventIn	SFBool over_in
+		eventIn	SFVec3f getViewpoint
+		eventIn	SFVec2f	getWindowSize
+		field	SFNode tf USE	tf
+		field	SFNode photo USE photo
+		exposedField SFVec3f poi_position IS	poi_position
+		directOutput TRUE
+		exposedField SFVec2f img_size IS img_size
+		field SFBool isOver FALSE
+		field	SFNode layer USE layer
+		field	SFNode mat USE VS_material
+		exposedField SFVec2f title_pos IS title_pos
+		exposedField MFString	title IS title
+		exposedField MFString image_info IS image_info
+
+
+		eventOut MFString	image_info_out IS	image_info_out
+		
+
+		url	"javascript:
+
+		function initialize()
+		{
+			Browser.addRoute(Browser, 'viewpointPosition', script, 'getViewpoint');
+			Browser.addRoute(Browser, 'windowSize', script, 'getWindowSize');
+
+			image_info_out = image_info;
+
+			getWindowSize(Browser.windowSize);
+		}
+
+		function shutdown()
+		{
+			Browser.deleteRoute(Browser, 'viewpointPosition', script, 'getViewpoint');
+			Browser.deleteRoute(Browser, 'windowSize', script, 'getWindowSize');
+		}
+	
+		function vp_in(val)
+		{
+			VP.set_bind = val;
+			image_info_out = image_info;
+		}
+
+
+		// Show the POI title when the mouse cursor is over:
+		function over_in(val)
+		{
+			if (val)
+			{
+				isOver = 1;
+				mat.transparency = 0;
+			}
+			else
+			{
+				isOver = 0;
+				mat.transparency = 1;
+			}
+		}
+
+
+		// preserve the size of the POI icons when the distance to them change:
+		function getViewpoint(val)
+		{
+			br_pos = Browser.viewpointPosition;
+			var vec = br_pos.subtract(poi_position);
+			len = 0.02*vec.length();
+			tf.scale = new SFVec3f(len, len, len);
+		}
+
+		// preserve the size of the photo (layer) when the viewport is changed:
+		function getWindowSize(val)
+		{
+			layer.size[0] = img_size[0]/val[0];
+			layer.size[1] = img_size[1]/val[1];
+		}
+	
+		"
+	}
+
+
+	ROUTE	TS.isOver	TO POIView_script.over_in
+	ROUTE TS.touchTime TO POIView_script.vp_in
+
+}

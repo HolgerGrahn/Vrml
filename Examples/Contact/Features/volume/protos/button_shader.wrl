@@ -1,0 +1,189 @@
+#VRML V2.0 utf8
+
+EXTERNPROTO Rectangle [
+	exposedField SFVec2f size
+]
+["urn:inet:bitmanagement.de:node:Rectangle"]
+
+PROTO Button[
+	exposedField MFString name "button name"
+	exposedField SFVec3f pos 50 0 300 # x,y: offset of the line; z : offset of the button
+	eventOut MFInt32 state_out
+	exposedField MFString	texture ""
+]
+{
+
+	DEF titleLayer Layer2D
+	{
+		size 1 1
+		children[
+			DEF ts TouchSensor	{	}
+			
+			Shape{
+				appearance DEF TxtApp Appearance{
+					material Material{
+						diffuseColor .5 .5 .5
+						emissiveColor 1 0 0
+					}
+				}
+				geometry DEF titleText Text{
+					fontStyle DEF textFS FontStyle {
+						family "TEXT_TEXTURE"
+					}
+					string IS name
+				}													 
+			}
+			
+		DrawGroup
+		{
+			sortedAlpha FALSE
+			#restoreOp TRUE
+			drawOp
+			[
+  			DrawOp{
+  				op [
+    				106 0 # don't switch BLEND / ALPHA state on texture alpha  (new function )
+    				3 1  # alpha test
+    				4 5     # alpha func greater
+    				5 128 # alpha ref , can be tweaked
+    				108 1 # super sample, optional NVIDIA extension when multi sampling enabled 
+					]
+				}
+			]
+			children
+
+				DEF buttonTrf Transform2D
+				{
+					children[
+						Shape {
+							geometry DEF recFalse Rectangle  {size 0.1 0.1}
+							#appearance Appearance { texture DEF ImgTex ImageTexture {} }
+							appearance ShaderAppearance
+							{
+								texture	DEF ImgTex ImageTexture { parameter "compress" url IS texture}
+
+								vertexShader DEF vs VertexShader
+								{
+									url "blur.fx"
+									field SFTime time 0
+									field SFBool isOver false
+									field SFBool isPushed false
+								}
+							}
+						}
+					]
+				}
+			}
+		]
+	}
+
+
+
+
+	DEF script Script
+	{
+		directOutput TRUE
+		exposedField MFString name IS	name
+		exposedField SFVec3f pos IS	pos
+		eventOut MFInt32 state_out IS	state_out
+		exposedField MFString	texture IS texture
+
+		field	SFNode textFS USE textFS
+		field	SFNode titleLayer USE titleLayer
+		field	SFNode titleText USE titleText
+		field	SFNode buttonTrf USE	buttonTrf
+		field	SFNode recFalse USE recFalse
+		field	SFNode ImgTex USE	ImgTex
+
+
+		eventIn	SFTime time_in
+		field	SFNode vs USE	vs
+		field	SFInt32	int_time 0
+
+		eventIn	SFVec2f	getWindowSize
+		eventIn	SFBool touch_in
+		eventIn	SFBool isOver_in
+
+
+		url	"javascript:
+
+		function initialize()
+		{
+			Browser.addRoute(Browser, 'windowSize', Browser.getScript(), 'getWindowSize');
+			Browser.addRoute(Browser, 'time_changed', Browser.getScript(), 'time_in');
+			getWindowSize(Browser.windowSize);
+			texture = 'slider_minus.png';
+		}
+
+		function shutdown()
+		{
+			Browser.deleteRoute(Browser, 'windowSize', Browser.getScript(), 'getWindowSize');
+			Browser.deleteRoute(Browser, 'time_changed', Browser.getScript(), 'time_in');
+		}
+
+
+		function getWindowSize(val)
+		{
+			var x = Browser.windowSize[0];
+			textFS.size = 50/x;
+			titleLayer.translation[0] = -0.5 + pos[0]/x ;
+
+			var y = Browser.windowSize[1];
+			var yf = y/1000;
+			titleLayer.translation[1] = pos[1]/y ;
+			buttonTrf.translation[0] = (pos[2])/x;
+			buttonTrf.translation[1] = (15)/x;
+
+			titleText.string = name; // update the node
+			recFalse.size = new SFVec2f(1.5*textFS.size, 1.5*textFS.size);
+
+		}
+
+
+		function touch_in(val)
+		{
+			if (val==1)
+				vs.isPushed = true;
+			else
+				vs.isPushed = false;
+		}
+
+
+
+		function isOver_in(val)
+		{
+			if (val==1)
+				vs.isPushed = true;
+			else
+				vs.isPushed = false;
+
+		}
+
+
+
+
+		function time_in(val)
+		{
+			int_time = 1e-5*val;
+			int_time *= 1e5;
+			vs.time = (val-int_time);
+		}
+
+
+		"
+	}
+
+	ROUTE	ts.isActive	TO script.touch_in
+	ROUTE	ts.isOver	TO script.isOver_in
+
+
+}
+
+
+Background
+{
+	skyColor 1 1 1
+}
+
+Button { texture "slider_minus.png"}
+

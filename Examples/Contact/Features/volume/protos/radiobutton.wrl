@@ -1,0 +1,149 @@
+#VRML V2.0 utf8
+
+EXTERNPROTO Rectangle [
+	exposedField SFVec2f size
+]
+["urn:inet:bitmanagement.de:node:Rectangle"]
+
+PROTO RadioButton[
+	exposedField MFString name "button name"
+	exposedField SFVec3f pos 50 0 300 # x,y: offset of the line; z : offset of the button
+	exposedField MFInt32	state [0,	0]				# first is ID second is state value
+	eventOut MFInt32 state_out
+]
+{
+
+	DEF titleLayer Layer2D
+	{
+		size 1 1
+		children[
+			DEF ts TouchSensor	{	}
+			
+			Shape{
+				appearance DEF TxtApp Appearance{
+					material Material{
+						diffuseColor .5 .5 .5
+						emissiveColor 1 0 0
+					}
+				}
+				geometry DEF titleText Text{
+					fontStyle DEF textFS FontStyle {
+						family "TEXT_TEXTURE"
+					}
+					string IS name
+				}													 
+			}
+			
+			DEF valueTextTrf Transform2D
+			{
+				children[
+					DEF checker Switch
+					{
+						whichChoice	0
+						choice
+						[
+							DEF rec1 Shape {geometry DEF recFalse Rectangle  {size 0.05 0.05}
+								appearance Appearance { texture ImageTexture { parameter "compress" url "radio_button_false.png"} }
+							}
+							DEF rec2 Shape {geometry DEF recTrue Rectangle  {size 0.05 0.05}
+								appearance Appearance { texture ImageTexture { parameter "compress" url "radio_button_true.png"} }
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+
+
+
+
+	DEF script Script
+	{
+		directOutput TRUE
+		exposedField MFString name IS	name
+		exposedField SFVec3f pos IS	pos
+		exposedField MFInt32 state IS state
+		eventOut MFInt32 state_out IS	state_out
+
+		field	SFNode textFS USE textFS
+		field	SFNode titleLayer USE titleLayer
+		field	SFNode titleText USE titleText
+		field	SFNode valueTextTrf USE	valueTextTrf
+		field	SFNode checker USE checker
+		field	SFNode recTrue USE recTrue
+		field	SFNode recFalse USE recFalse
+		eventIn	SFVec2f	getWindowSize
+		eventIn	SFBool touch_in
+
+
+		url	"javascript:
+
+		function initialize()
+		{
+			Browser.addRoute(Browser, 'windowSize', Browser.getScript(), 'getWindowSize');
+			getWindowSize(Browser.windowSize);
+			checker.whichChoice= state[1];
+		}
+
+		function shutdown()
+		{
+			Browser.deleteRoute(Browser, 'windowSize', Browser.getScript(), 'getWindowSize');
+		}
+
+
+		function getWindowSize(val)
+		{
+			var x = Browser.windowSize[0];
+			textFS.size = 50/x;
+			titleLayer.translation[0] = -0.5 + pos[0]/x ;
+
+			var y = Browser.windowSize[1];
+			var yf = y/1000;
+			titleLayer.translation[1] = pos[1]/y ;
+			valueTextTrf.translation[0] = (pos[2])/x;
+			valueTextTrf.translation[1] = (10)/x;
+
+			titleText.string = name; // update the node
+			recTrue.size = new SFVec2f(textFS.size, textFS.size);
+			recFalse.size = new SFVec2f(textFS.size, textFS.size);
+
+		}
+
+
+		function touch_in(val)
+		{
+			if (state[1] == 0 && val==1)
+			{
+				state[1] =	1;
+				checker.whichChoice = 1;
+				state_out = state;
+			}
+			else if (val == 1)
+			{
+				state[1] =	0;
+				checker.whichChoice = 0;
+				state_out = state;
+			}
+		}
+
+		function state(val)
+		{
+			checker.whichChoice = val[1];
+		}
+
+
+		"
+	}
+
+	ROUTE	ts.isActive	TO script.touch_in
+}
+
+
+Background
+{
+	skyColor 1 1 1
+}
+
+RadioButton { }
+

@@ -1,0 +1,62 @@
+#VRML V2.0 utf8
+
+
+Background
+{
+	skyColor 1 1 1
+}
+
+DEF buttonTrf Transform2D
+{
+	children[
+		Shape {
+
+			appearance ShaderAppearance
+			{
+				texture	DEF bricktex ImageTexture{url "slider_plus.png"}
+
+				vertexShader DEF vs VertexShader
+				{
+					url "blur.fx"
+					field SFTime time 0
+					field SFBool isOver false
+					field SFBool isPushed false
+				}
+			}
+			geometry DEF recFalse Rectangle  {size 0.1 0.1}
+		}
+	]
+}
+
+
+
+Script
+{
+	eventIn	SFTime time_in
+	field	SFNode vs USE	vs
+	field	SFInt32	int_time 0
+
+	url	"javascript:
+	
+	
+	function initialize()
+	{
+		Browser.addRoute(Browser, 'time_changed', Browser.getScript(), 'time_in');
+	}
+
+	function shutdown()
+	{
+		Browser.deleteRoute(Browser, 'time_changed', Browser.getScript(), 'time_in');
+	}
+
+
+	function time_in(val)
+	{
+		int_time = 1e-5*val;
+		int_time *= 1e5;
+		vs.time = (val-int_time);
+	}
+	
+	
+	"
+}

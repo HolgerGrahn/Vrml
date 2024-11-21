@@ -1,0 +1,112 @@
+#VRML V2.0 utf8
+
+EXTERNPROTO Rectangle [
+	exposedField SFVec2f size
+]
+["urn:inet:bitmanagement.de:node:Rectangle"]
+
+PROTO TextArea[
+	exposedField MFString text "text content"
+	exposedField SFVec3f pos 50 0 300 # x,y: offset of the line; z : offset of the button
+	exposedField SFInt32 width 200
+]
+{
+
+	DEF titleLayer Layer2D
+	{
+		size 1 1
+		children[
+			
+			# title
+			Shape{
+				appearance DEF TxtApp Appearance{
+					material Material{
+						diffuseColor .5 .5 .5
+						emissiveColor 0 0 0
+					}
+				}
+				geometry DEF titleText Text{
+					fontStyle DEF textFS FontStyle {
+						family "TEXT_TEXTURE"
+					}
+					string IS	text
+				}													 
+			}
+		]
+	}
+
+
+
+
+	DEF script Script
+	{
+		directOutput TRUE
+		exposedField MFString text IS	text
+		exposedField SFVec3f pos IS	pos
+
+
+		field	SFNode textFS USE textFS
+		field	SFNode titleLayer USE titleLayer
+		field	SFNode titleText USE titleText
+
+
+		eventIn	SFVec2f	getWindowSize
+
+
+
+		url	"javascript:
+
+		function initialize()
+		{
+			Browser.addRoute(Browser, 'windowSize', Browser.getScript(), 'getWindowSize');
+			getWindowSize(Browser.windowSize);
+
+		}
+
+		function shutdown()
+		{
+			Browser.deleteRoute(Browser, 'windowSize', Browser.getScript(), 'getWindowSize');
+		}
+
+
+		function getWindowSize(val)
+		{
+			var x = Browser.windowSize[0];
+			var y = Browser.windowSize[1];
+
+			textFS.size = 35/x;
+			titleLayer.translation[0] = -0.5 + pos[0]/x ;
+			titleLayer.translation[1] = pos[1]/y ;
+
+			titleText.string = text; // update the node
+
+		}
+
+
+
+		// change the position. This may happen when the Panel (InterfaceLayer)
+		// panel is animated (opening, closing)
+		function pos(val)
+		{
+			var x = Browser.windowSize[0];
+			var y = Browser.windowSize[1];
+
+			titleLayer.translation[0] = -0.5 + pos[0]/x ;
+			titleLayer.translation[1] = pos[1]/y ;
+		}
+
+
+
+		"
+	}
+
+}
+
+
+Background
+{
+	skyColor 1 1 1
+}
+
+TextArea { text "test Text"}
+

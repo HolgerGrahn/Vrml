@@ -1,0 +1,143 @@
+#VRML V2.0 utf8
+
+EXTERNPROTO CheckButton
+[
+	exposedField MFString name
+	exposedField SFVec3f pos
+	exposedField MFInt32	state
+	eventOut MFInt32 state_out
+
+]
+["checkbutton.wrl#CheckButton"]
+
+
+Background
+{
+	skyColor 0 0 0
+}
+
+
+PROTO	CheckButtonGroup
+[
+	exposedField MFString	title ""
+	exposedField SFVec3f pos 50 0 300 # x,y: offset of the line; z : offset of the button
+	exposedField MFString	names []
+]
+{
+	DEF buttons Group
+	{
+	}
+
+
+
+	# title
+	DEF titleLayer Layer2D
+	{
+		size 1 1
+		children[
+			DEF titleTextTrf Transform{
+				children[
+					Shape{
+						appearance DEF TxtApp Appearance{
+							material Material{
+								diffuseColor .5 .5 .5
+								emissiveColor 0 0 1
+							}
+						}
+						geometry DEF titleText Text{
+							fontStyle DEF textFS FontStyle {
+								family ["TEXT_TEXTURE"]
+							}
+						}													 
+					}
+				]
+			}
+		]
+	}
+
+
+
+
+
+
+	DEF cbg_script Script
+	{
+		directOutput TRUE
+		exposedField MFString	names IS names
+		exposedField SFVec3f	pos IS pos
+		exposedField MFString title IS title
+
+		field	MFNode childs []
+		field	SFNode buttons USE	buttons
+		field	SFString string ""
+		field	SFNode textFS USE textFS
+		field	SFNode titleTextTrf USE titleTextTrf
+		field	SFNode titleLayer USE titleLayer
+		field	SFNode titleText USE titleText
+				
+		eventIn	SFVec2f	getWindowSize
+		eventIn	MFInt32	stateChanges
+
+
+		url	"javascript:
+	
+		function initialize()
+		{
+
+			Browser.addRoute(Browser, 'windowSize', Browser.getScript(), 'getWindowSize');
+			getWindowSize(Browser.windowSize);
+
+
+
+			var number = names.length;
+			for (i=0; i<number;++i)
+			{
+				var x = pos.x + 30; // shift relative the title
+				var y = pos.y - 30*(i+1); // the current line leave for Title
+				string += 'CheckButton{ pos ' + x + ' ' + y + ' ' + pos.z + ' state ['+ i + ' 0]}'; 
+			}
+			childs = Browser.createVrmlFromString(string);
+			buttons.addChildren = childs;
+
+			for (i=0; i<number; ++i)
+			{
+				childs[i].name = names[i];
+			}
+		}
+
+
+
+																	 
+
+		function getWindowSize(val)
+		{
+			var x = Browser.windowSize[0];
+			textFS.size = 45/xf;
+			titleLayer.translation[0] = -0.5 + pos[0]/x ;
+
+			var y = Browser.windowSize[1];
+			var yf = y/1000;
+			titleLayer.translation[1] = pos[1]/y ;
+			titleText.string = title; // update the node
+
+		}
+
+
+		"
+	}
+
+
+
+																 
+}
+
+
+CheckButtonGroup
+{
+	pos	50 100 300
+	title	"Textureing techniques"
+	names	["button one", "two", "three"]
+}
+
+
+
