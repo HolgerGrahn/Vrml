@@ -1,0 +1,129 @@
+#VRML V2.0 utf8
+
+DEF _1 Viewpoint {
+	position 0 0 6 
+	fieldOfView	1.1
+	description	"Entry"
+}
+
+DEF VIEWPOINT2 Viewpoint {
+	description	" Animated"
+	fieldOfView	1.1
+}
+
+DEF _2 NavigationInfo {type ["EXAMINE","PAN", "WALK","FLY","ANY"]}
+
+DEF _3 Background {skyColor 0.5 1 0.5}
+
+DEF ROOT  Group	{
+}
+DEF _4 Anchor {
+	children DEF _5 Transform {
+		children DEF ROOT-SHAPE Shape {
+			appearance Appearance {
+				texture ImageTexture {
+					url [
+						#"../textures/cubemaps/StPauls_CubeMap_Compressed.dds"
+						"../textures/cubemaps/sky_cube_mipmap.dds"
+						#"../textures/cubemaps/nvlobby_cube_mipmap.dds",
+						#"../textures/cubemaps/sky.dds"
+						#"../textures/cubemaps/sky_dxt1.dds"
+					]
+					repeatS FALSE 
+					repeatT FALSE 
+				}
+#			textureTransform TextureMatrixTransform 
+#				{
+#					matrix 1 0 0 0
+#							0 1 0 0
+#							0 0 1 0
+#							0 0 0 1
+#				}						
+			}
+	
+			geometry DEF _IndexedFaceSet IndexedFaceSet {
+				coord Coordinate {point [
+						-1 -1 -1,-1 1 -1,1 1 -1,1 -1 -1,
+						1 -1 -1,1 1 -1,1 1 1,1 -1 1,
+						1 -1 1,1 1 1,-1 1 1,-1 -1 1,
+						-1 -1 1,-1 1 1,-1 1 -1,-1 -1 -1,
+						1 1 1,1 1 -1,-1 1 -1,-1 1 1,
+						1 -1 -1,1 -1 1,-1 -1 1,-1 -1 -1]}
+#				texCoord TextureCoordinate {point [
+#				1 0,1 1,0 1,0 0,
+#				1 0,1 1,0 1,0 0,
+#				1 0,1 1,0 1,0 0,
+#				1 0,1 1,0 1,0 0,
+#				1 0,1 1,0 1,0 0,
+#				1 0,1 1,0 1,0 0]}
+
+				texCoord TextureCoordGen {
+					#mode "CAMERASPACEREFLECTIONVECTOR"
+					#mode "CAMERASPACEPOSITION"
+					#mode "CAMERASPACENORMAL"
+					#mode "CAMERASPACEPOSITION3"
+
+					mode "OBJECTSPACEPOSITION3"
+					#mode "GLSPHERE"
+		
+					#mode "SPHERE"
+				}
+				ccw TRUE 
+				coordIndex [
+					0,1,2,3,
+					-1,4,5,6,
+					7,-1,8,9,
+					10,11,-1,12,
+					13,14,15,-1,
+					16,17,18,19,
+					-1,20,21,22,
+					23,-1]
+				#creaseAngle 3.16
+				creaseAngle 0
+			}
+		}
+	scale 2 2 2
+}
+description "Greetings"
+parameter "title=DDS Cubemap"
+url "#VIEWPOINT2" ##   #position=5 1.6 15 orientation=0 0 1 0 animate=TRUE"
+}
+
+ DEF TS TimeSensor {
+	cycleInterval 10
+	loop TRUE 
+}
+DEF S Script {
+	field SFNode vp USE	VIEWPOINT2
+	eventIn SFFloat f
+	url "javascript:
+
+	function f(t) {
+		var a= t * 2.0*Math.PI;
+
+		vp.position =new SFVec3f(7*Math.cos(a),0,7*Math.sin(a));
+		vp.orientation = new SFRotation( new SFVec3f(0,0,1),vp.position );
+	    
+
+	}
+
+	"
+}
+ROUTE TS.fraction_changed TO S.f
+
+################ DropHandler
+
+EXTERNPROTO DropHandler [
+	field SFNode root  
+	field SFNode rootShape 
+
+] "../event/drop/drophandler.wrl#DropHandler"
+
+
+
+DropHandler	{ 
+	root USE ROOT	
+	rootShape	USE ROOT-SHAPE 
+}
+
+#################

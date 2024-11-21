@@ -1,0 +1,85 @@
+#VRML V2.0 utf8
+
+DEF _1 Viewpoint 
+{
+	description	"Inside"
+	position 0 0 0 
+	fieldOfView	1.5
+}
+DEF _2 Viewpoint 
+{
+	description	"Outside"
+	position 0 0 6 
+	fieldOfView	1.1
+}
+
+DEF _2 NavigationInfo {type ["PAN","EXAMINE", "WALK","FLY","ANY"]}
+
+DEF _3 Background {skyColor 0 0 0
+}
+DEF _5 Transform 
+	{
+		children DEF _6 Shape {
+			appearance Appearance {
+				texture ImageTexture {
+					url [
+						"../textures/cubemaps/sky_cube_mipmap.dds"
+						#"../textures/cubemaps/nvlobby_cube_mipmap.dds",
+						#"../textures/cubemaps/sky.dds"
+						"../textures/cubemaps/sky_dxt1.dds"
+					]
+					#repeatS FALSE 
+					#repeatT FALSE 
+				}
+#			textureTransform TextureMatrixTransform 
+#				{
+#					matrix 1 0 0 0
+#							0 1 0 0
+#							0 0 1 0
+#							0 0 0 1
+#				}						
+			}
+	
+			geometry DEF _IndexedFaceSet IndexedFaceSet {
+				solid FALSE
+				coord Coordinate {point [
+						-1 -1 -1,-1 1 -1,1 1 -1,1 -1 -1,
+						1 -1 -1,1 1 -1,1 1 1,1 -1 1,
+						1 -1 1,1 1 1,-1 1 1,-1 -1 1,
+						-1 -1 1,-1 1 1,-1 1 -1,-1 -1 -1,
+						1 1 1,1 1 -1,-1 1 -1,-1 1 1,
+						1 -1 -1,1 -1 1,-1 -1 1,-1 -1 -1]}
+#				texCoord TextureCoordinate {point [
+#				1 0,1 1,0 1,0 0,
+#				1 0,1 1,0 1,0 0,
+#				1 0,1 1,0 1,0 0,
+#				1 0,1 1,0 1,0 0,
+#				1 0,1 1,0 1,0 0,
+#				1 0,1 1,0 1,0 0]}
+
+				texCoord TextureCoordGen {
+					#mode "CAMERASPACEREFLECTIONVECTOR"
+					#mode "CAMERASPACEPOSITION"
+					#mode "CAMERASPACENORMAL"
+					#mode "CAMERASPACEPOSITION3"
+
+					mode "OBJECTSPACEPOSITION3"
+					#mode "GLSPHERE"
+		
+					#mode "SPHERE"
+				}
+				ccw FALSE
+				coordIndex [
+					0,1,2,3,
+					-1,4,5,6,
+					7,-1,8,9,
+					10,11,-1,12,
+					13,14,15,-1,
+					16,17,18,19,
+					-1,20,21,22,
+					23,-1]
+				creaseAngle 3.16
+			}
+		}
+	scale 2 2 2
+}

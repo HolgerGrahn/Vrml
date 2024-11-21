@@ -3,12 +3,17 @@ VRML, X3D, Media Demos and Scenes mainly for BSContact 3D Player
 
 Holger Grahn
 
+## Introduction
+Bitmanagement BSContact Player is a 3D Engine supporting DirectX9, DirectX11 and OpenGL
+It is based on the Web3D VRML Standard
 
-most examples work in the BSContact Player available 
+Here is a set of examples and demos for specific BSContact features
+
+Tthe BSContact Player is available 
 https://www.bitmanagement.de/en/products/interactive-3d-clients/bs-contact
 
 BSContact Stereo adds support for 
-Stereo Rendering, MultiView Display and  VR Occulus Rift support 
+Stereo Rendering, MultiView Display and VR Occulus Rift support 
 https://www.bitmanagement.de/en/products/interactive-3d-clients/bs-contact-stereo
 
 
@@ -17,7 +22,7 @@ More Bitmanagement developer info on
 http://sdk.bitmanagement.de/
 https://www.bitmanagement.de/developer/index.html
 
-General VRML / X3D information / Resources
+## General VRML / X3D information / Resources
 https://www.web3d.org/what-x3d-graphics
 
 VRML 97  ISO/IEC 14772-1:1997 - The Virtual Reality Modeling Language
@@ -28,8 +33,7 @@ https://www.bitmanagement.de/developer/spec/vrmlscript/vrmlscript.html
 X3D ISO/IEC 19775-1:2013
 https://www.web3d.org/documents/specifications/19775-1/V3.3/
 
-
-Launching the Player
+## Launching the BSContact Player
 
 Because drop of support for native plugins in Webbrowsers like Google Chrome, Microsoft Edge, Firefox
 you would need to load url's in the BSContact Player->File Open Command.
