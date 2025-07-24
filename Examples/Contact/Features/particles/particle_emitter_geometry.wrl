@@ -267,9 +267,9 @@ DrawGroup {
 			}
 		}
 
-
+								  
 		DEF PS-T Transform {
-			children USE PS2  ## USE PS-S
+			children USE PS2 #USE PS-S	
 		}
 
 

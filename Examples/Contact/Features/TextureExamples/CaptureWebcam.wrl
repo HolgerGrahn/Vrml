@@ -1,0 +1,831 @@
+#VRML V2.0 utf8
+#written by BS Contact Stereo (Developer)  9.285
+EXTERNPROTO Layer3D[
+		eventIn MFNode addChildren
+		eventIn MFNode removeChildren
+		exposedField MFNode children
+		exposedField SFVec2f size
+		exposedField SFNode background
+		exposedField SFNode fog
+		exposedField SFNode navigationInfo
+		exposedField SFNode viewpoint
+		exposedField SFVec3f bboxSize
+		exposedField SFVec3f bboxCenter
+		exposedField SFNode metadata
+		eventIn MFNode addChildrenLayer
+		eventIn MFNode removeChildrenLayer
+		exposedField MFNode childrenLayer
+		exposedField SFVec2f translation
+		exposedField SFInt32 depth
+		exposedField SFString aspectMode
+		]
+	["urn:inet:bitmanagement.de:node:Layer3D","http://www.bitmanagement.de/vrml/protos/nodes.wrl#Layer3D","nodes.wrl#Layer3D"]
+
+EXTERNPROTO StereoMovieTexture[
+			exposedField SFString type
+			exposedField MFInt32 viewMap
+			exposedField SFBool loop
+			exposedField SFFloat speed
+			exposedField MFString url
+			exposedField MFString rightUrl
+			exposedField MFNode textureTransform
+			exposedField SFTime startTime
+			exposedField SFTime stopTime
+			exposedField SFBool repeatS
+			exposedField SFBool repeatT
+			eventIn SFBool set_pause
+			eventIn SFBool set_unload
+			eventIn SFTime set_seekTime
+			eventIn SFFloat set_volume
+			eventIn SFString set_showPropertyPage
+			eventOut SFTime duration
+			eventOut SFBool isActive
+			eventOut SFBool isLoaded
+			eventOut SFBool isEos
+			eventOut SFBool isFlipped
+			eventOut SFTime mediaTime
+			eventOut SFVec2f imageSize
+			eventOut SFFloat imageAspect
+			exposedField SFBool scaleImage
+			exposedField MFString parameter
+			exposedField SFBool load
+			exposedField SFBool thumbEnabled
+			exposedField SFVec2f thumbSize
+			exposedField SFNode thumbTexture
+			exposedField SFBool showThumb
+			exposedField SFBool stream
+			exposedField SFTime onSaveTexture
+			exposedField MFNode outputTexture
+			exposedField SFNode textureProperties
+			exposedField SFNode metadata
+			]
+		["urn:inet:bitmanagement.de:node:StereoMovieTexture","http://www.bitmanagement.de/vrml/protos/nodes.wrl#StereoMovieTexture","nodes.wrl#StereoMovieTexture"]
+
+PROTO Button[field SFVec2f positon 0 0
+	field SFVec2f size 0.2 0.2
+	exposedField SFString description ""
+	field MFString text []
+	eventOut SFTime touched
+	exposedField SFVec2f size 0 0
+	]
+{	Layer3D {
+		children [
+			TouchSensor {touchTime IS touched
+				description IS description
+			}
+			
+			Shape {
+				appearance DEF _Appearance Appearance {material Material {emissiveColor 0 0 0.598}}
+				geometry Text {
+					string IS text
+					fontStyle DEF Font FontStyle {
+						family ["Arial","Sans"]
+						justify "MIDDLE"
+						size 0.8
+						style "PLAIN USE_TEXTURE"
+					}
+				}
+			}
+		]
+		size IS size
+		viewpoint DEF _Viewpoint Viewpoint {position 0 0.5 3}
+		translation IS positon
+		aspectMode "FIT"
+	}
+}
+EXTERNPROTO DeviceSensor[
+	exposedField SFBool enabled
+	exposedField SFString device
+	exposedField SFString eventType
+	exposedField SFNode event
+	eventOut SFBool isActive
+	exposedField SFNode metadata
+	]
+ ["urn:inet:bitmanagement.de:node:DeviceSensor","http://www.bitmanagement.de/vrml/protos/nodes.wrl#DeviceSensor","nodes.wrl#DeviceSensor"]
+WorldInfo {
+	info ["options:stereoSeparation=0.0,relativeTime=true,wwwProgress=true","StereoImageLeft:capture:Default","StereoImageRight:","StereoFormat:LEFT-RIGHT"]
+	title "StereoImage:capture:Default"
+}
+DEF NAVIGATIONINFO NavigationInfo {type ["SLIDE","ANY"]}
+DEF PanoramaShape Shape {
+	appearance Appearance {texture 	DEF STEREOMOVIE StereoMovieTexture {
+			type "LEFT-RIGHT"
+			loop TRUE 
+			url "capture:Default"
+			startTime 0
+			stopTime -1
+			repeatS FALSE 
+			repeatT FALSE 
+			parameter "subtexture"
+		}}
+	geometry EXTERNPROTO Rectangle[
+		exposedField SFVec2f size
+		exposedField SFNode metadata
+		]
+	["urn:inet:bitmanagement.de:node:Rectangle","http://www.bitmanagement.de/vrml/protos/nodes.wrl#Rectangle","nodes.wrl#Rectangle"]
+	Rectangle {size 1.777778 1}
+}
+DEF UI-Switch Switch {
+	choice[DEF _Group Group {
+		children [
+			DEF BtnStart Button {
+				positon 0.3 0.1
+				size 0.1 0.1
+				text "Start"
+			}
+			
+			DEF BtnStop Button {
+				positon 0.4 0.1
+				size 0.1 0.1
+				text "Stop"
+			}
+			
+			DEF BtnResume Button {
+				positon 0.5 0.1
+				size 0.1 0.1
+				text "Pause"
+			}
+			
+			DEF BtnMute Button {
+				positon 0.6 0.1
+				size 0.1 0.1
+				text "Mute"
+			}
+			
+	DEF _Layer3D Layer3D {
+				children [
+					DEF _DirectionalLight DirectionalLight {}
+					
+					DEF DRAG PlaneSensor {}
+					
+					Transform {
+						rotation 0 0 1 -1.57
+						children[Shape {
+							appearance Appearance {material Material {emissiveColor 0 0 0.598}}
+							geometry Cylinder {
+								height 12
+								radius 0.2
+							}
+						}]
+					}
+					
+					DEF TransSlider Transform {
+						translation -6 0 0
+						children[Shape {
+							appearance DEF _Appearance Appearance {material DEF _Material Material {emissiveColor 0 0 0.598}}
+							geometry Sphere {radius 0.4}
+						}]
+					}
+				]
+				size 0.9 0.1
+				viewpoint Viewpoint {
+					fieldOfView 0.6
+					position 0 0 5
+				}
+				translation 0.05 0
+				aspectMode "FIT"
+			}
+		]
+	}]
+	whichChoice 0
+}
+DEF MovieWorker Script {
+	eventIn SFTime start
+	eventIn SFTime stop
+	eventIn SFTime resume
+	eventIn SFTime mute
+	eventIn SFTime duration
+	eventIn SFTime mediaTime
+	eventOut SFTime startTime
+	eventOut SFTime stopTime
+	eventOut SFString dragDescription
+	field SFNode movie USE STEREOMOVIE
+	field SFNode BtnResume USE BtnResume
+	field SFBool paused FALSE 
+	field SFBool muted FALSE 
+	url "vrmlscript:
+
+	function start(now)
+	{
+		startTime= now;
+		//stopTime= now + duration;
+		stopTime = -1;
+	}
+
+	function stop(now)
+	{
+		stopTime= now;
+	}
+
+	function resume(now)
+	{
+
+		if (!movie.isActive)
+		{
+			startTime= now;
+			paused = false;
+			return;
+		}
+		paused = !paused;
+		print('set pause:'+paused);
+
+		movie.set_pause = paused;
+
+		if (paused)
+			BtnResume.text= new MFString('Play');
+   		else 
+			BtnResume.text= new MFString('Pause');
+		//set_seekTime
+
+		//startTime= now - mediaTime;
+		//stopTime=  startTime + duration;
+	}
+
+	function mute(now)
+	{
+
+		if (!movie.isActive)
+		{
+		
+			muted = false;
+			return;
+		}
+		muted = !muted;
+		print('set mute:'+muted);
+
+		movie.set_volume = (muted ? 0 : 1) ;
+	}
+	function mediaTime(t)
+	{
+
+		dragDescription = ''+t;
+		//		if(duration)
+		//			print('mediaTime: '+ t +' sec    /    '+ (Math.floor(t/duration * 100 + 5)) +' %.');
+		//		else
+		//			print('mediaTime: '+ t +' sec.');
+	}
+	"
+}
+DEF SliderWorker Script {
+	eventIn SFTime mediaTime
+	eventIn SFTime set_duration
+	eventIn SFVec3f trackPoint
+	eventOut SFTime seekTime
+	field SFTime duration 1e+030
+	eventOut SFVec3f slider_pos
+	url "vrmlscript:
+
+	function set_duration(d)
+	{
+		duration= d;
+	}
+
+	function mediaTime(t)
+	{
+		if(!duration)
+			return;
+	
+		slider_pos= new SFVec3f( -6 + t / duration * 12,  0,  0);
+	}
+	function trackPoint(d)
+	{
+		print(d);
+
+		var t= (d.x+6) / 12;
+		if (t<0) t= 0; else if (t>1) t=1.0;
+
+		if (duration>0)	   {
+
+			print('Seek t='+t);
+			seekTime = t*duration;
+		}
+
+
+		
+	}
+
+	"
+}
+DEF Printer Script {
+	eventIn SFTime set_duration
+	eventIn SFTime mediaTime
+	eventIn SFVec2f imageSize
+	eventIn SFFloat imageAspect
+	eventIn SFBool isLoaded
+	eventIn SFBool isActive
+	eventIn SFBool isEos
+	field SFTime duration 1e+030
+	field SFNode movie USE STEREOMOVIE
+	field SFNode panorama NULL 
+	field SFNode panoramaShape USE PanoramaShape
+	url "vrmlscript:
+
+
+	function isLoaded(a)
+	{
+		print('isLoaded: '+ (a? 'TRUE':'FALSE'));
+
+	
+	}
+
+	function isActive(a)
+	{
+		print('isActive: '+ (a? 'TRUE':'FALSE'));
+
+		if (!a)
+			return;
+
+		print('Url='+movie.url[0]);
+		print('StereoFormat='+movie.type);
+		print('PanoramaFormat='+panorama.type);
+  		print('Player stereo='+Browser.getOption('stereo'));
+		print('Player StereoFormat='+Browser.getOption('stereoMode'));
+	}
+
+	function isEos(a)
+	{
+		print('isEos: '+ (a? 'TRUE':'FALSE'));
+
+	}
+
+
+	function set_duration(d)
+	{
+		duration= d;
+		print('Duration='+ d);
+	}
+
+	function mediaTime(t)
+	{
+		//		if(duration)
+		//			print('mediaTime: '+ t +' sec    /    '+ (Math.floor(t/duration * 100 + 5)) +' %.');
+		//		else
+		//			print('mediaTime: '+ t +' sec.');
+	}
+
+	function imageSize(s)
+	{
+		print('imageSize='+ s);
+	}
+	function imageAspect(s)
+	{
+
+		var a=s;
+		print('imageAspect='+ s);
+		//SPLIT-HORIZONTAL
+
+
+		if (movie.type  == 'SPLIT-HORIZONTAL') {
+			a*=0.5;
+			//if (a>=
+		}
+		else if (movie.type  == 'SPLIT-VERTICAL')
+			a*=2.0;
+
+		print('resultingAspect='+ a);
+
+		if (panorama.type == 'PLANAR')
+		{
+			panorama.parameter[0]=100.0 * a;
+			panorama.parameter[1]=100.0 / a;
+
+		}
+		if (panoramaShape)
+		{
+			var n=panoramaShape.geometry;
+			if (n.getType() == 'Rectangle') 
+			{
+			   	n.size.x = a; n.size.y = 1.0;
+			}
+		}
+
+	}
+ 
+	"
+}
+DEF FullscreenWorker Script {
+	eventIn SFTime trigger
+	eventOut SFNode out
+	field SFBool fullScreen FALSE 
+	url "javascript:
+	function initialize() {
+		fullScreen= (Browser.getOption('fullScreen') == 'TRUE');
+		//print( Browser.getOption('fullScreen') );
+	}
+
+	function trigger(v,t)
+	{
+		if (fullScreen) {
+			fullScreen=Browser.setOption('fullScreen' ,'FALSE');
+		} else {		
+			fullScreen=Browser.setOption('fullScreen' ,'TRUE');
+		}
+		//print(fullScreen);
+
+	}
+	"
+}
+DEF ROOT Transform {
+	children[]
+}
+DEF ds DeviceSensor {
+	enabled TRUE 
+	eventType "drop"
+}
+DEF inputHandler Script {
+	eventIn SFNode onEvent
+	field SFNode root USE ROOT
+	field SFNode rootShape USE PanoramaShape
+	field SFNode rootMovie USE STEREOMOVIE
+	field SFNode rootSound NULL 
+	field SFString backslash "\\"
+	field SFString vrmlExtensions "wrl wrz x3d x3dz x3db stl obj"
+	field SFString movieExtensions "avi mpg mpeg rm wma wmv gif asf ogg mp4 mjpg mov mkv m2v"
+	field SFString audioExtensions "wav mp3 ac3 wma"
+	field SFString imageExtensions "jpg jpeg png bmp dib dds ico cur"
+	field SFString shaderExtensions "vhl vsh fx"
+	field SFString webbrowserExtensions "htm html swf"
+	field MFString frameParameters []
+	field SFNode target NULL 
+	eventIn MFNode addVrml
+	eventIn MFNode addMat
+	url "javascript:
+
+	// handle the event callback 
+	function onEvent(e,t)
+	{
+
+		print('Event type='+e.type+' at='+t);
+		print(' button='+e.button+' shiftKey='+e.shiftKey+' ctrlKey='+e.ctrlKey+' altKey='+e.altKey);
+		print(' position='+e.position+' keyCode='+e.keyCode+' ctrlKey='+e.ctrlKey+' altKey='+e.altKey);
+
+		if (e.type == 'drop') { // ***** handle a DROP event  
+
+			//print('Dropdata:'+e.data+',');
+			//print('Droptype:'+e.dataType);
+			//print('ControlKey:'+e.ctrlKey+',');
+
+
+			// get index where file name starts 
+			var i1 = e.data.lastIndexOf('/');
+			var i2 = e.data.lastIndexOf(backslash);
+
+			var url ='';
+			var ext ='';
+
+
+			if (i2>i1) i1=i2;
+
+			// check the data type
+			var worldUrl = Browser.getWorldURL();
+
+			if (e.dataType == 'File') {// it's an local file
+				url= e.data;
+			}	
+			else if (e.dataType == 'URL') // it's an URL dragged 
+				url = e.data;
+			else print('Drop:Cant deal with this yet.'); ;	// some special data like HTML Text 
+
+			// get extension 
+			i1 = e.data.lastIndexOf('.');
+			if (i1>0)  {
+				ext = e.data.substring(i1+1);
+				ext = ext.toLowerCase();
+			}
+
+
+			// search what is below mouse 
+			var hit = Browser.mouseSelect(e.position);
+			var cone=rootShape;
+
+			if (hit)  {
+				path = hit.hitPath; // MFNode
+				l= path.length;
+				//print('Hit');
+				while (l>0) {
+					l--;
+					if (path[l].getType() == 'Shape') {
+						cone = path[l];				  // found nearest Shape, break
+						break;
+					}
+				}
+
+			}
+		
+			var baseUrl=Browser.getBaseURL();
+
+			print(url);
+			print(ext);
+			print(baseUrl); 
+
+			if (url.length > baseUrl.length) {
+				// make url relative ?
+			}
+
+			// check extensions 
+			if (vrmlExtensions.indexOf(ext) >=0) 
+			{
+				target = cone;
+				if (e.ctrlKey)
+					addInline(url);
+				else 
+					Browser.createVrmlFromURL(url,Browser.getScript(),'addVrml');
+			
+			}
+			else if ( audioExtensions.indexOf(ext) >=0) 
+			{
+				setAudio(rootSound,url,false);
+
+			} else {
+
+				// assume image ?? 
+				if (cone) {
+					if (imageExtensions.indexOf(ext) >=0)
+						setTexture(cone,url,false);
+					else if (movieExtensions.indexOf(ext) >=0)
+						setTexture(cone,url,true);
+					else if (shaderExtensions.indexOf(ext) >=0)
+						setShader(cone,url,false);
+				}
+				else Browser.loadURL(url,frameParameters);
+			}
+
+
+			// ok done, we have handled the drop event
+			e.returnValue = 0;
+
+		}
+
+	}
+
+	// check node and set the texture url 
+	function setTexture(node,url,isMovie) 
+	{
+		if (node.getType() == 'Shape') 
+		{
+
+
+
+			var stereoFormat='MONO';
+			var panoFormat='PLANAR';
+
+			if (url.indexOf('Equirectangular')>=0)
+				panoFormat = 'SPHERICAL';
+	 		else if (url.indexOf('Dome')>=0)
+				panoFormat = 'DOME';
+
+
+			if (url.indexOf('_SBS')>=0  || url.indexOf('Side-By-Side')>=0)
+				stereoFormat = 'SPLIT-HORIZONTAL';
+
+		  	else if (url.indexOf('_AB')>=0  ||  url.indexOf('Over-Under')>=0)
+				stereoFormat = 'SPLIT-VERTICAL';
+
+			else if (url.indexOf('_3x3')>=0 ||  url.indexOf('_9.')>=0)
+				stereoFormat = 'TILED-9';
+
+			else if (url.indexOf('5tile')>=0 ||  url.indexOf('_5.')>=0)
+				stereoFormat = 'TILED-5';
+
+			//cubmemap-cross
+
+			print('StereoFormat='+ stereoFormat);
+
+			
+			if (node.appearance) ;
+			else node.appearance = new SFNode('Appearance{}');
+
+			var app = node.appearance;
+ 
+			
+
+			var tex = app.texture;
+
+			if (isMovie && tex.getType() != 'StereoMovieTexture')
+				tex=app.texture = new SFNode('StereoMovieTexture{ loop TRUE }');
+
+			if (app.texture) ;
+			else 
+				if (isMovie)
+				app.texture = new SFNode('StereoMovieTexture{}');
+			else app.texture = new SFNode('ImageTexture{}');
+		
+			
+			tex = app.texture;
+
+			if (tex.getType() == 'StereoMovieTexture') 
+			{
+				tex.type = stereoFormat;
+
+			}
+			
+
+			// check type of texture node 
+			if (tex.getType() == 'MultiTexture') 
+			{
+				if (tex.texture.length == 0) {
+					tex.texture[0] = new SFNode('ImageTexture{}');
+				}
+				tex = tex.texture[tex.texture.length-1];
+				//print('mtex'+tex.url[0]);
+			}
+
+			// Equirectangular
+
+			tex.url[0]=url;
+		
+			//print('new'+tex.getType()+'url '+tex.url[0]);
+
+
+		}
+		else {
+			// we do not know what to do 
+			print('No drop action defined for '+url);
+		}
+	}
+
+	// check node and set the texture url 
+	function setShader(node,url,isFragment) 
+	{
+		if (node.getType() == 'Shape') 
+		{
+
+			if (node.appearance && node.appearance.getType() == 'ShaderAppearance') ;
+			else node.appearance = new SFNode('ShaderAppearance{}');
+
+			var app = node.appearance;
+			
+			if (app.vertexShader) ;
+			else 
+				if (isFragment)
+				app.fragmentShader = new SFNode('FragmentShader{}');
+			else app.vertexShader = new SFNode('VertexShader{}');
+		
+			var tex = app.vertexShader;
+
+			tex.url[0]=url;
+		
+			//print('new'+tex.getType()+'url '+tex.url[0]);
+
+
+		}
+		else {
+			// we do not know what to do 
+			print('No drop action defined for '+url);
+		}
+	}
+
+	// check node and set the texture url 
+	function setAudio(node,url,isMovie) {
+		print('set audio new clip'+url);
+		//print(node.getType());
+
+		if (!node) {
+			node =new SFNode('Sound{}');
+			rootSound = node;
+			root.addChildren = new MFNode(node);
+		}
+		if (node && node.getType() == 'Sound') 
+		{
+
+			if (node.source) ;
+			else 
+				if (isMovie)
+				node.source = new SFNode('MovieTexture{loop TRUE}');
+			else node.source = new SFNode('AudioClip{loop TRUE}');
+			tex = node.source;
+			tex.url[0]=url;
+			//print('new clip'+tex.url[0]);
+
+		}
+		else {
+			// we do not know what to do 
+			print('No drop action defined for '+url);
+		}
+	}
+
+
+	// add some nodes to us
+	function addVrml(nodes) 
+	{
+
+		var n = nodes.length;
+		print('adding nodes '+n);
+
+		if (n==0) return;
+
+		if (target)
+			if (n==1) {
+
+			// special drop actions with prepared wrl files
+			var src = nodes[0];
+
+
+			if (src.getType() == 'Appearance') {
+				target.appearance = src;
+				return;
+			}
+			if (src.getType() == 'MultiTexture') {
+				if (target.appearance) ;
+				else target.appearance = new SFNode('Appearance{}');
+				target.appearance.texture = src;
+				return;
+			}
+			if (src.getType() == 'ImageTexture') {
+				if (target.appearance) ;
+				else target.appearance = new SFNode('Appearance{}');
+				target.appearance.texture = src;
+				return;
+			}
+			if (src.getType() == 'MovieTexture') {
+				if (target.appearance) ;
+				else target.appearance = new SFNode('Appearance{}');
+				target.appearance.texture = src;
+				return;
+			}
+
+			if (src.getType() == 'Material') {
+				if (target.appearance) ;
+				else target.appearance = new SFNode('Appearance{}');
+				target.appearance.material = src;
+				return;
+			}
+
+
+		}
+
+		//var world = Browser.getWorld();
+		//world.addChildren = nodes;
+
+		root.addChildren = nodes;
+
+		// if its a background lets bind it 
+		for (i=0;i<n;i++) {
+			if 	(nodes[i].getType() == 'Background') {
+				nodes[i].set_bind = true;
+				break;
+			}
+		}
+
+	}
+	"
+}
+EXTERNPROTO ViewVolume[
+	eventIn SFBool set_bind
+	exposedField SFFloat fieldOfView
+	exposedField SFBool jump
+	exposedField SFRotation orientation
+	exposedField SFVec3f position
+	exposedField SFVec3f centerOfRotation
+	exposedField SFString description
+	exposedField SFTime bindTime
+	exposedField SFBool isBound
+	exposedField SFBool perspective
+	exposedField SFVec2f center
+	exposedField SFVec2f size
+	exposedField MFInt32 viewport
+	exposedField SFFloat nearDistance
+	exposedField SFFloat farDistance
+	exposedField SFFloat focalDistance
+	exposedField SFFloat eyeDistance
+	exposedField SFFloat eyeVertDistance
+	exposedField SFString aspectMode
+	exposedField SFMatrix projectionMatrix
+	exposedField SFBool projectionMatrixEnabled
+	exposedField SFNode metadata
+	]
+["urn:inet:bitmanagement.de:node:ViewVolume","http://www.bitmanagement.de/vrml/protos/nodes.wrl#ViewVolume","nodes.wrl#ViewVolume"]
+DEF Default ViewVolume {
+	fieldOfView 0.7175413
+	orientation 0 0 1 0
+	position 0 0 1.333333
+	centerOfRotation 0 0 0
+	description "Default"
+	perspective TRUE 
+	size 1.333333 1
+	focalDistance 1.333333
+	eyeDistance 0
+	eyeVertDistance 0
+	aspectMode "FIT"
+}
+ROUTE BtnStart.touched TO MovieWorker.start
+ROUTE BtnStop.touched TO MovieWorker.stop
+ROUTE BtnResume.touched TO MovieWorker.resume
+ROUTE BtnMute.touched TO MovieWorker.mute
+ROUTE STEREOMOVIE.duration_changed TO MovieWorker.duration
+ROUTE STEREOMOVIE.mediaTime_changed TO MovieWorker.mediaTime
+ROUTE MovieWorker.startTime TO STEREOMOVIE.set_startTime
+ROUTE MovieWorker.stopTime TO STEREOMOVIE.set_stopTime
+ROUTE STEREOMOVIE.duration_changed TO SliderWorker.set_duration
+ROUTE STEREOMOVIE.mediaTime_changed TO SliderWorker.mediaTime
+ROUTE SliderWorker.slider_pos TO TransSlider.set_translation
+ROUTE DRAG.trackPoint_changed TO SliderWorker.trackPoint
+ROUTE SliderWorker.seekTime TO STEREOMOVIE.set_seekTime
+ROUTE STEREOMOVIE.isActive TO Printer.isActive
+ROUTE STEREOMOVIE.isLoaded TO Printer.isLoaded
+ROUTE STEREOMOVIE.isEos TO Printer.isEos
+ROUTE STEREOMOVIE.duration_changed TO Printer.set_duration
+ROUTE STEREOMOVIE.mediaTime_changed TO Printer.mediaTime
+ROUTE STEREOMOVIE.imageSize_changed TO Printer.imageSize
+ROUTE STEREOMOVIE.imageAspect_changed TO Printer.imageAspect
+ROUTE ds.event_changed TO inputHandler.onEvent

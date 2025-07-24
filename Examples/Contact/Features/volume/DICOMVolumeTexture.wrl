@@ -1602,17 +1602,12 @@ DEF	DICOMScript Script
 	field SFInt32 fileIndex 0
 
 	field MFString files  [
-		"VolumeMaps/VisMale.Gradient.dds"
-		"VolumeMaps/HeadVolume.dds"
-		"VolumeMaps/NoiseVolume.dds"
+		"../textures/VolumeMaps/VisMale.Gradient.dds"
+		"../textures/VolumeMaps/HeadVolume.dds"
+		"../textures/VolumeMaps/NoiseVolume.dds"
 
-		"D:\\Bitmanagement\\Customers\\Boldt Zahnarzt\\2017-12-12-DICOM\\DICOMDIRGradient.dds"
-
-		"VolumeMaps/MR-MONO2-8-16x-heart.dcm"
- 		"VolumeMaps/MR-MONO2-8-16x-heart.dds"
-
-## slower		"D:\\Bitmanagement\\Customers\\Boldt Zahnarzt\\2017-12-12-DICOM\\DICOMDIR"
-
+		#"VolumeMaps/MR-MONO2-8-16x-heart.dcm"
+ 		#"VolumeMaps/MR-MONO2-8-16x-heart.dds"
 	]
 
 

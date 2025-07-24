@@ -1,0 +1,176 @@
+#VRML V2.0 utf8
+
+WorldInfo{
+	title "Particles"
+	info[
+        "Contact Particle system test using VRML Sphere"
+		"holger.grahn@gmail.com"
+	]
+}
+
+
+NavigationInfo {
+    visibilityLimit 1500
+}
+
+
+Fog	{
+	fogType	"LINEAR"
+	color  0.5 0.5 0.5
+	visibilityRange	1000
+
+}
+
+Viewpoint 
+{
+    position     37.982 -232.371 168.080
+    orientation  0.991 0.113 -0.072 0.804
+    fieldOfView  1
+ 	description "Start"
+}
+
+
+Viewpoint 
+{
+    position 0 5 30
+	description "Start 2"
+}
+
+Viewpoint 
+{
+    position     -3.910 -48.756 2.820
+    orientation  0.986 0.047 -0.157 1.476
+    fieldOfView  1
+	description "Front"
+}
+
+
+DEF PS-T Transform 
+{
+	children Shape {
+    	appearance  DEF PS-APP Appearance {
+        	material Material { 
+				diffuseColor  1 0.5 0.5
+				specularColor  0.9 0.9 1
+				shininess  0.7					
+				transparency 0.1 
+				##emissiveColor 1 0.5 0.5 
+			}
+           
+    	}
+    	geometry Particles 
+    	{
+        	bboxSize 150 150 150 ##  to be estimated
+        	bboxCenter 0 10 0
+        	lodRange 0 # 500 
+        	particleRadius 3.5
+			particleRadiusVariation 1
+
+			##val= (val*(1.0f-(Random0()*variation)));
+
+        	# geometry Box {}
+			geometry Sphere {}
+			sort TRUE
+        
+        	emitColor 1 1 1
+        	fadeColor 0.15 0.15 0.5
+        	fadeRate 0.1
+        	fadeAlpha 0.75
+        	emitterPosition 0 10 0
+        	emitterRadius 2				 #
+		
+        	emitterSpread 1
+        	creationRate 500
+        	creationRateVariation 0.9
+        	maxParticles 10000
+        	maxLifeTime 20
+
+        	emitVelocity 15 15 15
+			emitVelocityVariation 0.4
+        	gravity 0 -5 0   
+        	#acceleration   5 1  5
+        	acceleration   0.2 0.2 0.2 #0.5 -1  0.5
+        
+        
+        
+        	numTrails 0
+        	numSparks 0
+    	}
+	}
+}
+
+
+
+DEF PS2-T Transform 
+{
+	children DEF ROOT-SHAPE Shape {
+    	appearance  DEF PS2-APP Appearance {
+        	material Material { 
+				diffuseColor  1 0.5 0.5
+				specularColor  0.9 0.9 1
+				shininess  0.7					
+				transparency 0.3 
+				##emissiveColor 1 0.5 0.5 
+			}
+           
+    	}
+    	geometry Particles 
+    	{
+        	#bboxSize 150 150 150 ##  to be estimated
+        	#bboxCenter 0 10 0
+        	lodRange 0 # 500 
+        	particleRadius 10
+			particleRadiusVariation 1
+
+			##val= (val*(1.0f-(Random0()*variation)));
+
+        	geometry Box {}
+			#geometry Sphere { radius 1 }
+			#geometry Cone {}
+			sort TRUE
+        
+        	emitColor 0.7 0.1 .1
+			emitAlpha 0.8
+
+			emitColorVariation 0.2
+        	fadeColor 0.15 0.1 0.1
+        	fadeRate 0.1
+        	fadeAlpha 0.0
+        	emitterPosition 0 10 0
+        	emitterRadius 2				 #
+		
+        	emitterSpread 1
+        	creationRate 100
+        	creationRateVariation 0.5
+        	maxParticles 10000
+        	maxLifeTime 20
+
+        	emitVelocity 15 15 15
+        	gravity 0 -4 0   
+        	#acceleration   5 1  5
+        	acceleration   0.2 0.2 0.2 #0.5 -1  0.5
+        	emitVelocityVariation 0.2
+
+			directionAlign TRUE
+        
+        
+        	numTrails 0
+        	numSparks 0
+    	}
+	}
+}
+
+DEF	ROOT Group {}
+
+## DropHandler
+
+EXTERNPROTO DropHandler [
+	field SFNode root  
+	field SFNode rootShape 
+ ] "../event/drop/drophandler.wrl#DropHandler"
+
+################ DropHandler
+DropHandler	{ 
+	root USE ROOT	
+	rootShape	USE ROOT-SHAPE 
+}

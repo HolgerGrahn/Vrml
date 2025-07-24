@@ -1,0 +1,331 @@
+#VRML V2.0 utf8
+
+WorldInfo{
+	title "Particles - Path Test"
+	info[
+ 		"Contact Particle system test"
+	]
+}
+EXTERNPROTO Particles[
+		exposedField SFVec3f bboxSize
+		exposedField SFVec3f bboxCenter
+		exposedField SFBool enabled
+		exposedField SFBool solid
+		exposedField SFFloat lodRange
+		exposedField SFFloat particleRadius
+		exposedField SFFloat particleRadiusVariation
+		exposedField SFFloat particleRadiusRate
+		exposedField SFNode geometry
+		exposedField SFVec3f emitterPosition
+		exposedField SFFloat emitterRadius
+		exposedField SFFloat emitterSpread
+		exposedField SFVec3f emitVelocity
+		exposedField SFFloat emitVelocityVariation
+		exposedField SFRotation emitterOrientation
+		exposedField SFFloat creationRate
+		exposedField SFFloat creationRateVariation
+		exposedField SFInt32 maxParticles
+		exposedField SFTime maxLifeTime
+		exposedField SFFloat maxLifeTimeVariation
+		exposedField SFVec3f gravity
+		exposedField SFVec3f acceleration
+		exposedField SFColor emitColor
+		exposedField SFFloat emitAlpha
+		exposedField SFFloat emitColorVariation
+		exposedField SFNode emitter
+		exposedField SFColor fadeColor
+		exposedField SFFloat fadeAlpha
+		exposedField SFFloat fadeRate
+		exposedField SFFloat fadeStartFraction
+		exposedField SFInt32 numTrails
+		exposedField SFInt32 numSparks
+		exposedField SFVec3f sparkGravity
+		exposedField SFColor sparkFadeColor
+		exposedField SFBool sort
+		exposedField SFBool billboard
+		exposedField SFString geometryType
+		exposedField SFBool emitLocal
+		exposedField SFBool directionAlign
+		exposedField SFNode collisionGeometry
+		exposedField MFNode physics
+		exposedField SFNode metadata
+		]
+	["urn:inet:bitmanagement.de:node:Particles","http://www.bitmanagement.de/vrml/protos/nodes.wrl#Particles","nodes.wrl#Particles"]
+
+EXTERNPROTO FollowPathPhysicsModel[
+			exposedField SFBool enabled
+			exposedField SFFloat strength
+			exposedField SFNode path
+			exposedField SFNode metadata
+			]
+		["urn:inet:bitmanagement.de:node:FollowPathPhysicsModel","http://www.bitmanagement.de/vrml/protos/nodes.wrl#FollowPathPhysicsModel","nodes.wrl#FollowPathPhysicsModel"]
+
+
+EXTERNPROTO DrawGroup[
+	exposedField SFVec3f bboxSize
+	exposedField SFVec3f bboxCenter
+	exposedField SFBool sortedAlpha
+	exposedField MFNode drawOp
+	exposedField MFNode children
+	eventIn MFNode addChildren
+	eventIn MFNode removeChildren
+]
+["urn:inet:bitmanagement.de:node:DrawGroup","http://www.bitmanagement.de/vrml/protos/nodes.wrl#DrawGroup","nodes.wrl#DrawGroup"]
+
+EXTERNPROTO DrawOp[
+	exposedField MFInt32 op
+	exposedField MFFloat args
+]
+["urn:inet:bitmanagement.de:node:DrawOp","http://www.bitmanagement.de/vrml/protos/nodes.wrl#DrawOp","nodes.wrl#DrawOp"]
+
+
+NavigationInfo {
+	#visibilityLimit 200
+	type ["WALK" "ANY" ]
+}
+
+DEF TS TimeSensor {
+	enabled TRUE
+	loop TRUE
+	cycleInterval 10
+}
+
+Viewpoint 
+{
+	description	"Entry"
+	position 0 10 70	
+	fieldOfView 1.10
+	centerOfRotation  0 15 0
+}
+
+Viewpoint 
+{
+	description	"From Top"
+    position     0.000 151.964 0.000
+    orientation  -1.000 -0.000 0.000 1.571
+    fieldOfView  0.785
+}
+
+
+DEF Background Background { skyColor 0.2 0.2 0.4 }
+
+PointLight {
+	on FALSE
+	location 0 2 0
+	color 1 0.05 0.05
+}
+
+## test different Emitter geometry
+Switch {
+	whichChoice	-1 
+	choice
+Shape {
+	geometry
+	DEF EmitterGeometry 
+	
+#	Sphere { radius	 30 }
+	Cone { bottom  FALSE bottomRadius 30 height 30 }
+#	Box	 {size  30 30 30 }
+#	Cylinder { bottom FALSE	 radius	30 height 60 }
+
+#	IndexedFaceSet {
+#		solid FALSE
+#		creaseAngle	3.14
+#		coord Coordinate {
+#			point [ -30 0 -20,
+#				30 0 -20,
+#				30 0 20,
+#				-30 0 20 ]
+#		}
+#		texCoord TextureCoordinate {
+#			point [ 0 0, 
+#				1 0,
+#				1 1,
+#				0 1 ]
+#		}
+#		coordIndex [ 0, 1, 2, 3, -1 ]
+#	}
+}
+
+}
+
+DEF PS-S Shape 
+{
+	appearance 	Appearance {
+		##material Material { transparency 0.1 } ##emissiveColor 1 0.5 0.5 }
+		texture DEF PS-TEX 
+		ImageTexture 
+		#MovieTexture 
+		{	# loop TRUE speed	2
+			#repeatS	FALSE repeatT FALSE
+			url [
+				#"../textures/lod_tesslar.png"
+				#	"../textures/fire.png"
+				#	"../textures/flame.png"
+				#"../textures/anim/fire_ani.gif" 
+				##"../textures/particle.png" 
+				"../textures/particle.png" 
+				## "../textures/shine1.png" 
+				##"../textures/flare2.png"
+			]
+		}
+		textureTransform TextureTransform { rotation 3.14 }
+		
+	}
+	geometry 		
+	
+	DEF PS Particles 
+	{
+		bboxSize -1 -1 -1 
+		#lodRange 3000 
+		particleRadius 0.5
+		#particleRadiusRate 1 # +0.4
+		particleRadiusVariation 0.1
+		
+		#emitter USE EmitterGeometry
+		emitColor 0.95 0.95 0.95
+		emitColorVariation 0.2
+
+		fadeColor 0.8 0.3 0.1
+
+		fadeRate 0.8
+	    fadeAlpha 0
+		fadeStartFraction 0.95   # new when to start fade 
+
+		emitterPosition 0 15 0	 # use to translate emitter geometry position 
+		
+		emitterRadius  1	
+
+		emitterSpread 0.5
+		
+		creationRate 500
+
+		maxParticles 10000
+		maxLifeTime 10
+
+		emitVelocity 1 1 1
+		emitVelocityVariation 0.25		
+		gravity	0 0 0	
+		
+		numTrails 0 #4
+		numSparks 3
+		sort FALSE
+		billboard TRUE
+
+
+		physics [
+			FollowPathPhysicsModel 
+			{
+				enabled  TRUE
+				strength 2.0
+				path DEF PathIP PositionInterpolator {
+					key	[0.0 2.5 5]
+					keyValue [  0 15 0, 30 15 0, 60 30 0]
+				}
+			}
+		]
+	}
+
+}
+
+DEF	Path Shape {
+	appearance Appearance  { material Material { emissiveColor 1 0 0 } }
+	geometry DEF PathILS IndexedLineSet	{
+		coord	DEF PathCoord Coordinate { point [  0 15 0, 30 15 0, 60 30 0 ] }
+		coordIndex [ 0 1 2 ]
+	  }				  
+}
+
+
+DEF	ComputePath Script	 
+
+{	  field SFNode pathCoord USE PathCoord
+	  field SFNode pathIP USE PathIP
+	  field SFNode pathILS USE PathILS
+	  field	SFFloat	radius 20
+	  field	SFFloat	duration 10
+
+	  url "vrmlscript:
+
+	  function initialize() {
+
+		  var t=0.0;
+		  var steps = 100;
+		  var dt= duration / (steps+1);
+
+		  var w=0.0;
+		  var dw = (Math.PI	 * 8)	/ (steps+1);
+		  var r=radius;
+		  var dr= (radius/2) / steps;
+		  for (var i=0; i<steps;i++) 
+		  {
+			  var x=Math.sin(w);
+
+			  var y=Math.cos(w);
+			  if (i==0) { x=y =0.0; }
+			  var v = new SFVec3f(x*r, 15.0+ i*0.1,y*r);
+			  pathCoord.point[i] = v;
+			  pathILS.coordIndex[i] = i;
+			  pathIP.keyValue[i] = v;
+
+			   pathIP.key[i] = t;
+			   t+=dt;
+			   w+=dw;
+			   r+=dr;
+
+	   	}
+
+	  }
+	  "
+}
+	DEF Ground Transform {
+		scale 50 50 50
+		children [
+			Shape {
+				appearance Appearance { 
+					material Material { 
+						diffuseColor 0 0 0 emissiveColor 1 1 1 
+						transparency 0.2 
+					}
+					texture ImageTexture { url "../textures/gray_ground.jpg" }
+					textureTransform TextureTransform { scale 10 10 }
+				}
+				geometry DEF Square IndexedFaceSet {
+					solid FALSE
+					coord Coordinate {
+						point [ -1 0 -1,
+							1 0 -1,
+							1 0 1,
+							-1 0 1 ]
+					}
+					texCoord TextureCoordinate {
+						point [ 0 0, 
+							1 0,
+							1 1,
+							0 1 ]
+					}
+					coordIndex [ 0, 1, 2, 3, -1 ]
+				}
+			}
+		]
+	}
+
+
+	DEF PS-translation PositionInterpolator {
+		keyValue [ 0 0 0,0 0 0]
+	}
+	DEF PS-rate ScalarInterpolator {
+		keyValue [ 100  350 200  100 100  ]
+	}
+	DEF PS-spread ScalarInterpolator {
+		keyValue [ 0.25 0.5 0.1 0.25 ]
+	}
+
+
+	#ROUTE TS.fraction_changed TO PS-rate.set_fraction
+	#ROUTE PS-rate.value_changed TO PS.creationRate
+	#ROUTE TS.fraction_changed TO PS-spread.set_fraction
+	ROUTE PS-spread.value_changed TO PS.emitterSpread
+
+
+

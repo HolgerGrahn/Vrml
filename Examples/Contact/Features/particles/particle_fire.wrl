@@ -97,12 +97,12 @@ DEF	Objects Switch {
 					emitterPosition 0 2 0
 					emitterRadius 0.5
 
-					emitterSpread 0.25
+					emitterSpread 0.45
 					
-					creationRate 200
+					creationRate 400
 
-					maxParticles 500
-					maxLifeTime 2
+					maxParticles 15000
+					maxLifeTime 10
 
 					emitVelocity 4 15 4
 					#emitVelocity 15 15 15

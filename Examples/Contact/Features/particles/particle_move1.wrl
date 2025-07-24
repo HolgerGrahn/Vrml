@@ -33,7 +33,7 @@ EXTERNPROTO Particles[
         ["urn:inet:blaxxun.com:node:Particles","http://www.blaxxun.com/vrml/protos/nodes.wrl#Particles","nodes.wrl#Particles"]
 
 WorldInfo{
- title "Particles"
+ title "Particles - moving emitter"
  info[
         "Contact 4.4 Particle system test"
  ]
@@ -42,12 +42,21 @@ WorldInfo{
 NavigationInfo {
     visibilityLimit 200
     avatarSize [0.5 1.75 0.6 ]  
+	type ["WALK", "ANY" ]
+
 }
 
 DEF TS TimeSensor {
     enabled TRUE
     loop TRUE
     cycleInterval 15
+}
+Viewpoint 
+{
+    position     -0.751 1.760 45.563
+    orientation  -0.039 -0.999 -0.000 0.016
+    fieldOfView  1.000
+	 description "FAR"
 }
 
 Viewpoint 
@@ -147,12 +156,12 @@ children  DEF ROOT-SHAPE  Shape {
 		#			emissiveColor 1 0.5 0.5 
 		#			}
         texture DEF PS-TEX ImageTexture { url [ 
-				"../textures/part2gray.png"
-                ##"particle.png" 
-                "particle_t.png" 
-                "partikel.png" 
-                ## "shine1.png" 
-                ##"flare2.png"
+				##"../textures/part2gray.png"
+                "../textures/particle.png" 
+                ##"../textures/particle_t.png" 
+                ##"../textures/partikel.png" 
+                ## "../textures/shine1.png" 
+                ##"../textures/flare2.png"
                 ]
                 }
             
@@ -160,7 +169,7 @@ children  DEF ROOT-SHAPE  Shape {
     geometry DEF PS Particles 
     {
         bboxSize -1 -1 -1 
-                    particleRadius 0.3
+                    particleRadius 0.4
                     emitterPosition 0 10 0
                     emitterRadius 0
                     emitterSpread 0.5
@@ -179,6 +188,7 @@ children  DEF ROOT-SHAPE  Shape {
 					numTrails 0
                     numSparks 3
             		sparkFadeColor 0.007843 0.215686 0.709804
+				#	geometryType "LINE" # "POINT"   "SPRITE"
     }
 }
 }

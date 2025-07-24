@@ -21,3 +21,5 @@ Tangent and Binormal information per mesh vertex is created by
 		
 		
 generated shaders can be written to file , see Shader Generator.wrl
+
+Sphere_Normalmap_Brick-PackagedShader.wrl - shaders for DX9 (FX) and DX11 (hlsl) has been exported to a PackagedShader node 

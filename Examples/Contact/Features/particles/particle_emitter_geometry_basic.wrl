@@ -1,7 +1,7 @@
 #VRML V2.0 utf8
 
 WorldInfo{
-	title "Particles"
+	title "Particles with geometry emitter"
 	info[
  		"Contact 7.02 Particle system test"
 	]
@@ -62,6 +62,7 @@ EXTERNPROTO DrawOp[
 
 NavigationInfo {
 	#visibilityLimit 200
+	type ["WALK" "ANY" ]
 }
 
 DEF TS TimeSensor {
@@ -178,7 +179,6 @@ DEF PS-S Shape
 		maxParticles 2000
 		maxLifeTime 3
 
-		#emitVelocity 100 -100 100  # use direction of normal and scale with that 
 		emitVelocity 10 10 10  # use direction of normal and scale with that 
 		gravity	0 -20 0
 		emitVelocityVariation 0.25		
@@ -196,7 +196,8 @@ DEF PS-S Shape
 		children [
 			Shape {
 				appearance Appearance { 
-					material Material { diffuseColor 0 0 0 emissiveColor 1 1 1 
+					material Material { 
+						diffuseColor 0 0 0 emissiveColor 1 1 1 
 						transparency 0.2 
 					}
 					texture ImageTexture { url "../textures/gray_ground.jpg" }
