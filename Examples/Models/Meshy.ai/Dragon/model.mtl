@@ -1,0 +1,17 @@
+# Blender 3.6.0 MTL File: 'None'
+# www.blender.org
+
+newmtl Material_1.001
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd Image_0.001.jpg
+# hg map_Bump -bm 1.000000 Image_2.001.jpg
+map_Albedo chinese_dragon_with_b_1113143456_refine_albedo.jpg
+map_Metallic chinese_dragon_with_b_1113143456_refine_metallic.jpg
+map_Normal chinese_dragon_with_b_1113143456_refine_normal.jpg
+map_Roughness chinese_dragon_with_b_1113143456_refine_roughness.jpg
