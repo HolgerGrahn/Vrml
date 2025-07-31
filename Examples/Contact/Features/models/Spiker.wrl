@@ -1,0 +1,208 @@
+#VRML V2.0 utf8
+
+WorldInfo
+{
+    title "Copyright by Herbert Stocker (hersto)"
+
+    info 
+    [   "
+        The original version of this world was done by me,
+        Herbert Stocker. It can be found at
+
+            http://www.hersto.de
+
+
+        Though the geometry comes from Cécile Muller, http://www.wildpeaks.com
+
+        "        
+    ]
+}
+
+
+EXTERNPROTO Spiky
+[
+    eventIn SFBool hideILS
+]
+    "Spiky.wrl#Spiky"
+
+
+EXTERNPROTO PositionDamper
+[
+    eventIn      SFVec3f      set_input
+    field        SFVec3f  initial_input          # 0 0 0
+
+    eventOut     SFVec3f          output_changed
+    field        SFVec3f  initial_output         # 0 0 0
+    eventIn      SFVec3f      set_output
+
+    exposedField SFFloat  tau                    # 1
+
+    field        SFInt32  order                  # 1
+
+    field        SFFloat  eps                    # .001
+]
+    "Dampers.wrl#PositionDamper"
+
+
+EXTERNPROTO OrientationDamper
+[
+    eventIn      SFRotation      set_input
+    field        SFRotation  initial_input          #  0 0 1 0
+
+    eventOut     SFRotation          output_changed
+    field        SFRotation  initial_output         #  0 0 1 0
+    eventIn      SFRotation      set_output
+
+    exposedField SFFloat  tau                       # 1
+
+    field        SFInt32  order                     # 1
+
+]
+    "Dampers.wrl#OrientationDamper"
+
+
+                 
+
+
+
+DEF Worker Script
+{
+    eventOut SFVec3f    pos    
+    eventOut SFRotation ori 
+
+
+    eventIn  SFTime  Tick 
+    field    SFFloat lastTick  0
+
+    field    SFTime  NextTime   0
+
+
+    url "vrmlscript:
+
+
+    function Tick(now)
+    {
+        if(!lastTick)
+        {
+            lastTick= now;
+    return;
+        }
+
+        var delta= now - lastTick;
+
+        
+        if(now > NextTime)
+        {
+            pos= new SFVec3f( Math.random() * 2 - 1
+                            , Math.random() * 2 - 1
+                            , Math.random() * 2 - 1
+                            );
+
+            ori= new SFRotation( Math.random() * 2 - 1
+                               , Math.random() * 2 - 1
+                               , Math.random() * 2 - 1
+                               ,(Math.random() * 2 - 1) * Math.PI
+                               );
+
+            NextTime= now + Math.random() * 1 + 1;
+        }
+
+
+        lastTick= now;
+    }
+
+
+    "
+}
+
+
+
+DEF Timer TimeSensor
+{
+    loop TRUE
+}
+
+ROUTE Timer.time TO Worker.Tick
+
+
+
+
+DEF TransObject Transform
+{
+    children DEF Spiky Spiky 
+    {
+    }
+}
+ 
+
+              
+DEF PosDamp1 PositionDamper    { tau .57    order 5 }
+DEF OriDamp1 OrientationDamper { tau .57    order 5 }
+
+                  
+ROUTE Worker.pos TO PosDamp1.set_input
+ROUTE Worker.ori TO OriDamp1.set_input
+
+ROUTE PosDamp1.output_changed TO TransObject.translation
+ROUTE OriDamp1.output_changed TO TransObject.rotation
+
+
+
+
+
+
+Viewpoint
+{
+    position -20 5 410
+    description "Outside"
+}
+
+Viewpoint
+{
+    position -6.6 -7.5 111
+    fieldOfView 2
+    description "Don't Touch Me!"
+}
+
+#Viewpoint
+#{
+#    position -.75 6 19298
+#    fieldOfView .01
+#    description "So close?"
+#}
+
+#Viewpoint
+#{
+#    position 16 58 3805
+#    fieldOfView .01 
+#    description "Between the Spikes"
+#}
+
+#Viewpoint
+#{
+#    position 107 -79 551 
+#    fieldOfView 0.3
+#    description "In the Corner"
+#}
+
+
+#DEF VpInside Viewpoint
+#{
+#    position 0 0 30
+#    fieldOfView 1.1
+#    description "Inside"
+#}
+
+#ROUTE VpInside.isBound TO Spiky.hideILS
+
+
+
+NavigationInfo
+{
+    type [ "EXAMINE" "ANY" ]
+
+#    type "NONE"
+
+    headlight TRUE
+}
+
