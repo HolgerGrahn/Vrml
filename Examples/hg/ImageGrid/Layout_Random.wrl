@@ -1081,23 +1081,23 @@ Layer3D {
 
 
 Background {
-	backUrl	"backgrounds/panosky/pano_sky_3_512.jpg"
-	bottomUrl	"backgrounds/panosky/pano_sky_6_16.png"
-	frontUrl	"backgrounds/panosky/pano_sky_1_512.jpg"
-	leftUrl	"backgrounds/panosky/pano_sky_4_512.jpg"
-	rightUrl	"backgrounds/panosky/pano_sky_2_512.jpg"
-	topUrl	"backgrounds/panosky/pano_sky_5_512.jpg"
+	backUrl	"../../Contact/Features/textures/background/panosky/pano_sky_3_512.jpg"
+	bottomUrl	"../../Contact/Features/textures/background/panosky/pano_sky_6_16.png"
+	frontUrl	"../../Contact/Features/textures/background/panosky/pano_sky_1_512.jpg"
+	leftUrl	"../../Contact/Features/textures/background/panosky/pano_sky_4_512.jpg"
+	rightUrl	"../../Contact/Features/textures/background/panosky/pano_sky_2_512.jpg"
+	topUrl	"../../Contact/Features/textures/background/panosky/pano_sky_5_512.jpg"
 }
 
-DEF background Background {
-	skyColor 0 0 0.1
-	leftUrl "../textures/starstr.gif"	
-	rightUrl "../textures/starstr.gif"	
-	backUrl "../textures/starstr.gif"	
-	frontUrl "../textures/starstr.gif"	
-	topUrl "../textures/starstr.gif"	
-	bottomUrl "../textures/starstr.gif"	
-}
+#DEF background Background {
+#	skyColor 0 0 0.1
+#	leftUrl "../textures/starstr.gif"	
+#	rightUrl "../textures/starstr.gif"	
+#	backUrl "../textures/starstr.gif"	
+#	frontUrl "../textures/starstr.gif"	
+#	topUrl "../textures/starstr.gif"	
+#	bottomUrl "../textures/starstr.gif"	
+#}
 
 NavigationInfo {
 	type [ "FLY" "WALK" "ANY" ]
