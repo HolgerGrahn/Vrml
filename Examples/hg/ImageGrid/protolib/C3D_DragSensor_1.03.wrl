@@ -1,0 +1,75 @@
+#VRML V2.0 utf8
+
+EXTERNPROTO C3D_PlaneXY [
+	field SFBool solid
+	exposedField MFColor color
+]
+"C3D_PlaneXY_1.00.wrl#C3D_PlaneXY"
+
+# Simplified DragSensor that works with Layer3D
+
+PROTO C3D_DragSensor [
+	eventOut SFFloat fraction_changed	# outputs 0.0 - 1.0
+	eventOut SFVec3f translation_changed
+	eventOut SFBool isActive
+	eventOut SFBool isOver
+]
+{
+	Group {
+		children [
+			Shape {
+				geometry C3D_PlaneXY {}
+				appearance Appearance {
+					material Material {
+						transparency 1
+					}
+				}
+			}
+
+			DEF touchSensor TouchSensor {
+				isActive IS	isActive
+				isOver IS isOver
+			}
+		]
+	}
+
+	DEF	dragSensorScript Script {
+
+		eventIn	SFBool set_isActive
+		eventIn	SFVec2f	set_hitTexCoord
+
+		field SFBool isActive FALSE
+		field SFVec2f hitTexCoord 0 0
+
+		eventOut SFFloat fraction_changed IS fraction_changed
+		eventOut SFVec3f translation_changed IS	translation_changed
+
+		directOutput TRUE
+
+		url	"javascript:
+
+		function set_isActive(v) {
+
+			isActive = v;
+
+		}
+
+		function set_hitTexCoord(v) {
+
+			if (isActive) {
+
+				fraction_changed = v.x;
+				translation_changed = new SFVec3f(v.x, v.y, 0);
+
+			}
+
+		}
+
+		"
+	}
+
+	ROUTE touchSensor.isActive TO dragSensorScript.set_isActive
+	ROUTE touchSensor.hitTexCoord_changed TO dragSensorScript.set_hitTexCoord
+
+}
+

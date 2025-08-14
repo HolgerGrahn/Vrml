@@ -1,0 +1,158 @@
+#VRML V2.0 utf8
+
+WorldInfo {
+	title "C3D_GuiIcon"
+	info [
+		"Creates a 1 x 1 multi-purpose, generic icon comprising the visual"
+		"state representation only (i.e. no button logic) for use by other"
+		"GUI elements. Uses a single texture for all icon states, where each"
+		"quadrant of the texture represents a different state as follows:"
+		""
+		"+-------+-------+"
+		"|       |       |"
+		"|  !on  |   on  |"
+		"| !over | !over |"
+		"|       |       |"
+		"+-------+-------+"
+		"|       |       |"
+		"|  !on  |   on  |"
+		"|  over |  over |"
+		"|       |       |"
+		"+-------+-------+"
+		""
+		"Copyright © 2000-2006 Construct 3D <www.construct3d.com>"
+		"Brian Hay <bhay@construct3d.com>"
+		""
+		"---------- HISTORY ----------"
+		""
+		"060429  1.06  bhay  added WorldInfo" 
+		"060207  1.05  bhay  -" 
+		"050813  1.04  bhay  -"
+		"060201  1.03  bhay  -"
+		"050704  1.02  bhay  -"
+		"050222  1.01  bhay  -"
+		"041101  1.00  bhay  initial commit"
+	]
+}
+
+PROTO C3D_GuiIcon [
+	exposedField SFBool	enabled	TRUE
+	exposedField SFNode texture NULL
+	exposedField SFNode sound	NULL
+	exposedField SFBool on		FALSE
+	exposedField SFBool over	FALSE
+	exposedField SFBool active	FALSE
+]
+{
+	Shape {
+		geometry IndexedFaceSet {
+			coord Coordinate {
+	    		point [
+					-.5 -.5 0
+		    		.5 -.5 0
+		    		.5 .5 0
+		    		-.5 .5 0
+				]
+			}
+			coordIndex [ 0, 1, 2, 3, 0, -1 ]
+			texCoord TextureCoordinate {
+				point [
+					0.03125 0.03125
+					0.96875 0.03125
+					0.96875 0.96875
+					0.03125 0.96875
+				]
+			}
+			texCoordIndex [ 0, 1, 2, 3, 0, -1 ]
+		}
+		appearance Appearance {
+			material DEF material Material {}
+			texture IS texture
+			textureTransform DEF texXfrm TextureTransform {
+				scale .5 .5
+			}
+		}
+	}
+
+	DEF sound Sound	{
+		source IS sound
+		minBack 9
+		minFront 9
+	}
+
+    DEF iconScript Script {
+		field			SFNode	texXfrm		USE texXfrm
+		field			SFNode	sound		USE sound
+		field			SFNode	material	USE material
+		exposedField	SFBool	active		IS	active
+		exposedField	SFBool	on			IS	on
+		exposedField	SFBool	over		IS	over
+		exposedField	SFBool	enabled		IS	enabled
+
+		directOutput TRUE
+
+        url	"javascript:
+		
+		function initialize() {
+			update();
+		}
+
+		function over(v) {
+			update();
+		}
+
+		function on(v) {
+			update();
+		}
+
+		function enabled(v) {
+			update();
+		}
+
+        function active(v, t) {
+			if (active) {
+				sound.source.startTime = t;
+			}
+        }
+
+		function update() {
+			var x = on   ? 1 : 0;
+			var y = over ? 0 : 1;
+			texXfrm.translation = new SFVec2f(x, y);
+			material.transparency = enabled ? 0 : .5;
+		}  
+
+		"
+    }
+
+}
+
+
+
+
+
+# testing
+
+DEF icon C3D_GuiIcon {
+	texture	ImageTexture { url "maps/icon_grey_close.png" }
+	enabled	FALSE
+}
+
+DEF	touch TouchSensor {}
+
+ROUTE touch.isOver TO icon.over
+
+DEF	scr Script {
+	eventIn	SFTime touchTime
+	field SFNode icon USE icon
+	field SFBool on FALSE
+	directOutput TRUE
+	url	"javascript:
+	function touchTime() {
+		on = !on;
+		icon.on = on;
+	}
+	"
+}
+
+ROUTE touch.touchTime TO scr.touchTime

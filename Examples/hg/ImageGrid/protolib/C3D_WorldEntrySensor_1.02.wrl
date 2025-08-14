@@ -1,0 +1,96 @@
+#VRML V2.0 utf8
+
+# C3D_WorldEntryTime
+#
+# Copyright 2005 Construct 3D <www.construct3d.com>
+# Brian Hay <bhay@construct3d.com>
+#
+# Outputs the world entry time.
+# Use as a trigger for world entry events as initialize() doesn't generate a timestamp.
+# delay can be useful to compensate for online loading, initialisation and timing issues
+# if crucial initialization events aren't firing, increase delay
+#
+# ---------- HISTORY ----------
+# 
+# 051221  1.02  bhay  template update
+# 050815  1.01  bhay  -
+# 040611  1.00  bhay  initial commit
+
+
+EXTERNPROTO C3D_Timer [
+	exposedField SFBool enabled
+	exposedField SFTime duration
+	exposedField SFTime startTime
+	exposedField SFTime stopTime
+	field SFNode console
+	field SFBool debug
+	eventOut SFTime time
+	eventOut SFTime finishedTime
+	eventOut SFBool isFinished
+	eventOut SFFloat fraction_changed
+	eventOut SFBool isActive
+	eventOut SFBool isLoaded
+]
+"C3D_Timer_1.05.wrl#C3D_Timer"
+
+PROTO C3D_WorldEntrySensor [
+	eventOut SFTime enterTime
+	eventOut SFBool enterBool
+	field SFTime delay 1
+
+	field SFNode console NULL
+	field SFBool debug FALSE
+	eventOut SFBool isLoaded
+]
+{
+	DEF	firstTimer TimeSensor { loop TRUE }
+
+	DEF	delayTimer C3D_Timer { duration IS delay }
+
+	DEF	scriptMain Script {
+
+		eventIn	SFTime set_time
+		eventIn	SFBool set_isFinished
+		eventIn	SFTime finishedTime
+		field SFNode firstTimer USE firstTimer
+		field SFNode delayTimer USE delayTimer
+		eventOut SFTime	enterTime IS enterTime
+		eventOut SFBool	enterBool IS enterBool
+
+		field SFNode console IS	console
+		field SFBool debug IS debug
+		eventOut SFBool	isLoaded IS	isLoaded
+
+		directOutput TRUE
+		mustEvaluate TRUE
+
+		url	"javascript:
+
+		function initialize() {
+
+			isLoaded = true;
+			msg( 'isLoaded = true' ); 
+
+		}
+
+		function set_time(now) {
+
+			firstTimer.enabled = false;
+			delayTimer.startTime = now;
+
+		}
+
+		function finishedTime(now) {
+
+			enterTime = now;
+			enterBool = true;
+
+		}
+
+		function msg( str ) { if ( debug && console ) console.set_message = 'C3D_WorldEntrySensor: ' + str; }
+
+		"
+	}
+	ROUTE firstTimer.time TO scriptMain.set_time
+	ROUTE delayTimer.finishedTime TO scriptMain.finishedTime
+}

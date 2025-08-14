@@ -1,0 +1,90 @@
+#VRML V2.0 utf8
+
+WorldInfo {
+	title "C3D_Timer"
+	info [
+		"A simple timer that operates like a TimeSensor node but also outputs"
+		"finishedTime and isFinished events. It cannot loop, so therefore"
+		"cycleInterval has been renamed to duration."
+		""
+		"Copyright 2000-2006 Construct 3D <www.construct3d.com>"
+		"Brian Hay <bhay@construct3d.com>"
+		""
+		"---------- HISTORY ----------"
+		""
+		"060429  1.05  bhay  added SFBool isFinished" 
+		"051225  1.04  bhay  changed cycleInterval to duration"
+		"051221  1.03  bhay  template update"
+		"050815  1.02  bhay  -"
+		"050813  1.01  bhay  -"
+		"041210  1.00  bhay  initial commit"
+	]
+}
+
+PROTO C3D_Timer [
+	exposedField	SFBool		enabled				TRUE
+	exposedField	SFTime		duration			1
+	exposedField	SFTime		startTime			0
+	exposedField	SFTime		stopTime			0
+	field			SFNode		console				NULL
+	field			SFBool		debug				FALSE
+	eventOut		SFTime		time
+	eventOut		SFTime		finishedTime
+	eventOut		SFBool		isFinished
+	eventOut		SFFloat		fraction_changed
+	eventOut		SFBool		isActive
+	eventOut		SFBool		isLoaded
+]
+{
+	DEF timer TimeSensor {
+		enabled IS enabled
+		cycleInterval IS duration
+		startTime IS startTime
+		stopTime IS stopTime
+		fraction_changed IS fraction_changed
+		isActive IS isActive
+		time IS time
+	}
+
+	DEF mainScript Script {
+		eventIn			SFBool		set_isActive
+		exposedField	SFTime		stopTime		IS		stopTime
+		field			SFNode		timer			USE		timer
+		field			SFBool		stopped			FALSE
+		field			SFNode		console			IS		console
+		field			SFBool		debug			IS		debug
+		eventOut		SFTime		finishedTime	IS		finishedTime
+		eventOut		SFBool		isFinished		IS		isFinished
+		eventOut		SFBool		isLoaded		IS		isLoaded
+
+		directOutput TRUE
+		mustEvaluate TRUE
+
+		url "javascript:
+
+		function initialize() {
+			isLoaded = true;
+			msg('isLoaded = true'); 
+		}
+
+		function stopTime() {
+			stopped = true;
+			msg('stopTime');
+		}
+
+		function set_isActive(isActive, now) {
+			msg('set_isActive() = ' + isActive);
+			if (!isActive && !stopped) {
+				finishedTime = now;
+				isFinished = true;
+				msg('set_isActive().isFinished = true');
+			}
+		}
+
+		function msg(str) { if (debug && console) console.set_message = 'C3D_Timer: ' + str; }
+
+		"
+	}
+
+	ROUTE timer.isActive TO mainScript.set_isActive
+}

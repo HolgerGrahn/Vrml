@@ -1,0 +1,143 @@
+#VRML V2.0 utf8
+
+# C3D_GuiMomentaryButton
+#
+# Creates a momentary button
+#
+# Author: Brian Hay
+# Copyright: Virtual Realms Pty Ltd
+#
+# Node Type: Grouping
+# Compatibility: ALL
+# Dependencies: C3D_GuiBar
+
+EXTERNPROTO C3D_GuiBar [
+	exposedField SFFloat width
+	exposedField SFFloat height
+	exposedField SFBool enabled
+	exposedField SFNode texture
+	exposedField SFNode sound
+	exposedField SFBool on
+	exposedField SFBool over
+	exposedField SFBool active
+	exposedField SFFloat transparency
+]
+"C3D_GuiBar_1.06.wrl#C3D_GuiBar"
+
+PROTO C3D_GuiMomentaryButton [
+	field MFString label ["" ""]
+	field SFString toolTip "isOver message"
+	eventOut SFTime	touchTime
+	eventOut SFBool	isActive
+	eventOut SFBool	isOver
+	eventOut MFString label_changed
+	eventOut MFString toolTip_changed
+	eventOut SFTime	repeatTime_changed
+	exposedField SFBool repeat FALSE
+	exposedField SFTime	repeatInterval 1
+	exposedField SFBool enabled TRUE
+	exposedField SFNode texture NULL
+	exposedField SFNode sound NULL
+	exposedField SFFloat width 1
+	exposedField SFNode fontStyle FontStyle	{ style	"BOLD USE_TEXTURE" family ["Arial" "SANS"] justify "MIDDLE" size .8 }
+	exposedField SFFloat height 0
+	exposedField SFFloat transparency 0
+]
+{
+	Transform {
+		scale 1 1 .01
+		children [
+			DEF	icon C3D_GuiBar {
+				enabled IS enabled
+				texture IS texture
+				sound IS sound
+				on FALSE
+				over FALSE
+				active FALSE
+				width IS width
+				height IS height
+				transparency IS	transparency
+			}
+			DEF	touchSensor TouchSensor {
+				touchTime IS touchTime
+				isActive IS isActive
+				isOver IS isOver
+				enabled	IS enabled
+			}
+			DEF textXfrm Transform {
+				translation	0 -.23 1
+				children Shape {
+					geometry DEF text Text {
+						string IS label
+						fontStyle IS fontStyle
+						maxExtent IS width
+					}
+					appearance Appearance {
+						material Material {
+							transparency IS	transparency
+						}
+					}
+				}
+			}
+		]
+	}
+	
+	DEF	repeatTimer TimeSensor {
+		enabled IS repeat
+		cycleInterval IS repeatInterval
+		loop TRUE
+	}
+
+	DEF	momentaryButtonScript Script {
+		field SFNode text USE text
+
+		eventIn	SFBool set_isOver
+		eventIn	SFBool set_isActive
+		eventIn	SFTime set_repeatTime
+		field SFBool isOver FALSE
+		field SFBool isActive FALSE
+		field SFNode icon USE icon
+		field SFString toolTip IS toolTip
+		eventOut MFString toolTip_changed IS	toolTip_changed
+		eventOut SFTime	repeatTime_changed IS repeatTime_changed
+		eventOut MFString label_changed
+
+		directOutput TRUE
+
+		url	"javascript:
+
+		function initialize() {
+		}
+
+		function set_isActive(bool) {
+			isActive = bool;
+			icon.active = isActive;
+			icon.on = isActive;
+		}
+	
+		function set_isOver(bool) {
+			isOver = bool;
+			icon.over = isOver;
+			toolTip_changed = new MFString(isOver ? toolTip[0] : ' ');
+		}
+
+		function set_repeatTime(now) {
+			if (isActive) {
+				repeatTime_changed = now;
+			}
+		}
+		"
+	}
+	ROUTE touchSensor.isOver	TO momentaryButtonScript.set_isOver
+	ROUTE touchSensor.isActive	TO momentaryButtonScript.set_isActive
+	ROUTE repeatTimer.cycleTime	TO momentaryButtonScript.set_repeatTime
+}
+
+
+C3D_GuiMomentaryButton	{
+	label "hejllo 1"
+	width 5
+	texture	ImageTexture {
+		url	"maps/gui_button_background.png"
+	}
+}

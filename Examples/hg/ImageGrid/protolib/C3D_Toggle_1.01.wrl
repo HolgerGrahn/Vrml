@@ -1,0 +1,81 @@
+#VRML V2.0 utf8
+
+# C3D_Toggle
+#
+# Toggles between trueChildren and falseChildren based on explicit SFBool input or SFTime 
+# Replaces verbose Switch + scripting practice "switch.whichChoice = boolean".
+# 1.01 toggleTime accepts future time
+#
+# Author: Brian Hay
+# Copyright: Virtual Realms Pty Ltd
+#
+# Node Type: Grouping
+# Compatibility: BS Contact
+# Dependencies: None
+EXTERNPROTO C3D_Timer [
+	exposedField SFBool enabled
+	exposedField SFTime duration
+	exposedField SFTime startTime
+	exposedField SFTime stopTime
+	field SFNode console
+	field SFBool debug
+	eventOut SFTime time
+	eventOut SFTime finishedTime
+	eventOut SFBool isFinished
+	eventOut SFFloat fraction_changed
+	eventOut SFBool isActive
+	eventOut SFBool isLoaded
+]
+"C3D_Timer_1.05.wrl#C3D_Timer"
+
+PROTO C3D_Toggle [
+	eventIn SFTime toggleTime
+	exposedField SFBool toggle TRUE
+	exposedField MFNode	trueChildren []
+	exposedField MFNode	falseChildren []
+]
+{
+	DEF toggleSwitch Switch {
+		choice [
+			Group {
+				children IS	falseChildren
+			}
+			Group {
+				children IS	trueChildren
+			}
+		]
+	}
+
+	DEF	timer C3D_Timer	{
+		duration .1 # short delay before timer isFinished
+		startTime IS toggleTime # start at future time e.g. time + 5 secs
+	}
+
+    DEF toggleScript Script {
+		
+		eventIn SFTime toggleTime
+		exposedField SFBool toggle IS toggle
+		field SFNode toggleSwitch USE toggleSwitch
+		
+		directOutput TRUE
+		mustEvaluate TRUE
+
+        url	"javascript:
+		
+		function initialize() {
+			toggle(toggle);
+		}
+
+		function toggle(bool) {
+			toggleSwitch.whichChoice = bool;
+		}
+
+		function toggleTime() {
+			toggle = !toggle;
+		}
+
+		"
+    }
+
+	ROUTE timer.finishedTime TO	toggleScript.toggleTime
+}

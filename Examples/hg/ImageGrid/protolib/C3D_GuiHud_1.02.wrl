@@ -1,0 +1,135 @@
+#VRML V2.0 utf8
+
+EXTERNPROTO Layer3D [
+	exposedField SFVec3f bboxSize
+	exposedField SFVec3f bboxCenter 
+	eventIn MFNode addChildrenLayer 
+	eventIn MFNode removeChildrenLayer 
+	exposedField MFNode childrenLayer 
+	exposedField SFVec2f translation 
+	exposedField SFInt32 depth 
+	exposedField SFVec2f size 
+	exposedField SFNode background 
+	exposedField SFNode viewpoint 
+	exposedField MFNode children 
+	eventIn MFNode addChildren 
+	eventIn MFNode removeChildren 
+]
+[
+	"urn:inet:bitmanagement.de:node:Layer3D",
+	"http://www.bitmanagement.de/vrml/protos/nodes.wrl#Layer3D",
+]
+
+
+# C3D_GuiHud
+#
+# Dynamically positions GUI elements on the screen
+# based on screen aspect ratio
+#
+# Author: Brian Hay
+# Copyright: Virtual Realms Pty Ltd	trading as Construct 3D
+#
+# Node Type: Grouping
+# Compatibility: BX, BS
+# Dependencies: None
+
+# TODO: rework this to use different layers for each quadrant, then don't need to know aspect ratio at all.
+# but there could be performance overhead from so many layers
+
+EXTERNPROTO C3D_Toggle [
+	eventIn			SFTime	toggleTime
+	exposedField	SFBool	toggle
+	exposedField	MFNode	trueChildren
+	exposedField	MFNode	falseChildren
+]
+"C3D_Toggle_1.01.wrl#C3D_Toggle"
+
+EXTERNPROTO C3D_SquareXY [
+]
+"C3D_SquareXY_1.00.wrl#C3D_SquareXY"
+
+
+PROTO C3D_GuiHud [
+	exposedField	MFNode	topLeftChildren			[]
+	exposedField	MFNode	topCenterChildren		[]
+	exposedField	MFNode	topRightChildren		[]
+	exposedField	MFNode	centerLeftChildren		[]
+	exposedField	MFNode	centerCenterChildren	[]
+	exposedField	MFNode	centerRightChildren		[]
+	exposedField	MFNode	bottomLeftChildren		[]
+	exposedField	MFNode	bottomCenterChildren	[]
+	exposedField	MFNode	bottomRightChildren		[]
+
+	exposedField	SFBool	illuminate				TRUE
+	exposedField	SFFloat	fixedAspect				-1
+]
+{
+	Layer3D {
+		children [
+			DEF parentXfrm Transform {
+				children [
+					Transform { children IS	topLeftChildren }
+					Transform { children IS	topCenterChildren }
+					Transform { children IS	topRightChildren }
+					Transform { children IS	centerLeftChildren }
+					Transform { children IS	centerCenterChildren }
+					Transform { children IS	centerRightChildren }
+					Transform { children IS	bottomLeftChildren }
+					Transform { children IS	bottomCenterChildren }
+					Transform { children IS	bottomRightChildren }
+				]
+			}
+			DirectionalLight {
+				on IS illuminate
+				direction 0 0 -1
+			}
+		]
+	}
+
+	Script {
+		eventIn			SFFloat		set_windowAspect
+		exposedField	SFFloat		fixedAspect 		IS	fixedAspect
+		field			SFNode		parentXfrm			USE	parentXfrm
+		field			MFVec2f		offset [
+			-1  1,  0  1,  1  1
+			-1  0,  0  0,  1  0
+			-1 -1,  0 -1,  1 -1
+		]
+
+		directOutput TRUE
+
+		url	"javascript:
+
+		function initialize() {
+			fixedAspect(fixedAspect);
+		}
+
+		function fixedAspect(v) {
+			if (fixedAspect == -1) {
+				Browser.addRoute(Browser, 'windowAspect', Browser.getScript(), 'set_windowAspect');
+				set_windowAspect(Browser.windowAspect);
+			}
+			else {
+				Browser.deleteRoute(Browser, 'windowAspect', Browser.getScript(), 'set_windowAspect');
+				set_windowAspect(fixedAspect);
+			}
+		}
+
+		function set_windowAspect(windowAspect) {
+			var x = y = 1;
+
+			if (windowAspect > 1) {	// landscape aspect ratio
+				x = windowAspect;
+			}
+			else {					// portrait aspect ratio
+				y = 1 / windowAspect;
+			}
+
+			// update child translations
+			for (var i = 0; i < 9; i++) {
+				parentXfrm.children[i].translation = new SFVec3f(x * offset[i].x, y * offset[i].y, 0);
+			}
+		}
+		"
+	}
+}

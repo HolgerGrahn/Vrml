@@ -1,0 +1,39 @@
+#VRML V2.0 utf8
+
+PROTO C3D_PlaneXY [
+	field SFBool solid TRUE
+	exposedField MFColor color []
+]
+{
+	IndexedFaceSet {
+		solid IS solid
+		colorPerVertex FALSE
+		color Color {
+			color IS color
+		}
+		coord Coordinate {
+			point
+			[
+				-.5 -.5 0
+				.5 -.5 0
+				.5 .5 0
+				-.5 .5 0
+			]
+		}
+		coordIndex [
+			0 1 2 3 0 -1
+		]
+		texCoord TextureCoordinate {
+			point
+			[
+				0 0
+				1 0
+				1 1
+				0 1
+			]
+		}
+		texCoordIndex [
+			0 1 2 3 0 -1
+		]
+	}
+}

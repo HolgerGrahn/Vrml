@@ -1,0 +1,2927 @@
+#VRML V2.0 utf8
+
+
+DEF WorldInfo WorldInfo {
+	title "ImageGrid Random 1"
+	info [ 
+		"Grid of photos generated from external X3D file treated as playlist"
+		"(C) 2006 Holger Grahn for BSContact"
+	]
+
+}
+
+#02.2007 randommode + movable Transform2 
+# based on LayoutGrid non proto version
+#based on LayoutRandom
+# quicker random animation, faster vp animation 
+
+
+
+EXTERNPROTO MetadataSet[
+	exposedField SFNode metadata
+	exposedField SFString name
+	exposedField SFString reference
+	exposedField MFNode value
+]
+["urn:inet:bitmanagement.de:node:MetadataSet","http://www.bitmanagement.de/vrml/protos/nodes.wrl#MetadataSet","nodes.wrl#MetadataSet"]
+EXTERNPROTO MetadataString[
+	exposedField SFNode metadata
+	exposedField SFString name
+	exposedField SFString reference
+	exposedField MFString value
+]
+["urn:inet:bitmanagement.de:node:MetadataString","http://www.bitmanagement.de/vrml/protos/nodes.wrl#MetadataString","nodes.wrl#MetadataString"]
+
+
+EXTERNPROTO Rectangle[
+	exposedField SFVec2f size
+]
+["urn:inet:bitmanagement.de:node:Rectangle","http://www.bitmanagement.de/vrml/protos/nodes.wrl#Rectangle","nodes.wrl#Rectangle"]
+
+EXTERNPROTO Fog2[
+	exposedField SFColor color
+	exposedField SFString fogType
+	exposedField SFFloat visibilityRange
+	exposedField SFFloat visibilityStart
+	exposedField SFFloat density
+	exposedField SFBool radial
+	eventIn SFBool set_bind
+	eventOut SFBool isBound
+]
+["urn:inet:bitmanagement.de:node:Fog2","http://www.bitmanagement.de/vrml/protos/nodes.wrl#Fog2","nodes.wrl#Fog2"]
+
+EXTERNPROTO KeySensor[
+	exposedField SFBool eventsProcessed
+	exposedField SFBool enabled
+	eventOut SFBool isActive
+	eventOut SFInt32 keyPress
+	eventOut SFInt32 keyRelease
+	eventOut SFInt32 actionKeyPress
+	eventOut SFInt32 actionKeyRelease
+	eventOut SFBool shiftKey_changed
+	eventOut SFBool controlKey_changed
+	eventOut SFBool altKey_changed
+	eventOut SFString character
+	]
+ ["urn:inet:bitmanagement.de:node:KeySensor","http://www.bitmanagement.de/vrml/protos/nodes.wrl#KeySensor","nodes.wrl#KeySensor"]
+
+EXTERNPROTO Layer3D[
+	exposedField SFVec3f bboxSize
+	exposedField SFVec3f bboxCenter
+	eventIn MFNode addChildrenLayer
+	eventIn MFNode removeChildrenLayer
+	exposedField MFNode childrenLayer
+	exposedField SFVec2f translation
+	exposedField SFInt32 depth
+	exposedField SFVec2f size
+	exposedField SFNode background
+	exposedField SFNode fog
+	exposedField SFNode navigationInfo
+	exposedField SFNode viewpoint
+	exposedField MFNode children
+	eventIn MFNode addChildren
+	eventIn MFNode removeChildren
+]
+["urn:inet:bitmanagement.de:node:Layer3D","http://www.bitmanagement.de/vrml/protos/nodes.wrl#Layer3D","nodes.wrl#Layer3D"]
+
+EXTERNPROTO Selection [
+	exposedField SFVec3f bboxSize
+	exposedField SFVec3f bboxCenter
+	exposedField SFBool collide
+	exposedField SFBool select
+	exposedField SFNode proxy
+	exposedField MFNode children
+	eventIn MFNode addChildren
+	eventIn MFNode removeChildren
+]
+["urn:inet:bitmanagement.de:node:Selection","http://www.bitmanagement.de/vrml/protos/nodes.wrl#Selection","nodes.wrl#Selection"]
+EXTERNPROTO ImageTextureLOD[
+	exposedField SFBool repeatS
+	exposedField SFBool repeatT
+	exposedField MFString url
+	exposedField SFVec2f maxSize
+	exposedField SFNode loadingTexture
+	eventIn SFBool set_unload
+	exposedField MFString parameter
+	exposedField SFBool thumbEnabled
+	exposedField SFVec2f thumbSize
+	exposedField SFNode thumbTexture
+	exposedField SFBool showThumb
+	eventOut SFBool isLoaded
+	eventOut SFVec2f size
+	eventOut SFFloat aspect
+]
+["urn:inet:bitmanagement.de:node:ImageTextureLOD","http://www.bitmanagement.de/vrml/protos/nodes.wrl#ImageTextureLOD","nodes.wrl#ImageTextureLOD"]
+
+
+EXTERNPROTO StereoMovieTexture[
+	exposedField SFString type
+	exposedField SFBool loop
+	exposedField SFFloat speed
+	exposedField MFString url
+	exposedField MFString rightUrl
+	exposedField MFNode textureTransform
+	exposedField SFTime startTime
+	exposedField SFTime stopTime
+	exposedField SFBool repeatS
+	exposedField SFBool repeatT
+	eventIn SFBool set_pause
+	eventIn SFBool set_unload
+	eventOut SFTime duration
+	eventOut SFBool isActive
+	eventOut SFBool isLoaded
+	eventOut SFTime mediaTime
+	eventOut SFVec2f imageSize
+	eventOut SFFloat imageAspect
+	exposedField SFBool scaleImage
+	exposedField MFString parameter
+	exposedField SFBool thumbEnabled
+	exposedField SFVec2f thumbSize
+	exposedField SFNode thumbTexture
+	exposedField SFBool showThumb
+	exposedField SFNode metadata
+]
+["urn:inet:bitmanagement.de:node:StereoMovieTexture","http://www.bitmanagement.de/vrml/protos/nodes.wrl#StereoMovieTexture","nodes.wrl#StereoMovieTexture"]
+
+EXTERNPROTO FlashMovieTexture[
+	exposedField SFBool loop
+	exposedField SFFloat speed
+	exposedField MFString url
+	exposedField SFTime startTime
+	exposedField SFTime stopTime
+	exposedField SFBool repeatS
+	exposedField SFBool repeatT
+	eventIn SFBool set_unload
+	eventOut SFTime duration
+	eventOut SFBool isActive
+	eventOut SFBool isLoaded
+	eventOut SFTime mediaTime
+	eventOut SFVec2f imageSize
+	eventOut SFFloat imageAspect
+	exposedField SFBool scaleImage
+	exposedField MFString parameter
+	exposedField SFInt32 currentFrame
+	exposedField SFInt32 totalFrames
+	exposedField SFString flashVars
+	exposedField SFBool thumbEnabled
+	exposedField SFVec2f thumbSize
+	exposedField SFNode thumbTexture
+	exposedField SFBool showThumb
+	eventIn SFTime set_pause
+	eventIn SFTime set_play
+	eventIn SFTime set_stop
+	eventIn SFTime set_rewind
+	eventIn SFTime set_back
+	eventIn SFTime set_forward
+	eventIn SFInt32 set_frame
+	eventIn MFString set_variable
+	eventIn MFString set_function
+	eventIn SFBool set_mouseActive
+	eventIn SFVec2f set_mousePosition
+	exposedField SFNode metadata
+]
+["urn:inet:bitmanagement.de:node:FlashMovieTexture","http://www.bitmanagement.de/vrml/protos/nodes.wrl#FlashMovieTexture","nodes.wrl#FlashMovieTexture"]
+EXTERNPROTO MouseSensor[
+	exposedField SFBool eventsProcessed
+	exposedField SFBool enabled
+	eventOut SFBool isActive
+	eventOut SFBool lButton
+	eventOut SFBool mButton
+	eventOut SFBool rButton
+	eventOut SFFloat mouseWheel
+	eventOut SFVec2f position
+	eventOut SFVec2f client
+	eventOut SFTime leftWindow
+]
+["urn:inet:bitmanagement.de:node:MouseSensor","http://www.bitmanagement.de/vrml/protos/nodes.wrl#MouseSensor","nodes.wrl#MouseSensor"]
+
+EXTERNPROTO DeviceSensor[
+	exposedField SFBool enabled
+	exposedField SFString device
+	exposedField SFString eventType
+	exposedField SFNode event
+	eventOut SFBool isActive
+]
+["urn:inet:bitmanagement.de:node:DeviceSensor","http://www.bitmanagement.de/vrml/protos/nodes.wrl#DeviceSensor","nodes.wrl#DeviceSensor"]
+
+
+# translate 4 times 
+PROTO T4 [
+	field SFVec3f bboxSize -1 -1 -1
+	field SFVec3f bboxCenter 0 0 0
+	field MFNode children []
+	field SFVec3f scale 1 1 1
+]
+{
+	Group {
+		children [
+			Transform {
+				bboxSize IS bboxSize
+				bboxCenter IS bboxCenter
+				children IS children
+				translation 50 0 50
+				scale IS scale
+			}
+			Transform {
+				bboxSize IS bboxSize
+				bboxCenter IS bboxCenter
+				children IS children
+				translation -50 0 50
+				scale IS scale
+			}
+			Transform {
+				bboxSize IS bboxSize
+				bboxCenter IS bboxCenter
+				children IS children
+				translation 50 0 -50
+				scale IS scale
+			}
+			Transform {
+				bboxSize IS bboxSize
+				bboxCenter IS bboxCenter
+				children IS children
+				translation -50 0 -50
+				scale IS scale
+			}
+		]
+	}
+}
+
+
+## ui
+EXTERNPROTO C3D_PlaneXY [
+	field SFBool solid
+	exposedField MFColor color
+]
+"protolib/C3D_PlaneXY_1.00.wrl#C3D_PlaneXY"
+
+EXTERNPROTO C3D_Toggle [
+	eventIn SFTime toggleTime
+	exposedField SFBool toggle
+	exposedField MFNode trueChildren
+	exposedField MFNode falseChildren
+]
+"protolib/C3D_Toggle_1.01.wrl#C3D_Toggle"
+
+EXTERNPROTO C3D_GuiMomentaryButton [
+	field MFString label
+	field SFString toolTip
+	eventOut SFTime touchTime
+	eventOut SFBool isActive
+	eventOut SFBool isOver
+	eventOut MFString label_changed
+	eventOut MFString toolTip_changed
+	eventOut SFTime repeatTime_changed
+	exposedField SFBool repeat
+	exposedField SFTime repeatInterval
+	exposedField SFBool enabled
+	exposedField SFNode texture
+	exposedField SFNode sound
+	exposedField SFFloat width
+	exposedField SFNode fontStyle
+	exposedField SFFloat height
+	exposedField SFFloat transparency
+]
+"protolib/C3D_GuiMomentaryButton_1.04.wrl#C3D_GuiMomentaryButton"
+
+#EXTERNPROTO C3D_GuiIcon [
+#	exposedField SFBool enabled
+#	exposedField SFNode texture
+#	exposedField SFNode sound
+#	exposedField SFBool isOn
+#	exposedField SFBool isOver
+#	exposedField SFBool isActive
+#]
+#"protolib/C3D_GuiIcon_1.03.wrl#C3D_GuiIcon"
+
+EXTERNPROTO C3D_GuiHud [
+	exposedField MFNode topLeftChildren
+	exposedField MFNode topCenterChildren
+	exposedField MFNode topRightChildren
+	exposedField MFNode centerLeftChildren
+	exposedField MFNode centerCenterChildren
+	exposedField MFNode centerRightChildren
+	exposedField MFNode bottomLeftChildren
+	exposedField MFNode bottomCenterChildren
+	exposedField MFNode bottomRightChildren
+	exposedField SFBool illuminate
+	exposedField SFFloat fixedAspect
+]
+"protolib/C3D_GuiHud_1.02.wrl#C3D_GuiHud"
+
+
+#EXTERNPROTO C3D_Fader [
+#	exposedField SFBool fadeOn
+#	exposedField SFBool invert
+#	exposedField SFBool easeInOut
+#	exposedField SFTime fadeOnDuration
+#	exposedField SFTime fadeOffDuration
+#	eventOut SFFloat fraction_changed
+#]
+#"protolib/C3D_Fader_1.02.wrl#C3D_Fader"
+
+#EXTERNPROTO C3D_GuiHelpText [
+#	eventIn MFString set_string
+#	exposedField SFBool isOn
+#	exposedField SFTime fadeOnDuration
+#	exposedField SFTime fadeOffDuration
+#	exposedField SFNode fontStyle
+#	exposedField SFColor color
+#]
+#"protolib/C3D_GuiHelpText_1.04.wrl#C3D_GuiHelpText"
+
+
+
+PROTO VideoIcon [
+	field MFString name []
+
+	field MFString videoUrl []
+	#	exposedField SFFloat size .08
+	exposedField SFVec3f translation 0 0 0
+	exposedField SFVec3f scale 1 1 1
+	exposedField SFColor color 1 1 1
+	exposedField SFFloat transparency 0.2
+	exposedField SFBool on TRUE
+
+	exposedField SFNode texture ImageTexture { url "maps/gui_button_background.png" }
+
+	eventOut SFTime	touchTime 
+	eventOut MFString videoUrl_changed
+
+	field SFString toolTip ""
+]
+{
+	C3D_Toggle {
+		toggle IS on
+		trueChildren [
+			DEF xfrm Transform {
+				translation	IS translation
+				scale IS scale
+				children Billboard {
+					axisOfRotation 0 0 0
+					children [
+						DEF button C3D_GuiMomentaryButton {
+							texture	IS texture
+							transparency IS	transparency
+							touchTime IS touchTime
+							toolTip	 IS	toolTip
+						}
+					]
+				}
+			}
+		]
+	}
+
+	DEF	scr Script {
+
+		eventIn	SFTime touchTime
+		
+		field MFString videoUrl IS videoUrl
+
+		eventOut MFString videoUrl_changed IS videoUrl_changed
+	
+		directOutput TRUE
+
+		url	"javascript:
+
+		function touchTime() {
+			videoUrl_changed = videoUrl;
+		
+		}
+		"
+	}
+
+	ROUTE button.touchTime TO scr.touchTime
+}
+
+
+##
+
+EXTERNPROTO TouchSensor2 [
+	exposedField	SFBool		enabled
+	exposedField	SFString	description		
+	eventOut		SFVec3f		hitNormal_changed
+	eventOut		SFVec3f		hitPoint_changed
+	eventOut		SFVec2f		hitTexCoord_changed
+	eventOut		SFBool		isActive
+	eventOut		SFBool		isOver
+	eventOut		SFTime		touchTime
+	eventOut		SFTime		doubleClickTime
+] ["urn:inet:bitmanagement.de:node:TouchSensor2"]
+###################################################################
+PROTO MoveSensor[ # sort of Billboard+PlaneSensor, but uses the mouse's position instead
+	exposedField	SFBool		enabled				FALSE
+	exposedField	SFString	description 		""		
+	eventOut		SFBool		shiftPressed			
+	eventOut		SFBool		ctrlPressed				
+	eventOut		SFVec2f		startPoint_changed
+	eventOut		SFVec2f		currentPoint_changed
+	eventOut		SFVec2f		relativeTranslation_changed	#in position units, not in pixels
+
+	eventOut		SFBool		isActive
+	eventOut		SFTime		touchTime
+	eventOut		SFTime		on_dblclick
+	eventOut		SFBool		isOver
+]{
+	DEF	TS TouchSensor2{
+		enabled IS enabled  
+		description IS description 
+		touchTime IS touchTime  doubleClickTime IS on_dblclick  isOver IS isOver}
+	DEF	brain Script {
+		eventOut	SFBool		shiftPressed		IS shiftPressed
+		eventOut	SFBool		ctrlPressed			IS ctrlPressed
+		eventOut	SFVec2f		from_changed		IS startPoint_changed
+		eventOut	SFVec2f		to_changed			IS currentPoint_changed
+		eventOut	SFVec2f		difference_changed	IS relativeTranslation_changed
+
+		field		SFInt32		oldMask				0
+		field		SFBool		routeExists			FALSE
+		field		SFBool		nextIsFirst			FALSE
+		eventOut	SFBool		isActive			IS isActive
+		eventIn		SFBool		TSisActive
+		eventIn		SFNode		on_event
+		directOutput TRUE
+		url	"javascript:
+		function listen(){
+			if (routeExists) return;
+			var m = Browser.eventMask; 
+			oldMask = m;
+			m = m | (1<<1) | (1<<4); //mousemove and mouseup
+			Browser.eventMask = m;
+			nextIsFirst = true;
+			isActive = true;
+			Browser.addRoute(Browser, 'event_changed', Browser.getScript(), 'on_event');
+			routeExists = true;
+		}
+
+		function unlisten(){
+			if (!routeExists) return;
+			Browser.eventMask = oldMask;
+			Browser.deleteRoute(Browser, 'event_changed', Browser.getScript(), 'on_event');
+			isActive = false;
+			routeExists = false;
+		}
+
+		function on_event(e) {
+			if (e.type == 'mousemove') {
+				shiftPressed = e.shiftKey;
+				ctrlPressed = e.ctrlKey;
+				if (nextIsFirst) {
+					from_changed = e.position;
+					nextIsFirst = false;
+				} else {
+					to_changed = e.position;
+					difference_changed = to_changed.subtract(from_changed);
+				}
+				
+			} else if (e.type == 'mouseup') unlisten();
+		}
+		function shutdown(){unlisten();}
+		// We stop listening only when mouseup
+		function TSisActive(v){if (v) listen();}
+		"
+	}
+	ROUTE TS.isActive TO brain.TSisActive
+}
+###################################################################
+
+PROTO PositionDamper [
+    eventIn      SFVec3f      set_input
+    exposedField        SFVec3f  initial_input           0 0 0
+
+    eventOut     SFVec3f          output_changed
+    exposedField        SFVec3f  initial_output          0 0 0
+    eventIn      SFVec3f      set_output
+
+    exposedField SFFloat  tau     1
+
+    exposedField        SFInt32  order   1                        
+
+    field        SFFloat  eps     .001                     # TBD: The tolerance should be found automatically
+
+    eventOut     SFBool   isActive
+
+    eventOut     SFBool   isLoaded
+] {
+    PROTO EFFS
+    [
+        exposedField SFFloat tau  1
+    ]
+       { Group {} }
+
+
+
+    DEF EFFS EFFS 
+    {
+        tau IS tau 
+    }
+
+
+
+    DEF Worker Script
+    {
+        eventIn      SFVec3f      set_input          IS     set_input
+        exposedField        SFVec3f          input          IS initial_input
+
+        eventOut     SFVec3f          output_changed IS         output_changed
+        exposedField        SFVec3f  initial_output         IS initial_output
+        eventIn      SFVec3f      set_output         IS     set_output
+
+        field        SFNode           effs           USE        EFFS
+        eventIn      SFFloat      set_tau
+        field        SFFloat          tau            1
+
+        exposedField        SFInt32          order          IS         order
+
+        field        SFFloat          eps            IS         eps
+
+
+
+        # internal fields
+        eventOut     SFBool needTimer                IS         isActive
+        eventIn      SFTime tick
+        field        SFTime lastTick    0
+
+
+        field        SFVec3f output5    0 0 0
+        field        SFVec3f output4    0 0 0
+        field        SFVec3f output3    0 0 0
+        field        SFVec3f output2    0 0 0
+        field        SFVec3f output1    0 0 0
+
+
+        url "vrmlscript:
+
+        function StartTimer()
+        {
+            if(!needTimer)
+            {
+                lastTick= 0;
+                needTimer= true;
+            }
+        }
+
+        function StopTimer()
+        {
+            if(needTimer)
+            {
+                needTimer= false;
+            }
+        }
+
+
+
+        function initialize()
+        {
+            tau= effs.tau;
+            set_output(initial_output);
+            needTimer=    input.x != initial_output.x
+                       || input.y != initial_output.y
+                       || input.z != initial_output.z
+                       ;
+        }
+
+        function set_tau(t)
+        {
+            tau= t;
+        }
+
+
+
+        function set_input(i)
+        {
+            input= i;
+            StartTimer();
+        }
+
+
+        function set_output(o)
+        {
+            output1= output2= output3= output4= output5= o;
+            output_changed= o;
+            StartTimer();
+
+        }
+
+
+
+        function tick(now)
+        {
+            if(!lastTick)
+            {
+                lastTick= now;
+        return;
+            }
+
+            var delta= now - lastTick;
+
+            var alpha= Math.exp(-delta / tau);
+
+
+
+            output1= order > 0 && tau
+                       ? input  .add(output1.subtract(input  ).multiply(alpha))
+                       : input;
+
+            output2= order > 1 && tau
+                       ? output1.add(output2.subtract(output1).multiply(alpha))
+                       : output1;
+
+            output3= order > 2 && tau
+                       ? output2.add(output3.subtract(output2).multiply(alpha))
+                       : output2;
+
+            output4= order > 3 && tau
+                       ? output3.add(output4.subtract(output3).multiply(alpha))
+                       : output3;
+
+            output5= order > 4 && tau
+                       ? output4.add(output5.subtract(output4).multiply(alpha))
+                       : output4;
+
+
+            var dist= output1.subtract(input).length();
+            if(order > 1)
+            {
+                var dist2= output2.subtract(output1).length();
+                if( dist2 > dist)  dist= dist2;
+            }
+            if(order > 2)
+            {
+                var dist3= output3.subtract(output2).length();
+                if( dist3 > dist)  dist= dist3;
+            }
+            if(order > 3)
+            {
+                var dist4= output4.subtract(output3).length();
+                if( dist4 > dist)  dist= dist4;
+            }
+            if(order > 4)
+            {
+                var dist5= output5.subtract(output4).length();
+                if( dist5 > dist)  dist= dist5;
+            }
+
+            if(dist < eps)
+            {
+                output1= output2= output3= output4= output5= input;
+                output_changed= input;
+                needTimer= false;
+        return;
+            }
+
+            output_changed= output5;
+
+            lastTick= now;
+
+        }
+
+
+
+
+
+        "
+    }
+
+    DEF Timer TimeSensor
+    {
+        loop TRUE
+    }
+
+    ROUTE Worker.needTimer TO Timer.enabled
+    ROUTE Timer.time       TO Worker.tick
+
+
+    ROUTE EFFS.tau TO Worker.set_tau
+
+    DEF LastNode Script
+    {
+        eventOut SFBool isLoaded IS isLoaded
+
+        url "vrmlscript:
+
+        function initialize()
+        {
+            isLoaded= true;
+        }
+
+        "
+    }
+}
+###################################################################
+PROTO OrientationDamper [
+    eventIn      SFRotation      set_input
+    field        SFRotation  initial_input           0 0 1 0
+
+    eventOut     SFRotation          output_changed
+    field        SFRotation  initial_output          0 0 1 0
+    eventIn      SFRotation      set_output
+
+    exposedField SFFloat  tau     1
+
+    field        SFInt32  order   1                            # supported only in range [1..5]
+
+    eventOut     SFBool   isActive
+
+    eventOut     SFBool   isLoaded
+	field SFFloat eps .001
+] {
+    PROTO EFFS
+    [
+        exposedField SFFloat tau  1
+    ]
+       { Group {} }
+
+
+
+    DEF EFFS EFFS 
+    {
+        tau IS tau 
+    }
+
+
+
+    DEF Worker Script
+    {
+        eventIn      SFRotation      set_input          IS     set_input
+        field        SFRotation          input          IS initial_input
+
+        eventOut     SFRotation          output_changed IS         output_changed
+        field        SFRotation  initial_output         IS initial_output
+        eventIn      SFRotation      set_output         IS     set_output
+
+        field        SFNode           effs              USE        EFFS
+        eventIn      SFFloat      set_tau
+        field        SFFloat          tau               1
+
+        field        SFInt32          order             IS         order
+
+        field        SFFloat          eps               IS eps
+
+
+
+        # internal fields
+        eventOut     SFBool needTimer                   IS      isActive
+        eventIn      SFTime tick
+        field        SFTime lastTick    0
+
+
+        field        SFRotation output5    0 0 1 0
+        field        SFRotation output4    0 0 1 0
+        field        SFRotation output3    0 0 1 0
+        field        SFRotation output2    0 0 1 0
+        field        SFRotation output1    0 0 1 0
+
+
+        url "vrmlscript:
+
+        function StartTimer()
+        {
+            if(!needTimer)
+            {
+                lastTick= 0;
+                needTimer= true;
+            }
+        }
+
+        function StopTimer()
+        {
+            if(needTimer)
+            {
+                needTimer= false;
+            }
+        }
+
+
+
+        function initialize()
+        {
+            tau= effs.tau;
+            set_output(initial_output);
+            needTimer=    input.x != initial_output.x
+                       || input.y != initial_output.y
+                       || input.z != initial_output.z
+                       || input.angle != initial_output.angle
+                       ;
+        }
+
+        function set_tau(t)
+        {
+            tau= t;
+        }
+
+
+
+        function set_input(i)
+        {
+            input= i;
+            StartTimer();
+        }
+
+
+        function set_output(o)
+        {
+            output1= output2= output3= output4= output5= o;
+            output_changed= o;
+            StartTimer();
+        }
+
+
+
+        function tick(now)
+        {
+            if(!lastTick)
+            {
+                lastTick= now;
+        return;
+            }
+
+            var delta= now - lastTick;
+
+            var alpha= Math.exp(-delta / tau);
+
+			
+
+            output1= order > 0 && tau
+                       ? input  .slerp(output1, alpha)
+                       : input;
+
+            output2= order > 1 && tau
+                       ? output1.slerp(output2, alpha)
+                       : output1;
+
+            output3= order > 2 && tau
+                       ? output2.slerp(output3, alpha)
+                       : output2;
+
+            output4= order > 3 && tau
+                       ? output3.slerp(output4, alpha)
+                       : output3;
+
+            output5= order > 4 && tau
+                       ? output5.slerp(output4, alpha)
+                       : output4;
+
+
+
+            var dist= Math.abs(output1.inverse().multiply(input).angle);
+            if(order > 1)
+            {
+                var dist2= Math.abs(output2.inverse().multiply(output1).angle);
+                if( dist2 > dist)  dist= dist2;
+            }
+            if(order > 2)
+            {
+                var dist3= Math.abs(output3.inverse().multiply(output2).angle);
+                if( dist3 > dist)  dist= dist3;
+            }
+            if(order > 3)
+            {
+                var dist4= Math.abs(output4.inverse().multiply(output3).angle);
+                if( dist4 > dist)  dist= dist4;
+            }
+            if(order > 4)
+            {
+                var dist5= Math.abs(output5.inverse().multiply(output4).angle);
+                if( dist5 > dist)  dist= dist5;
+            }
+
+            if(dist < eps)
+            {
+                output1= output2= output3= output4= output5= input;
+                output_changed= input;
+                needTimer= false;
+        return;
+            }
+
+            output_changed= output5;
+
+            lastTick= now;
+
+        }
+
+       "
+    }
+
+    DEF Timer TimeSensor
+    {
+        loop TRUE
+    }
+
+    ROUTE Worker.needTimer TO Timer.enabled
+    ROUTE Timer.time       TO Worker.tick
+
+
+    ROUTE EFFS.tau TO Worker.set_tau
+
+    DEF LastNode Script
+    {
+        eventOut SFBool isLoaded IS isLoaded
+
+        url "vrmlscript:
+
+        function initialize()
+        {
+            isLoaded= true;
+        }
+
+        "
+    }
+}
+
+
+
+###################################################################
+# PROTO Transform2: acts like a Transform, but the elements
+# contained can be moved by the user
+###################################################################
+PROTO Transform2 [
+
+	exposedField SFInt32 id -1
+
+	exposedField	SFBool		user_moveable			TRUE
+	exposedField	SFFloat		smoothness				0.2
+
+	field			SFVec3f		bboxCenter				0 0 0
+	field			SFVec3f		bboxSize				-1 -1 -1
+	exposedField	SFVec3f		translation				0 0 0
+	exposedField	SFRotation	rotation				0 0 1 0
+	exposedField	SFVec3f		scale					1 1 1
+	exposedField	SFRotation	scaleOrientation		0 0 1 0
+	exposedField	SFVec3f		center					0 0 0
+
+	exposedField	MFNode		children				[]
+	eventIn			MFNode		addChildren
+	eventIn			MFNode		removeChildren
+
+	eventIn			SFVec3f		add_translation
+    eventIn         SFVec3f     move_to
+	eventOut		SFVec3f		current_translation
+
+	eventOut		SFBool		isOver
+	eventOut		SFBool		isActive
+	eventOut		SFBool		isMoving
+	eventOut		SFTime		touchTime
+	eventOut		SFTime		on_dblclick
+	exposedField	SFNode	metadata NULL		
+
+	exposedField SFString	description		""
+	eventOut	 SFTime		on_click
+	eventOut	 SFInt32	on_click_id		# on click returns id 
+
+	# What are those fields for ?!!
+    eventOut        SFMatrix    myMatrix
+    eventIn         SFTime      updateMatrix
+]{
+
+	Group{
+		children [
+			DEF	sensor MoveSensor{
+				enabled IS user_moveable description IS description 
+				isOver IS isOver  isActive IS isActive  touchTime IS touchTime  on_dblclick IS on_dblclick
+			}
+			DEF	tr Transform{
+				translation_changed IS current_translation
+				center IS center
+				rotation IS	rotation
+				scale IS scale
+				scaleOrientation IS	scaleOrientation
+				children IS	children
+				bboxCenter IS bboxCenter
+				bboxSize IS	bboxSize
+				addChildren IS addChildren
+				removeChildren IS removeChildren
+			}
+		]
+	}
+	DEF damper_pos PositionDamper{tau IS smoothness}
+	DEF damper_ori OrientationDamper{tau IS smoothness  order 2}
+
+	DEF	brain Script {
+		exposedField	SFFloat		smoothness			IS smoothness
+    	exposedField	SFRotation	rotation			IS rotation
+		exposedField	SFVec3f		translation			IS translation
+		field			SFVec3f		pos_non_dampered	0 0 0
+
+		field			SFNode		tr					USE	tr
+		field			SFNode		damper_pos			USE	damper_pos
+		field			SFNode		damper_ori			USE	damper_ori
+
+		eventIn			SFVec3f		add_translation		IS add_translation
+        eventIn 	    SFVec3f     move_to             IS move_to
+        eventIn 	    SFTime      updateMatrix        IS updateMatrix
+        eventOut	    SFMatrix    myMatrix            IS myMatrix
+		eventOut		SFBool		isMoving			IS isMoving
+
+		eventIn			SFVec2f		moved
+		eventIn			SFBool		shift
+
+		field			SFVec3f		x_axis				1 0 0
+		field			SFVec3f		y_axis				0 1 0
+		field			SFVec3f		z_axis				0 0 1
+
+		field			SFVec3f		start_pos			0 0 0
+		field			SFString	backup_navigation	"walk"
+		eventIn			SFBool		sensor_isActive
+		eventIn			SFBool		refresh_isActive
+		# click stuff 
+		
+		eventIn	SFTime touchTime
+		eventOut SFInt32 on_click_id IS	on_click_id
+		exposedField SFInt32 id IS id
+
+
+		directOutput TRUE
+		url	"javascript:
+		function touchTime(t) { on_click_id = id; }
+
+
+		function getVRMLSize(distance){
+			var VP = Browser.boundViewpoint;
+			var fov = (VP) ? VP.fieldOfView : 0.785398;
+			var size = Browser.windowSize;
+    		if (size[0] > size[1]){
+				return new SFVec2f(
+					(Math.tan((Math.atan((size[0] * Math.tan(fov / 2)) / size[1]) * 2) / 2) * distance * 2),
+					(Math.tan(fov / 2) * distance * 2)
+				);
+    		} else {
+				return new SFVec2f(
+    				(Math.tan(fov / 2) * distance * 2),
+					(Math.tan((Math.atan((Math.tan(fov/2) * size[1]) / size[0]) * 2) / 2) * distance * 2)
+				);
+    		}
+		}
+		function moved(v){
+			var VRMLSize = getVRMLSize( tr.translation.subtract(Browser.viewpointPosition).length() );
+			var speed_x = v[0] * VRMLSize[0] / 2;
+			var speed_y = v[1] * VRMLSize[1] / 2;
+			//for z it should find the distance at which to go to so that y and x are correct instea of just using the y value
+
+			var ori = Browser.viewpointOrientation;
+			var pos = start_pos.add( ori.multVec(x_axis).multiply(speed_x) );
+			if (shift) pos = pos.add( ori.multVec(z_axis).multiply(-speed_y) );
+			else pos = pos.add( ori.multVec(y_axis).multiply(speed_y) );
+			damper_pos.set_input = pos;
+		}
+		function sensor_isActive(v){
+			if (v) {
+				start_pos = tr.translation;
+				backup_navigation = Browser.getNavigationMode();
+				Browser.setNavigationMode('none'); //disable navigation while we move the object
+			} else {
+				Browser.setNavigationMode('any'); //re-enables letting the user chooses his naigation mode
+				Browser.setNavigationMode(backup_navigation);
+			}
+		}
+
+		function initialize(){
+			pos_non_dampered = translation;
+			tr.translation = translation;
+			pos_non_dampered = translation;
+			damper_pos.set_input = translation;
+			damper_pos.set_output = translation;
+			damper_ori.set_output = rotation;
+			damper_ori.set_input = rotation;
+			Browser.addRoute(damper_pos, 'output_changed', tr, 'set_translation');
+			Browser.addRoute(damper_ori, 'output_changed', tr, 'set_rotation');
+		}
+		function shutdown(){
+			Browser.deleteRoute(damper_pos, 'output_changed', tr, 'set_translation');
+			Browser.deleteRoute(damper_ori, 'output_changed', tr, 'set_rotation');
+		}
+
+		function translation(){
+			if (smoothness <= 0) damper_pos.set_output = translation;
+			damper_pos.set_input = translation;
+		}
+		function rotation(){damper_ori.set_input = rotation;}
+
+        function refresh_isActive() {
+            var active = (damper_ori.isActive || damper_pos.isActive);
+            if (active != isMoving) isMoving = active;
+        }
+		function add_translation(v){
+			pos_non_dampered = pos_non_dampered.add(v);
+            damper_pos.order = 1;
+			damper_pos.set_input = pos_non_dampered;
+		}
+        function move_to(v){
+            pos_non_dampered = v;
+            damper_pos.order = 3;
+            damper_pos.set_input = pos_non_dampered;
+        }
+        function updateMatrix(){myMatrix = tr.getMatrix();}
+
+		"
+	}
+	ROUTE sensor.shiftPressed TO brain.shift
+	ROUTE sensor.relativeTranslation_changed TO	brain.moved
+	ROUTE sensor.isActive TO brain.sensor_isActive
+
+    ROUTE damper_pos.isActive TO brain.refresh_isActive
+    ROUTE damper_ori.output_changed TO tr.rotation
+    ROUTE damper_ori.isActive TO brain.refresh_isActive
+
+	ROUTE sensor.touchTime TO brain.touchTime
+}
+###################################################################
+
+
+
+
+Layer3D {
+	size 0.5 0.2
+	translation	0.25 0.01
+	children [
+		DEF BUTTON_PREV VideoIcon {
+			on TRUE
+			translation	-0.75 -0 0
+			scale 0.5 0.5 0.5
+			toolTip	"previous"
+			texture ImageTexture { url "maps/icon_grey_left.png" }
+
+		}
+
+		DEF BUTTON_NEXT VideoIcon {
+			on TRUE
+			translation	0 0 0
+			scale 0.5 0.5 0.5
+			toolTip	"next"
+			texture ImageTexture { url "maps/icon_grey_right.png" }
+
+		}
+
+		DEF BUTTON_UP VideoIcon {
+			on TRUE
+			translation	0.75 0 0
+			scale 0.5 0.5 0.5
+			toolTip	"next"
+			texture ImageTexture { url "maps/icon_grey_up.png" }
+
+		}
+		DEF BUTTON_SLIDE_SHOW VideoIcon {
+			on TRUE
+			translation	1.5 0 0
+			scale 0.5 0.5 0.5
+			toolTip	"Slide Show"
+			texture ImageTexture { url "maps/icon_grey_right2.png" }
+
+		}
+	]}
+
+
+#Background {
+#	backUrl	"backgrounds/panosky/pano_sky_3_512.jpg"
+#	bottomUrl	"backgrounds/panosky/pano_sky_6_16.png"
+#	frontUrl	"backgrounds/panosky/pano_sky_1_512.jpg"
+#	leftUrl	"backgrounds/panosky/pano_sky_4_512.jpg"
+#	rightUrl	"backgrounds/panosky/pano_sky_2_512.jpg"
+#	topUrl	"backgrounds/panosky/pano_sky_5_512.jpg"
+#}
+
+#DEF background Background {
+#	skyColor 0 0 0.1
+#	leftUrl "../textures/starstr.gif"	
+#	rightUrl "../textures/starstr.gif"	
+#	backUrl "../textures/starstr.gif"	
+#	frontUrl "../textures/starstr.gif"	
+#	topUrl "../textures/starstr.gif"	
+#	bottomUrl "../textures/starstr.gif"	
+
+#}
+	Background { skyColor 0 0 0 }
+
+NavigationInfo {
+	type [ "FLY" "WALK" "ANY" ]
+	headlight TRUE
+	avatarSize [0.5 1.75, 0.75 ]	
+	#visibilityLimit 200
+	speed 5
+}
+
+#Fog2 {
+#	fogType "LINEAR"
+#	visibilityRange 300
+#	color	0.3 0.3 0.5
+
+#	visibilityStart 150
+
+
+#}
+
+DEF ENTRY-VP Viewpoint {
+	position 0 0 200
+	fieldOfView	1
+	description "entry"
+}
+
+
+PROTO ImageViewer [
+	exposedField SFInt32 id -1
+
+	exposedField SFInt32 whichChoice 0
+	exposedField MFString url []			# url of image 
+	exposedField SFVec2f size 1 1			# to fill from Image aspect ratio 
+	exposedField SFNode	thumbTexture NULL
+	exposedField SFBool	showThumb TRUE
+
+	exposedField SFNode	metadata NULL		# the meta data from XML 
+
+	exposedField SFString	description		""
+	eventOut	 SFTime		on_click
+	eventOut	 SFInt32	on_click_id		# on click returns id 
+]
+{
+	Switch {
+		#whichChoice	0
+		whichChoice IS whichChoice 
+		choice 
+		Group { children
+			[
+				DEF TS TouchSensor	{ 
+					enabled	FALSE
+					touchTime IS on_click
+					description IS description  # in X3D
+				}
+				DEF	PS ProximitySensor {
+					#size 10 10 12
+					size 30 30 50
+
+				}
+				Shape {
+					appearance 
+			
+#					LOD	{
+#						range [ 25 , 150 ]
+#						level [
+
+
+							Appearance {
+								texture	
+				
+								DEF IM ImageTextureLOD { 
+									url IS url 
+									repeatS	FALSE repeatT FALSE
+									parameter ["subtexture"  ]
+							
+									showThumb IS showThumb
+									thumbTexture IS thumbTexture
+
+									## loop TRUE 					startTime 0
+								}
+							}
+							## Thumbnail texture
+					
+#							Appearance { 
+#								material Material { transparency 0.5 }
+#								texture	IS thumbTexture
+#							}
+#							## just transparent 
+#							Appearance { 
+#								material Material { transparency 0.7 }
+#							}
+
+#						]
+#					}
+					geometry DEF R Rectangle { size IS size }
+				}
+	
+			]
+		}
+	}
+	# on click return  on_click_id
+	DEF	S Script {
+		eventIn	SFTime touchTime
+		eventOut SFInt32 on_click_id IS	on_click_id
+		exposedField SFInt32 id IS id
+
+		eventIn	SFBool	isLoaded
+		eventIn	SFFloat aspect 
+
+		directOutput TRUE
+
+		eventIn SFBool	inProxy 
+		field SFNode im USE IM 
+		field SFNode r USE R
+		url	"javascript:
+		function touchTime(t) { on_click_id = id; }
+		function inProxy(f) {
+			// don't show thumb if in proximity 
+			im.showThumb = !f;
+		 }
+
+		function isLoaded(v) {
+			if (!v) trace('can not load image:'+im.url);
+		}
+		function aspect(f) {
+			// for images without pre given aspect 
+			if (r.size.x == r.size.y) {
+				//trace('Adapting aspect '+f);
+				r.size.x = f * r.size.y;
+			}
+		 }
+		"
+	}
+	ROUTE TS.touchTime TO S.touchTime
+	ROUTE PS.isActive TO S.inProxy 
+	ROUTE IM.isLoaded TO S.isLoaded
+	ROUTE IM.aspect TO S.aspect
+    
+
+}
+
+PROTO MovieViewer [
+	exposedField SFInt32	id -1
+
+	exposedField SFInt32	whichChoice 0
+	exposedField MFString	url []
+	exposedField SFVec2f	size 1 1 
+	exposedField SFNode		thumbTexture NULL
+	exposedField SFBool		showThumb TRUE
+
+	exposedField SFNode		metadata NULL 
+
+	exposedField SFString	description		""
+	eventOut	 SFTime		on_click
+	eventOut	 SFInt32	on_click_id		
+]
+
+
+{
+	Switch {
+		#whichChoice	0
+		whichChoice IS whichChoice 
+		choice 
+		Group {
+			children [
+
+				DEF TS TouchSensor	{ 
+					enabled	FALSE
+					touchTime IS on_click
+					description IS description  # in X3D
+				}
+				DEF	PS ProximitySensor {
+					#size 10 10 12
+					size 30 30 50
+
+				}
+				Shape {
+					appearance 
+			
+#					LOD	{
+#						range [ 5 , 50 ]
+#						level [
+
+
+							Appearance {
+								texture	
+				
+								DEF IM 
+								StereoMovieTexture 
+								#MovieTexture 
+								{ 
+									url IS url 
+									repeatS	FALSE repeatT FALSE
+									loop  TRUE
+									startTime 0 
+									parameter ["subtexture"]
+									## showThumb IS showThumb
+									thumbTexture IS thumbTexture
+								}
+							}
+#							## Thumbnail texture
+					
+#							Appearance { 
+#								material Material { transparency 0.5 }
+#								texture	IS thumbTexture
+#							}
+#							## just transparent 
+#							Appearance { 
+#								material Material { transparency 0.7 }
+#							}
+
+#						]
+#					}
+					geometry DEF R Rectangle { size IS size }
+				}
+			]}
+	}
+	# on click return  on_click_id
+	DEF	S Script {
+		eventIn	SFTime touchTime
+		eventOut SFInt32 on_click_id IS	on_click_id
+		exposedField SFInt32 id IS id
+
+		eventIn	SFBool	isLoaded
+		eventIn	SFFloat aspect 
+
+		directOutput TRUE
+
+		eventIn SFBool	inProxy 
+		field SFNode im USE IM 
+		field SFNode r USE R
+		url	"javascript:
+		function touchTime(t) { 
+			if (!im.isActive)
+				im.set_startTime = t;
+
+			on_click_id = id; 
+		}
+		function inProxy(f) {
+			// don't show thumb if in proximity 
+			/// im.showThumb = !f;
+		}
+
+		function isLoaded(v) {
+			if (!v) trace('can not load image:'+im.url);
+		}
+		function aspect(f) {
+			// for images without pre given aspect 
+			if (r.size.x == r.size.y) {
+				trace('Adapting aspect '+f);
+				r.size.x = f * r.size.y;
+			}
+		}
+		"
+	}
+	ROUTE TS.touchTime TO S.touchTime
+	ROUTE PS.isActive TO S.inProxy 
+	ROUTE IM.isLoaded TO S.isLoaded
+	ROUTE IM.imageAspect TO S.aspect
+}
+
+PROTO FlashViewer [
+	exposedField SFInt32	id -1
+
+	exposedField SFInt32	whichChoice 0
+	exposedField MFString	url []
+	exposedField SFVec2f	size 1 1 
+	exposedField SFNode		thumbTexture NULL
+	exposedField SFBool		showThumb TRUE
+
+	exposedField SFNode		metadata NULL 
+
+	exposedField SFString	description		""
+	eventOut	 SFTime		on_click
+	eventOut	 SFInt32	on_click_id		
+]
+
+
+{
+	Switch {
+		#whichChoice	0
+		whichChoice IS whichChoice 
+		choice 
+		Group {
+			children [
+
+				DEF TS TouchSensor	{ 
+					enabled	FALSE
+					touchTime IS on_click
+					description IS description  # in X3D
+				}
+				DEF	PS ProximitySensor {
+					#size 10 10 12
+					size 30 30 50
+
+				}
+				Shape {
+					appearance 
+			
+#					LOD	{
+#						range [ 5 , 50 ]
+#						level [
+
+
+							Appearance {
+								texture	
+				
+								DEF IM 
+								FlashMovieTexture 
+								{ 
+									url IS url 
+									repeatS	FALSE repeatT FALSE
+									loop  TRUE
+									startTime 0 
+									parameter ["subtexture"]
+									 ## todo size: "width=512" "height=256" 
+									showThumb IS showThumb
+									thumbTexture IS thumbTexture
+								}
+							}
+#							## Thumbnail texture
+					
+#							Appearance { 
+#								material Material { transparency 0.5 }
+#								texture	IS thumbTexture
+#							}
+#							## just transparent 
+#							Appearance { 
+#								material Material { transparency 0.7 }
+#							}
+
+#						]
+#					}
+					geometry DEF R Rectangle { size IS size }
+				}
+			]}
+	}
+	# on click return  on_click_id
+	DEF	S Script {
+		eventIn	SFTime touchTime
+		eventOut SFInt32 on_click_id IS	on_click_id
+		exposedField SFInt32 id IS id
+
+		eventIn	SFBool	isLoaded
+		eventIn	SFFloat aspect 
+
+		directOutput TRUE
+
+		eventIn SFBool	inProxy 
+		field SFNode im USE IM 
+		field SFNode r USE R
+		url	"javascript:
+		function touchTime(t) { 
+			if (!im.isActive)
+				im.set_startTime = t;
+
+			on_click_id = id; 
+		}
+		function inProxy(f) {
+			// don't show thumb if in proximity 
+			im.showThumb = !f;
+		}
+
+		function isLoaded(v) {
+			if (!v) trace('can not load image:'+im.url);
+		}
+		function aspect(f) {
+			// for images without pre given aspect 
+			if (r.size.x == r.size.y) {
+				trace('Adapting aspect '+f);
+				r.size.x = f * r.size.y;
+			}
+		}
+		"
+	}
+	ROUTE TS.touchTime TO S.touchTime
+	ROUTE PS.isActive TO S.inProxy 
+	ROUTE IM.isLoaded TO S.isLoaded
+	ROUTE IM.imageAspect TO S.aspect
+}
+
+
+#DEF Encloser Collision {  # don't walk outside 
+#	collide TRUE
+#	proxy 
+#	   ##Box { size 215 65 215 }
+#		IndexedFaceSet {
+#		solid FALSE
+#		coord Coordinate {point [
+#				-115 -32.5 -115,-115 32.5 -115,115 32.5 -115,115 -32.5 -115,
+#				115 -32.5 -115,115 32.5 -115,115 32.5 115,115 -32.5 115,
+#				115 -32.5 115,115 32.5 115,-115 32.5 115,-115 -32.5 115,
+#				-115 -32.5 115,-115 32.5 115,-115 32.5 -115,-115 -32.5 -115,
+#				115 32.5 115,115 32.5 -115,-115 32.5 -115,-115 32.5 115,
+#				115 -32.5 -115,115 -32.5 115,-115 -32.5 115,-115 -32.5 -115]}
+#		coordIndex [
+#			0,1,2,3,
+#			-1,4,5,6,
+#			7,-1,8,9,
+#			10,11,-1,12,
+#			13,14,15,-1,
+#			16,17,18,19,
+#			-1,20,21,22,
+#			23,-1]
+
+#	}
+#}
+
+Switch {
+	whichChoice	0
+	choice
+	Collision {
+		collide FALSE
+		children  [ 
+			DEF Root Group { } 
+			#Shape {
+			#	geometry DEF gridIls IndexedLineSet { ## will be computed by script
+			#	coord DEF gridCoord Coordinate { }
+			#}}
+		]
+	}
+}
+#
+#	Script building an "Layout" of nodes in 3D
+#   and handling basic next prev navigation 
+#
+
+DEF Layouter Script
+{
+	directOutput TRUE
+	field SFNode root USE Root	# group to place generated object
+
+	
+	# layout interface 
+	
+	field MFNode	items []	# the list of items 
+
+	eventIn	SFInt32 setMaxItem  # set the maximum number of items in layout 
+
+	eventIn	SFString addUrlItem
+	eventIn	SFNode	addItem		# add a new item with item interface
+	eventOut SFNode	lastAddedItem_changed # item with transform wrapper
+
+	exposedField SFInt32	currentItem -1
+
+	exposedField SFInt32	selectedItem 0  
+
+	exposedField SFInt32 maxFilledItem 0 # the max item actually used 
+
+	field SFBool	stateViewAll TRUE	# if viewing the whole layout from outside
+
+	eventIn	SFTime	navigateNext		# navigate to next
+	eventIn	SFTime	navigatePrev
+	eventIn	SFTime	navigateAll			# navigate to view all 
+	eventIn	SFInt32	navigateItem		# go to item # index 
+	eventIn	SFTime	shuffle				# randomize list order 
+
+	exposedField SFInt32 style			0 # shuffle move style 
+	eventIn SFTime  shuffle_move		# move parts to new location  
+	eventIn	SFTime	clear				# clear item list 
+
+	eventOut SFNode	selectedItemChanged	# sends item changed by navigation 
+
+
+	field	 SFInt32 maxItemCount  128# 256 ## 64 # 256 nees larger bbox 
+
+	# internal to layout 
+	# this places objects in a 3D grid 
+	
+	field MFNode particleObjects [ 
+		Group {
+			children [
+			]
+		}				
+	]
+	field MFNode  particles []
+
+	field SFFloat  radius 100
+	
+   	
+	field SFVec3f bboxSize 100 -100 -100
+	field SFVec3f bboxCenter 0 0 0
+
+	field SFVec3f scale 9 9 9
+
+	exposedField SFFloat animationDuration 0.2 #1.0
+
+
+
+	url "javascript:
+
+	function clear(t) 
+	{
+		currentItem = -1;
+		items.length=0;
+		var target=	root.children;
+		var l = target.length;
+		for (var i=0; i<l;i++) {
+			if (target[i].children.length >=4)
+				target[i].children[3]=null;
+		}
+		maxFilledItem = 0;
+
+	}
+
+	function navigateItem(index) 
+	{
+
+		var target=	root.children;
+
+		if (stateViewAll) 
+		{
+			stateViewAll = false;
+		}
+		selectedItem = index;
+		navigateSelectedItem();
+	}
+
+
+	function navigateSelectedItem() 
+	{
+		var target=	root.children;
+
+		if (selectedItem<0 || selectedItem>=target.length)
+		{
+				print('navigateSelectedItem: no target '+selectedItem);
+				return null;
+		}
+
+		if (target[selectedItem].children.length <4)
+			return; // empty cell 
+
+		var n=target[selectedItem].children[3];
+
+		if (!n)
+		{
+				print('navigateSelectedItem:empty target '+selectedItem);
+				return null;
+		}
+
+
+		var pos = new SFVec3f();
+		var ori = new SFRotation();
+
+		Browser.getViewpointByValue(pos,ori);
+		//print(pos);
+
+		pos = target[selectedItem].translation;
+		pos.z-=5.0;
+
+		//Browser.setViewpointByValue(pos,ori);
+
+		//Browser.setViewpointByNode(n);
+		Browser.setViewpointByNode(n,1.0,new SFVec3f(0,0,0),1.05,true,animationDuration);
+		selectedItemChanged = n;
+		return n;
+	}
+
+	function navigateNext() 
+	{
+
+		if (stateViewAll) 
+		{
+			stateViewAll = false;
+			if (selectedItem <0) selectedItem = 0;
+		}
+		else selectedItem = selectedItem +1;
+
+		var target=	root.children;
+
+		if (selectedItem >= target.length)
+			selectedItem = 0;
+
+		if (target[selectedItem].children.length <4)
+			selectedItem = 0;
+	
+		navigateSelectedItem();
+
+
+	}
+
+	function navigatePrev() 
+	{
+		if (stateViewAll) 
+		{
+			stateViewAll = false;
+		}	
+		else selectedItem = selectedItem -1;
+
+		var target=	root.children;
+		if (selectedItem <0)
+			selectedItem = target.length-1;
+
+		if (selectedItem >= target.length)
+			selectedItem = 0;
+
+		if (target[selectedItem].children.length <4)
+			selectedItem = 0;
+	
+		navigateSelectedItem();
+
+
+	}
+
+	function navigateAll(t) 
+	{  	
+	
+		if (stateViewAll) {
+			stateViewAll = false;
+			// navigate back to current item
+			navigateSelectedItem();
+
+		} else {
+			var n=root;
+			//if (TS.isActive)
+			//	slideShowStop(t);
+			Browser.setViewpointByNode(n,1.2,new SFVec3f(0,0,0),1.3,true,2.0);
+			stateViewAll = true;
+			//Browser.setViewpointByNode(n);
+		}
+
+	}
+
+
+	function addUrlItem(u) 
+	{
+
+		var n;
+		//n = new SFNode('ImageViewer');
+		n = Browser.createVrmlFromString('ImageViewer { }')[0];
+
+		n.url[0]=u;
+
+		print(n);
+		addItem(n);
+
+	}
+
+	function addItem(n) 
+	{
+		currentItem++;
+	
+		var target=	root.children;
+		currenItem = 0;
+	
+		n.id = currentItem;
+		items[currentItem]=n;
+
+		if (currentItem < target.length)  
+		{
+			if (target[currentItem].hasEventOut('id'))
+				target[currentItem].id = n.id;
+			maxFilledItem = currentItem+1;
+			lastAddedItem_changed = target[currentItem];
+
+			target[currentItem].children[3]=n;
+		}
+
+	}
+
+	// swap two items and their ids
+	function shuffle2(a,b) 
+	{
+		var target=	root.children;
+		var n =  target[a].children[3];
+		var m =  target[b].children[3];
+		var id1=n.id;
+		n.id = m.id;
+		m.id=id1;
+		target[a].children[3]=m;
+		target[b].children[3]=n;
+
+	}
+	// shuffle the item list a bit
+	function shuffle(t) 
+	{
+
+		var target=	root.children;
+		var l=target.length-1;
+		var n= 20;
+
+		while (n>0) 
+		{
+			var a = Math.random()*l;
+			var b = Math.random()*l;
+			if (a!=b) shuffle2(a,b);
+			n=n-1;
+
+		}
+
+	}
+	function shuffle_move(t) 
+	{
+
+		var target=	root.children;
+		var l=target.length-1;
+		var x,y,z;
+		var bmin = bboxCenter.subtract(bboxSize.multiply(0.5));
+
+	
+		var n=l;
+		while (n>=0) 
+		{
+			if ((style%4) == 0) {
+				x=bmin.x+ bboxSize.x*Math.random();
+				y=bmin.y+ bboxSize.y*Math.random();
+				z=bmin.z+ bboxSize.z*Math.random();
+			}
+			else if ((style%3) == 1) {
+				// row 
+				x=bboxCenter.x;y=bboxCenter.y;z=0;
+				x=bmin.x+ 4*n/(l) * bboxSize.x;
+				z=bmin.z+ 4*n/(l) * bboxSize.z;
+			}	
+			else if ((style%3) == 2) {
+				// circle 
+				var a= (0.25+(n/l))*2*Math.PI;
+				y=0;
+				x=bboxCenter.x+Math.cos(a)*bboxSize.x;
+				z=bboxCenter.z+Math.sin(a)*bboxSize.z;
+			}		
+			
+			else {
+				// square grid 
+				var d=Math.sqrt(l+1);
+				var u= (n%d);
+				x=bmin.x+ bboxSize.x*  (u)/ d;
+				y=bmin.y+ bboxSize.y*  ((n-u)/d) / d;
+				z=bboxCenter.z;
+			}		
+			target[n].translation = new SFVec3f(x,y,z); // mm otherwise it jumps
+			target[n].move_to = new SFVec3f(x,y,z); // add_translation
+			n=n-1;
+
+		}
+		style++;
+
+	}
+
+	/// re-create grid which max content maxCount 
+	function setMaxItem(maxCount) 
+	{
+
+	
+		return;
+		var pts;
+		pts = computeGridCoord(maxCount);
+
+		root.set_children = particles; // add all particles to root
+		particles.length=0;
+		currentItem = -1;
+
+	}
+	
+	// compute equal spaced 3D grid coordinates, based on bbox
+	function computeGridCoord(nitems) 
+	{ 
+		var w;
+		var x,y,z;
+		var bmin = bboxCenter.subtract(bboxSize.multiply(0.5));
+	
+		var pts = new MFVec3f();
+		var ptsi=0;
+	
+		pts.length = nitems;
+
+		var a=-Math.PI;
+		var da = (2.0*Math.PI) / nitems;
+
+		y=0.0;
+
+	
+		for(w=0; w<nitems;w++) 
+		{
+
+			//var r=radius*Math.random();
+			//x = r * Math.cos(a); z = r * Math.sin(a);
+			x=bmin.x+ bboxSize.x*Math.random();
+			y=bmin.y+ bboxSize.y*Math.random();
+			z=bmin.z+ bboxSize.z*Math.random();
+
+			pts[ptsi] = new SFVec3f(x,y,z);
+
+			//var n= new SFNode('Transform {}');
+			var n= Browser.createVrmlFromString('Transform2 {}')[0];
+	
+			particles[ptsi]= n;
+			n.set_translation = pts[ptsi];
+			n.set_scale = scale;
+			//n.set_rotation = new SFRotation(0,1,0,a-Math.PI*0.5);
+
+			n.set_children = particleObjects[0].children;
+			ptsi++;
+
+			a=a+da;
+	
+		}
+	
+		return pts;
+	}  
+	
+
+	
+	// setup everything 
+	function initialize() 
+	{
+
+		var pts;
+	
+		pts = computeGridCoord(maxItemCount);
+
+		root.set_children = particles; // add all particles to root
+
+		maxItemCount =particles.length;
+
+		particles.length=0;
+	
+	}		
+
+	"
+	
+}
+
+
+#DEF S_tx Script {
+#	directOutput TRUE
+#	field SFNode tx USE tx		# the
+
+#	eventIn SFFloat anim
+#	url "javascript:
+#	function anim(f) {
+#			tx.translation.x = f;			
+#			//tx.rotation = Math.PI*Math.sin(2.0*f*Math.PI);
+#	}	
+#	"
+
+
+#}
+#ROUTE TS.fraction_changed TO S_tx.anim
+
+DEF Viewpoint2 Viewpoint {
+	fieldOfView 1.0
+	orientation 0 0 1 0
+	position 0 0 107
+	description "Viewpoint2"
+}		  
+
+# the XML encoded list of media items
+DEF MEDIA_LIST Inline {
+	#url "index.x3d"
+	url "PhotosAll.x3d"
+	#url "i:/hg/stuff/priv/Series1_list.x3d"
+
+	#url "0fotos.x3d"
+	#url	"http://labo-3d.com/phpwebgallery/galleries/listing.x3d"
+	##url	"listing.x3d" 
+	#url	"California.x3d" 
+	#url	"MediaTest1.x3d" 
+	
+}
+
+# handler for navigation  
+DEF KS KeySensor 
+{
+
+
+}
+#slide show timer 
+DEF	TS TimeSensor 
+{
+	startTime -2
+	stopTime -1
+	loop TRUE
+	cycleInterval 3.0
+
+}
+
+#idle show timer 
+DEF	TS_IDLE TimeSensor 
+{
+	startTime 0
+	stopTime -1
+	loop TRUE
+	cycleInterval 1 
+
+}
+# navigates through the items qq
+
+DEF MEDIA_NAVIGATOR Script 
+{
+
+	field SFTime	lastInteractionTime 0
+	field SFTime	lastIdleTime 0
+
+	# keyboard 
+	eventIn SFString character 
+	eventIn SFInt32 keyPress 
+	eventIn SFInt32 keyRelease 
+
+	field MFInt32   pressedKeys []
+
+	# direct mouse position 
+	eventIn SFVec2f mousePosition
+
+	field SFVec2f	lastMousePosition 0 0
+
+	eventIn SFNode selectedItemChanged
+
+	eventIn	SFBool  mediaLoaded
+
+	# ui functions 
+	eventIn	SFTime	navigateNext		# navigate to next
+	eventIn	SFTime	navigatePrev
+	eventIn	SFTime	navigateAll			# navigate to view all 
+	eventIn	SFInt32	navigateItem		# go to item # index 
+
+
+	directOutput TRUE
+	field SFNode layout USE Layouter 
+	field SFNode mediaList USE MEDIA_LIST
+
+	field SFNode KS USE KS 
+	field SFNode TS USE TS 
+
+	field SFNode currentItem NULL
+
+	field SFBool slideShowRandom TRUE
+
+	eventIn	SFTime slideShow # start slide show
+	eventIn	SFTime slideShowNext
+
+	eventIn	SFTime idleTime  # do something 
+
+
+	field SFNode currentItemPrev NULL
+
+	## item with ID id clicked 
+	eventIn SFInt32 on_click_id
+	
+
+	url	"javascript:
+
+	function getMetaData(list, tag) 
+	{
+
+		var num = list.length;
+		for (var i=0;i<num;i++) 
+		{
+			if (list[i].name == tag)
+				return list[i];
+		}
+		return false;
+
+
+	}
+
+	function selectedItemChanged(item,t) 
+	{
+
+		// switch back to thumb mode 
+		if (currentItemPrev  && currentItemPrev != item) 
+		{
+			currentItemPrev.showThumb = true;
+		}
+		if (currentItem && currentItem != item) 
+		{
+			//currentItem.showThumb = true;
+			currentItemPrev = currentItem;
+		}
+
+
+		if (item.metadata) 
+		{
+
+			var s;
+			var des='';
+			s=getMetaData(item.metadata.value,'Title');
+			if (s) {
+				des+='Title:'+s.value[0];
+			}
+			s=getMetaData(item.metadata.value,'Ref');
+			if (s) {
+				des+=' Url:'+s.value[0];
+			}
+			Browser.setDescription(des);
+		}
+		item.showThumb = false; // show real 
+		currentItem = item;
+	}	
+
+	function navigateNext(t) 
+	{
+		lastInteractionTime = t;
+		layout.navigateNext = t;
+	}
+	function navigatePrev(t) 
+	{
+		lastInteractionTime = t;
+		layout.navigatePrev = t;
+	}
+	function navigateAll(t) 
+	{
+		lastInteractionTime = t;
+		if (!layout.stateViewAll) {
+			slideShowStop(t);
+		}	
+		layout.navigateAll = t;
+	}
+
+	// keyboard stuff 
+
+	function keyPress(k,t)
+	{
+		lastInteractionTime = t;
+
+    	var handled= false;
+		trace('keyPress='+k);
+		pressedKeys[k]=1;
+		var base=65;
+		if (k>=65 && k <= 90) {
+			var n=k-base;
+			var target=	layout.root.children;
+			var l=target.length-1;
+			if (n>=0 && n<l) 
+			{
+				var x=0, y=0,z=110+2.0*Math.random();
+				var t=target[n];
+				t.translation = new SFVec3f(x,y,z);
+				t.move_to = new SFVec3f(x,y,z);
+				handled =true;
+			}
+		}
+		KS.eventsProcessed= handled;
+	}
+	function keyRelease(k,t)
+	{
+		lastInteractionTime = t;
+
+    	var handled= false;
+		trace('keyRelease='+k);
+		if (k<0) return ; // focus lost 
+		pressedKeys[k]=0;
+		var base=65;
+		if (k>=65 && k <= 90) {
+		var n=k-base;
+		var target=	layout.root.children;
+		var l=target.length-1;
+		if (n>=0 && n<l) 
+		{
+			var x=0, y=0,z=100;
+
+			var t=target[n];
+			var bmin = layout.bboxCenter.subtract(layout.bboxSize.multiply(0.5));
+
+				x=bmin.x+ layout.bboxSize.x*Math.random();
+				y=bmin.y+ layout.bboxSize.y*Math.random();
+				z=bmin.z+ layout.bboxSize.z*Math.random();
+			t.translation = new SFVec3f(x,y,z);
+			t.move_to = new SFVec3f(x,y,z);
+			handled =true;
+		}
+		}
+		KS.eventsProcessed= handled;
+	}
+	function character(ch,t)
+	{
+		lastInteractionTime = t;
+
+    	var returnValue= false;
+		trace('character='+ch);
+
+		if (ch == 'n' || ch == 'N') {
+			layout.navigateNext = t;
+		}
+		else if (ch == 'b' || ch == 'B') {
+			layout.navigatePrev = t;
+		}
+		else if (ch == 'a' || ch == 'A') {
+			layout.navigateAll = t;
+		}
+		else if (ch == 'c' || ch == 'C') {
+			layout.clear = t;
+		}
+		else if (ch == 'q' || ch == 'Q') {
+			layout.shuffle_move = t;
+		}
+		else if (ch == 'r' || ch == 'R') {
+			layout.shuffle = t;
+		}
+		else if (ch == 's' || ch == 'S') {
+			if (TS.isActive)
+				slideShowStop(t);
+			else slideShowStart(t);
+		}
+		else 
+		{
+        	returnValue = true;
+		}
+
+    	//KS.returnValue= returnValue;
+		KS.eventsProcessed= !returnValue;
+
+    
+	}
+	function mousePosition(v,t)
+	{
+	
+		if (v == lastMousePosition)
+			return; 
+		var m= (v.x+1.0) / 2.0;
+		// scroll horizontal through items 
+		var l=  Math.round(m * (layout.maxFilledItem-1)); // maxItemCount
+		if (l != layout.selectedItem) {
+			lastInteractionTime = t;
+			layout.animationDuration = 0.01;
+			layout.navigateItem = l;
+			//print('mousePosition:'+v+' item:'+l);
+
+		}
+		lastMousePosition = v;
+
+	}
+	function slideShow(t) 
+	{
+		lastInteractionTime = t;
+
+		if (TS.isActive)
+			slideShowStop(t);
+		else slideShowStart(t);
+	}
+
+	function slideShowStart(t) 
+	{
+		TS.set_startTime = Browser.getTime();
+
+	}
+	function slideShowStop(t) 
+	{
+		TS.set_stopTime = Browser.getTime();
+
+	}
+	function slideShowNext(t) 
+	{
+
+		// print('SLIDE next:'+t);
+		if (slideShowRandom) 
+		{
+			var l= Math.random()*(layout.maxItemCount-1);
+			layout.navigateItem = l;
+		} else {
+			layout.navigateNext = t;
+		}
+
+	}
+
+	function idleTime(t) 
+	{
+		var dt = (t-lastInteractionTime);
+
+		if (dt <= 1.5)
+			return;
+		var dtidle = (t-lastIdleTime);
+		var x = layout.animationDuration;
+		if (dtidle <= (x*1.5)) 
+			return;
+
+		var action = Math.random()*9; // 10;
+		action=0;
+
+		if (action <4) 
+		{
+			//layout.animationDuration = 0.1 + 1.5*Math.random();
+			layout.animationDuration = 0.2*Math.random();
+			layout.navigateNext =t;
+
+		}
+		if (action <5) 
+		{
+			var l= Math.random()*(layout.maxFilledItem-1); // maxItemCount
+			layout.animationDuration = 0.2;
+			layout.navigateItem = l;
+		}
+		else if (action <7) {
+			if (layout.stateViewAll)
+				layout.navigateNext = t;
+			else layout.navigateAll = t;
+		}
+		else if (action <10) {
+			layout.shuffle_move = t;
+			if (!layout.stateViewAll) {
+				layout.animationDuration = 1.5;
+				layout.navigateAll = t;
+			}	
+
+		}
+		//xxx lastInteractionTime = t-3;
+		lastIdleTime = t;
+
+	}
+	// clicked on item with id 
+	function on_click_id(id,t) 
+	{
+		lastInteractionTime = t;
+
+		print('on_click_id:'+id);
+
+		//if already current go next 
+		if (currentItem && currentItem.id == id)  {
+			layout.navigateNext = t;
+		}	
+		else layout.navigateItem = id;
+	}
+
+	"
+
+
+}
+
+#ROUTE BUTTON_PREV.touchTime TO Layouter.navigatePrev
+#ROUTE BUTTON_NEXT.touchTime TO Layouter.navigateNext
+#ROUTE BUTTON_UP.touchTime TO Layouter.navigateAll
+
+ROUTE BUTTON_PREV.touchTime TO MEDIA_NAVIGATOR.navigatePrev
+ROUTE BUTTON_NEXT.touchTime TO MEDIA_NAVIGATOR.navigateNext
+ROUTE BUTTON_UP.touchTime TO MEDIA_NAVIGATOR.navigateAll
+
+ROUTE BUTTON_SLIDE_SHOW.touchTime TO MEDIA_NAVIGATOR.slideShow
+
+ROUTE KS.character TO MEDIA_NAVIGATOR.character
+ROUTE KS.keyPress TO MEDIA_NAVIGATOR.keyPress
+ROUTE KS.keyRelease TO MEDIA_NAVIGATOR.keyRelease
+
+ROUTE Layouter.selectedItemChanged TO MEDIA_NAVIGATOR.selectedItemChanged
+
+ROUTE TS.cycleTime TO MEDIA_NAVIGATOR.slideShowNext
+ROUTE TS_IDLE.time TO MEDIA_NAVIGATOR.idleTime
+
+# handler for the loaded media list 
+DEF MEDIA_LIST_LOADED Script 
+{
+
+	eventIn	SFBool  mediaLoaded
+
+	directOutput TRUE
+	field SFNode layout USE Layouter 
+	field SFNode mediaList USE MEDIA_LIST
+	field SFNode mediaNavigator USE MEDIA_NAVIGATOR
+
+
+
+	# drop related !
+
+	eventIn		SFVec2f		mouse_position
+	eventIn		SFNode		on_drop
+	eventIn		MFString	on_drop_multi
+	
+	field		MFString	separators	["/", "\\", "."]
+	# Extensions recognized for dropped files
+	field		MFString	ext_web									["html", "htm", "mhtml", "txt", "hta"]
+	field		MFString	ext_image								["jpg", "jpeg", "jpe", "png", "gif", "bmp"
+																	  "dds" "jp2" "ico" "cur" "tga" "targa"
+																	  "tif" "tiff" 
+																	]
+	field		MFString	ext_video								["wmv", "gif"
+																	  "rm", "mov",
+																	  "mpg", "mpeg", "avi", "divx", "vob"]
+
+  	field		MFString	ext_flash								["swf", "fla", "flv" ]
+
+	field		MFString	ext_audio								["mp3", "ogg", "mid", "wav"]
+	field		MFString	ext_3d									["wrl", "wrz", "vrml", "x3d", "x3dz", "x3dv","bswrl"]
+
+
+	url	"javascript:
+
+	function getMetaData(list, tag) 
+	{
+
+		var num = list.length;
+		for (var i=0;i<num;i++) 
+		{
+			if (list[i].name == tag)
+				return list[i];
+		}
+		return false;
+
+
+	}
+
+	function mediaLoaded(flag,t) 
+	{
+
+		if (!flag) {
+			Browser.print('Could not load media XML list:'+mediaList.url);
+			return;
+		}	
+
+		var list  = mediaList.children;
+		var num= list.length;
+
+		Browser.print('got media list '+flag+' Num top level Elements='+num);
+
+		var maxCount = layout.maxItemCount;
+
+		layout.setMaxItem = num;
+		if (num>maxCount)	{
+			num = maxCount; 
+			needScroll=true;
+		}
+
+		addPlayList(list);
+	}
+
+
+	function addPlayList(list)
+	{
+
+	  	var num= list.length;
+		// parse the playlist 
+
+		for (var i=0;i<num;i++) 
+		{
+			var item=list[i];
+
+			var type = item.getType();
+
+			// Browser.print('Got a ' +type);
+
+			if (type == 'Group') 
+			{
+				// sub group 
+				addPlayList(item.children);
+
+			}else 
+
+			if (type == 'media' || type == 'Anchor') 
+			{
+				
+				var srcUrl;
+				var description='';
+
+				if (type == 'media')
+					srcUrl = item.src;
+				else 
+					srcUrl = item.url[0];
+
+				// Browser.print('   url=' +srcUrl);
+
+				// Browser.print('   meta=' +item.metadata);
+
+				if (item.metadata) 
+				{
+
+					var mediaType='Image';
+					var Aspect = 1.0;
+
+					var s;
+					s=getMetaData(item.metadata.value,'Ref');
+					if (s) {
+						srcUrl = s.value[0];
+					}
+					s=getMetaData(item.metadata.value,'MediaType');
+					if (s) {
+						mediaType = s.value[0];
+					}	
+					s=getMetaData(item.metadata.value,'Description');
+					if (s) {
+						description = s.value[0];
+					}
+					else {
+						s=getMetaData(item.metadata.value,'Title');
+						if (s) {
+							description = s.value[0];
+						}
+
+					}
+					s=getMetaData(item.metadata.value,'Aspect');
+					if (s) {
+						Aspect = parseFloat(s.value[0]);
+						//print(Aspect);
+					}	
+					s=getMetaData(item.metadata.value,'RectangleSize');
+					//if (s) 
+					if (true) 
+					{
+						// print(s);
+						// create new node representing the media item 
+						var n = Browser.createVrmlFromString(mediaType+'Viewer { }')[0];
+
+						if (n) {
+							n.url[0]=srcUrl;
+							if (s) n.size = s.value[0];
+							else {
+								
+								if (Aspect >= 1.0) { n.size.x = 1.0;	n.size.y = 1.0/Aspect; }
+								else { n.size.x = Aspect;	n.size.y = 1.0; }
+							}	
+							n.metadata = item.metadata;
+
+							//&twg_type=small
+							s=getMetaData(item.metadata.value,'ThumbRef');
+							if (s) {
+								var tn = new SFNode('ImageTexture{}');
+								tn.url[0]=s.value[0];
+								tn.repeatS=false; tn.repeatT=false;
+								n.thumbTexture = tn;
+								n.url[1]=s.value[0];
+							}
+
+							n.description = description;
+
+							//continue;
+							//print(n);
+							layout.addItem = n;
+
+							// add route if clicked on item 
+							if (layout.lastAddedItem_changed.hasEventOut('on_click_id'))
+								Browser.addRoute(layout.lastAddedItem_changed,'on_click_id',mediaNavigator,'on_click_id');
+							else Browser.addRoute(n,'on_click_id',mediaNavigator,'on_click_id');
+						}
+						continue;
+
+
+					}		
+					
+
+				}		
+				else {
+					layout.addUrlItem = srcUrl;
+				}	
+
+			}
+			else if (type == 'Entry') 
+			{
+				var l=item.children;
+				for (var j=0; j<l.length;j++) 
+				{
+					var litem = l[j];
+					var t= litem.getType();
+					if (t == 'Ref') {
+						var srcUrl = litem.href;
+						Browser.print('   url=' +srcUrl);
+						layout.addUrlItem = srcUrl;
+					}
+				}
+
+			}
+
+		}
+
+	}
+
+
+	// drop related 
+
+	function on_drop(e){
+		trace('[on_drop] ' + e);
+
+	
+		var e_dataType = e.dataType.toLowerCase(); //we handle 'File' or 'URL', but not directly dropped code ('HTML')
+
+	
+		if ((e_dataType == 'file') || (e_dataType == 'url') || (e_dataType == 'directory') || (e_dataType == 'shell') || (e_dataType == 'shellfolder')) 
+			DoDrop(e_dataType,e.data,true);
+		else if ((e_dataType == 'filemulti') || (e_dataType == 'shellmulti')) 
+			DoDrop_multi(e);
+
+	}
+
+	function DoDrop(dataType, data,load_subfolders)
+	{
+		trace('DoDrop:'+data);
+		if (data == '') return ;
+		var tmp_data = data.toLowerCase();
+
+		var pos = tmp_data.lastIndexOf(separators[0]);
+		if (pos > -1) tmp_data = tmp_data.substring(pos + 1, tmp_data.length);
+
+		pos = tmp_data.lastIndexOf(separators[1]);
+		if (pos > -1) tmp_data = tmp_data.substring(pos + 1, tmp_data.length);
+
+		pos = tmp_data.lastIndexOf(separators[2]);
+		
+		var attributes = Browser.getFileAttributes(data);
+		var isDirectory = 0;
+		var shellType='';
+		var shortcutUrl='';
+
+		if (attributes) 
+		{
+			print(attributes);
+
+			if (IsDirectory(attributes)) { // Folder object
+				
+
+				if (load_subfolders) 
+				{
+					var folder = data;
+					
+				    if (folder.substring(0,2) == '::' || folder.substring(0,2) == ';;') { // shell folder, device
+					}  else {
+						folder=data+'\\\\';
+					}
+
+					var files = Browser.getDirectoryContent(folder,'All'); // Directory , All, File
+					if (files) {
+						var l = files.length;
+						if (l > 50) l = 50; //only the first 50 files - too slow for many files
+
+						for (i = 0; i < l; i++) 
+						{
+							var file = files[i];
+							var ignore=false;
+
+							if ((file == '.') || (file == '..') ) ignore=true;
+							else if (file.toLowerCase() == 'thumbs.db')
+								ignore = true;
+							else if (file.indexOf('thumb_')>=0)
+								ignore = true;
+							else if (file.indexOf('.ini')>=0)
+								ignore = true;
+
+							if (!ignore) {
+								DoDrop('file', data + '\\\\' + file, false);
+							}
+						}
+					}
+				}
+				return;
+			}
+			else {
+			}
+		}		
+
+			
+		// No attributes or not a directory
+		if (pos > -1) {
+			var ext = ExtractFileExt(tmp_data);
+			trace('Extension:'+ext);
+			ext = ext.toLowerCase();
+
+			if (ext == 'url' && attributes) 
+			{
+				// could expand short cut 
+				for (j=0;j<attributes.length; j++) 
+				{
+					if (attributes[j].indexOf('shortcutUrl=')==0) 
+					{
+						shortcutUrl = attributes[j].substring(12);
+						trace('shortcutUrl=' + shortcutUrl);
+						return DoDrop('url',shortcutUrl,load_subfolders);
+					}
+				}
+				
+			}
+			if (ext == 'x3d') { // assume playlist 
+				mediaList.url[0]=data;
+				return;
+			}
+			var mediaType = 'Image';
+
+			if (in_array(ext, ext_image))  
+				mediaType = 'Image';
+			else if (in_array(ext, ext_video))  
+				mediaType = 'Movie';
+			else if (in_array(ext, ext_flash))  
+				mediaType = 'Flash';
+			//layout.addUrlItem = data;
+			var n = Browser.createVrmlFromString(mediaType+'Viewer { }')[0];
+
+			if (n) {
+				n.url[0]=data;
+				//n.description = description;
+				//print(n);
+				layout.addItem = n;
+
+				// add route if clicked on item 
+				if (layout.lastAddedItem_changed.hasEventOut('on_click_id'))
+					Browser.addRoute(layout.lastAddedItem_changed,'on_click_id',mediaNavigator,'on_click_id');
+				else Browser.addRoute(n,'on_click_id',mediaNavigator,'on_click_id');
+			}
+
+
+			
+		} else {
+			// no ext 
+			layout.addUrlItem = data;
+		}
+	}
+	
+	// split list of files 
+	function DoDrop_multi(e)
+	{ 
+		var i0 = 0;
+		var i1 = e.data.indexOf('|', i0);
+		var l = e.data.length;
+		var x = 0.0;
+		while (i0 < l) {
+			DoDrop('file',e.data.substring(i0, i1),true);
+			i0 = i1 + 1;
+			i1 = e.data.indexOf('|', i0);
+			if (i1<0) i1 = l;
+			x += 2;
+		}
+	}
+	function ExtractFileExt(filename)
+	{
+		var ext = filename + '';
+		var l = ext.length;
+		var pos = ext.indexOf('?');
+		
+		if (pos > -1) ext = ext.substring( 0, pos );
+		pos = ext.lastIndexOf('.');
+	
+		if (pos > -1) return ext.substring( pos + 1, ext.length );
+		else return '';
+
+	}	
+	function in_array(str, arr){
+			var l = arr.length;
+			if (l == -1) return false;
+			for (i = 0; i < l; i++) {if (arr[i] == str) return true;}
+			return false;
+		}
+	function IsDirectory(attributes){
+		var l = attributes.length;
+		for (var i = 0; i < l; i++){
+			var str = attributes[i].toLowerCase();
+			if (str.toLowerCase() == 'type=directory') return true;
+			else if ((str.indexOf('type=') == 0 ) && (str.indexOf('folder') >= 0)) return true;
+			else if ((str.indexOf('attributes=') == 0) && (str.indexOf('folder') >= 0)) return true;
+		}
+		return false;
+	}
+	// ----------------------------------------- //
+	function IsHidden(attributes){
+		var l = attributes.length;
+		for (var i = 0; i < l; i++) if (attributes[i].toLowerCase() == 'hidden system') return true; //to check
+		return false;
+	}
+	// ----------------------------------------- //
+	function IsShortcutURL(attributes){
+		var l = attributes.length;
+
+		for (var i = 0; i < l; i++) 
+		if (attributes[i].indexOf('shortcutUrl=')==0) 
+		{
+		//	shortcutUrl = attributes[i].substring(12);
+
+				return true;
+			}	
+
+		return false;
+	}
+	function IsShell(attributes){
+	
+	}
+	function GetShellName(attributes){
+//		else if (attributes[j].indexOf('shellType=')==0) {
+//			displayName = attributes[j].substring(10);
+//		}
+	}
+	// ----------------------------------------- //
+	function IsShortcut(attributes){
+	
+	}
+	function GetShortcutUrl(attributes){
+	
+	}
+	function GetDisplayName(attributes){
+		var l = attributes.length;
+		for (var i = 0; i < l; i++) if (attributes[i].toLowerCase().indexOf('displayname=') == 0) return attributes[i].substring(12);
+		return '';
+	}
+	"
+
+
+}
+
+ROUTE MEDIA_LIST.isLoaded TO MEDIA_LIST_LOADED.mediaLoaded
+
+
+DEF mouseSensor MouseSensor{}
+DEF dropSensor DeviceSensor{eventType "drop"}
+
+ROUTE dropSensor.event TO MEDIA_LIST_LOADED.on_drop
+
+#ROUTE mouseSensor.lButton	TO MEDIA_NAVIGATOR.mouselButton
+#ROUTE mouseSensor.rButton	TO MEDIA_NAVIGATOR.mouselButton
+
+ROUTE mouseSensor.position TO	MEDIA_NAVIGATOR.mousePosition
+
+
+
+DEF INIT Script {
+	directOutput TRUE
+
+	field SFNode layout USE Layouter 
+	field SFNode mediaList USE MEDIA_LIST
+	field SFNode mediaListLoaded USE MEDIA_LIST_LOADED
+
+	eventIn	SFString setMediaListUrl 
+
+	url	"javascript:
+	function initialize()
+	{
+		//Browser.setOption('recenterMouseOnUp','true');
+		// limit image size 
+        Browser.setOption('maxTextureSize', '1024');
+        Browser.setOption('useDX9ImageReader', 'true');
+
+		//Browser.setOption('viewpointAnimationDuration', duration);
+        var browser= Browser.getName(); 
+		var version= Browser.getVersion(); 
+		if (browser== 'blaxxunCC3D' && parseFloat(version)>= 7.02) {
+		} else {
+			Browser.print('Need BSContact 7.02 at least');
+			trace (browser);
+			trace (version);
+
+		}	
+
+
+       
+	}
+	function shutdown() {
+	}
+	function setMediaListUrl(s,t) 
+	{
+		// trigger load of new url 
+		mediaList.url= new MFString(s);
+	}	
+	
+	"
+}
