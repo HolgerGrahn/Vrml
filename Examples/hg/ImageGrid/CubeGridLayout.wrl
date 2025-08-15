@@ -440,7 +440,7 @@ PROTO ImageViewer [
 	exposedField MFString url []			# url of image 
 	exposedField SFVec2f size 1 1			# to fill from Image aspect ratio 
 	exposedField SFNode	thumbTexture NULL
-	exposedField SFBool	showThumb TRUE
+	exposedField SFBool	showThumb FALSE ##TRUE
 
 	exposedField SFNode	metadata NULL		# the meta data from XML 
 
@@ -464,11 +464,10 @@ PROTO ImageViewer [
 					appearance 
 			
 					LOD	{
-						range [ 15 , 150 ]
+						#range [ 15 , 150 ]
+						range [ 10 , 50 ]
 						level [
-
-
-							Appearance {
+						   Appearance {
 								texture	
 				
 								ImageTextureLOD { 
@@ -478,14 +477,13 @@ PROTO ImageViewer [
 							
 									showThumb IS showThumb
 									thumbTexture IS thumbTexture
-
-									## loop TRUE 					startTime 0
+			  								
 								}
 							}
 							## Thumbnail texture
 					
 							Appearance { 
-								material Material { transparency 0.5 }
+								#material Material { transparency 0.5 }
 								texture	IS thumbTexture
 							}
 							## just transparent 
