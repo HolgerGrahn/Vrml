@@ -1,0 +1,174 @@
+#VRML V2.0 utf8
+
+PROTO ImageViewer[exposedField SFInt32 id -1
+	exposedField SFInt32 whichChoice 0
+	exposedField MFString url []
+	exposedField SFVec2f size 1 1
+	exposedField SFNode thumbTexture NULL 
+	exposedField SFBool showThumb TRUE 
+	exposedField SFNode metadata NULL 
+	exposedField SFString description ""
+	eventOut SFTime on_click
+	eventOut SFInt32 on_click_id
+]
+{Switch {whichChoice IS whichChoice
+		choice[Group {
+				children [
+					DEF TS_1 TouchSensor {description IS description
+						touchTime IS on_click
+					}
+				
+					Shape {
+						appearance LOD {
+							range [10,50]
+							level [
+								Appearance {
+									texture ImageTextureLOD {thumbTexture IS thumbTexture
+										showThumb IS showThumb
+										url IS url
+										repeatS FALSE 
+										repeatT FALSE 
+										url IS url
+										parameter "subtexture"
+										thumbTexture IS thumbTexture
+										showThumb IS showThumb
+									}}
+							
+								Appearance {texture IS thumbTexture
+									###material DEF _Material Material { transparency 0.5}
+									texture IS thumbTexture
+								}
+							
+								DEF _Appearance Appearance {material Material {transparency 0.7}}
+							]
+						}
+						geometry Rectangle {
+							size IS size}
+					}
+				]
+			}]
+		whichChoice IS whichChoice
+	}
+	DEF S_1 Script {
+		eventIn SFTime touchTime
+		eventOut SFInt32 on_click_id IS on_click_id
+		exposedField SFInt32 id IS id
+		url "javascript:
+		function touchTime(t) {
+		    on_click_id = id; 
+		}
+		"
+	}
+	ROUTE TS_1.touchTime_changed TO S_1.touchTime
+}
+
+
+DEF _ImageViewer_124 ImageViewer {
+	id 124
+	showThumb FALSE ### TRUE
+	url ["./Photos/0,1020,659177,00.jpg","./Photos/thumbnail/thumb_0,1020,659177,00.jpg"]
+	size 1 0.666667
+	thumbTexture DEF _ImageTexture_128 ImageTexture {
+		url "./Photos/thumbnail/thumb_0,1020,560005,00.jpg" ## thumb_0,1020,659177,00.jpg"
+		repeatS FALSE 
+		repeatT FALSE 
+	}
+	metadata DEF _MetadataSet_124 MetadataSet {
+		value [
+			MetadataString {
+				name "Ref"
+				value "./Photos/0,1020,659177,00.jpg"
+			}
+			
+			MetadataString {
+				name "Title"
+				value "0,1020,659177,00"
+			}
+			
+			MetadataString {
+				name "Category"
+				value ""
+			}
+			
+			MetadataString {
+				name "Created"
+				value "2007-02-26T 0:24:27.0"
+			}
+			
+			MetadataString {
+				name "LastModified"
+				value "2006-07-05T 8:58:45.0"
+			}
+			
+			MetadataString {
+				name "Size"
+				value "54583"
+			}
+			
+			MetadataString {
+				name "Tags"
+				value ",Spiegel,Media,"
+			}
+			
+			MetadataString {
+				name "VolumeId"
+				value "9CD08F5C"
+			}
+			
+			MetadataString {
+				name "Type"
+				value "JPEG-Bild"
+			}
+			
+			MetadataString {
+				name "Width"
+				value "750"
+			}
+			
+			MetadataString {
+				name "Height"
+				value "500"
+			}
+			
+			MetadataString {
+				name "Aspect"
+				value "1.5"
+			}
+			
+			MetadataString {
+				name "RectangleSize"
+				value "1 0.666667"
+			}
+			
+			MetadataString {
+				name "MediaType"
+				value "Image"
+			}
+			
+			MetadataString {
+				name "ThumbRef"
+				value "./Photos/thumbnail/thumb_0,1020,659177,00.jpg"
+			}
+			
+			MetadataString {
+				name "lastScanned"
+				value "2007-02-26T 1:00:02.0"
+			}
+			
+			MetadataString {
+				name "added"
+				value "2007-02-26T 1:00:02.0"
+			}
+			
+			MetadataString {
+				name "id"
+				value "126"
+			}
+			
+			MetadataString {
+				name "currentIndex"
+				value "126"
+			}
+		]}
+	description "0,1020,659177,00"
+}

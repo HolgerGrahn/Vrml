@@ -1,0 +1,69 @@
+#VRML V2.0 utf8
+#written by BS Contact Stereo (Developer)  9.285
+
+WorldInfo {title "ArcClose2D.x3d"}
+DEF _Background Background {skyColor 1 1 1}
+DEF _Viewpoint Viewpoint {description "ArcClose2D example animated "}		  
+
+EXTERNPROTO ArcClose2D[
+			exposedField SFNode metadata
+			exposedField SFString closureType
+			exposedField SFFloat endAngle
+			exposedField SFFloat radius
+			exposedField SFFloat startAngle
+			]
+		["urn:inet:bitmanagement.de:node:ArcClose2D","http://www.bitmanagement.de/vrml/protos/nodes.wrl#ArcClose2D","nodes.wrl#ArcClose2D"]
+
+Transform {
+	translation -2.5 1 0
+	children[Shape {
+		appearance DEF MagentaAppearance Appearance {material Material {
+				diffuseColor 1 0 0
+				emissiveColor 0 0 1
+				specularColor 0 0.8 0
+			}}
+		geometry 		DEF ARC ArcClose2D {
+			closureType "PIE"
+			##closureType "CHORD"
+			solid TRUE
+			endAngle 0
+			radius 3
+			startAngle 4.5
+		}
+	}]
+}
+Transform {
+	scale 1 0.5 0
+	translation -1 -1.5 0
+	children[Shape {
+		appearance USE MagentaAppearance
+		geometry ArcClose2D {
+			closureType "CHORD"
+			endAngle 0.78
+			radius 1.5
+			startAngle 6
+		}
+	}]
+}
+
+DEF TS TimeSensor {
+	loop TRUE
+	cycleInterval  10
+}
+
+DEF S Script {
+	field SFNode arc USE ARC
+	eventIn	SFFloat	fraction
+
+	url	"javascript:
+
+	function fraction(f) {
+	    arc.endAngle = f* 2.0*Math.PI;
+	}
+
+	"
+
+}
+
+ROUTE TS.fraction_changed TO S.fraction
+

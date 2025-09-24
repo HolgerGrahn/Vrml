@@ -1,0 +1,71 @@
+#VRML V2.0 utf8
+#written by BS Contact Stereo (Developer)  9.285
+
+WorldInfo {title "Disk2D.x3d  animated "}
+DEF _Viewpoint Viewpoint {description "Disk2D example"}		
+
+
+
+EXTERNPROTO Disk2D[
+			exposedField SFNode metadata
+			exposedField SFFloat innerRadius
+			exposedField SFFloat outerRadius
+			exposedField SFBool solid
+			]
+		["urn:inet:bitmanagement.de:node:Disk2D","http://www.bitmanagement.de/vrml/protos/nodes.wrl#Disk2D","nodes.wrl#Disk2D"]
+
+Transform {
+	translation -2.5 1 0
+	children[
+		
+		DEF TS1 TouchSensor	{ enabled TRUE description "Disk 1" }
+		Shape {
+		appearance DEF MagentaAppearance Appearance {material Material {
+				diffuseColor 1 0 0
+				emissiveColor 0 0 1
+				specularColor 0 0.8 0
+			}}
+		geometry 		Disk2D {}
+	}]
+}
+Transform {
+	scale 1 0.5 0
+	translation -1 -1.5 0
+	children[
+		DEF TS2 TouchSensor	{ enabled TRUE  description "Disk 2" }
+		Shape {
+		appearance USE MagentaAppearance
+		geometry DEF DISK Disk2D {
+			innerRadius 1.5
+			outerRadius 3
+		##	solid TRUE
+		}
+	}]
+}
+
+
+DEF TS TimeSensor {
+	loop TRUE
+	cycleInterval  10
+}
+
+DEF S Script {
+	field SFNode s USE DISK
+	eventIn	SFFloat	fraction
+
+	eventIn	SFBool over
+
+	url	"javascript:
+
+	function fraction(f) {
+	    s.innerRadius = f* 5.0;
+	}
+
+	"
+
+}
+
+ROUTE TS.fraction_changed TO S.fraction
+
+ROUTE TS1.isOver TO	S.over
+ROUTE TS2.isOver TO	S.over

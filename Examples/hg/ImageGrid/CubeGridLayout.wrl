@@ -463,14 +463,12 @@ PROTO ImageViewer [
 				Shape {
 					appearance 
 			
-					LOD	{
-						#range [ 15 , 150 ]
-						range [ 10 , 50 ]
+					LOD	{					   # Contact Extension LOD allowed here 
+						range [ 15 , 150 ]
+						#range [ 10 , 50 ]
 						level [
 						   Appearance {
-								texture	
-				
-								ImageTextureLOD { 
+								texture	ImageTextureLOD { 
 									url IS url 
 									repeatS	FALSE repeatT FALSE
 									parameter ["subtexture"  ]
@@ -486,7 +484,7 @@ PROTO ImageViewer [
 								#material Material { transparency 0.5 }
 								texture	IS thumbTexture
 							}
-							## just transparent 
+							## just transparent grey
 							Appearance { 
 								material Material { transparency 0.7 }
 							}
