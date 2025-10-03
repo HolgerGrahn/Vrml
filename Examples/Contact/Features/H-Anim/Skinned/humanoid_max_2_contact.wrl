@@ -4,70 +4,70 @@
 # modified by Bitmanagement Software GmbH, H. Grahn, Andrea Fasce, Version 7.01, Revision 0
 # MAX File: humanoid_01.max, Date: Fri Aug 12 16:18:11 2011
 
-EXTERNPROTO Joint [
-   exposedField     SFVec3f      center
-   exposedField     MFNode       children
-   exposedField     MFFloat      llimit
-   exposedField     SFRotation   limitOrientation
-   exposedField     SFString     name
-   exposedField     SFRotation   rotation
-   exposedField     SFVec3f      scale
-   exposedField     SFRotation   scaleOrientation
-   exposedField     MFInt32      skinCoordIndex
-   exposedField     MFFloat      skinCoordWeight
-   exposedField     MFFloat      stiffness
-   exposedField     SFVec3f      translation
-   exposedField     MFFloat      ulimit
-]
-[ "urn:inet:bitmanagement.de:node:Joint","h-anim.wrl#Joint","http://www.bitmanagement.de/vrml/protos/nodes.wrl#Joint" ]
-EXTERNPROTO Segment [
-   field          SFVec3f bboxCenter
-   field          SFVec3f bboxSize
-   exposedField   SFNode coord
-   exposedField   SFString name
-   exposedField   SFVec3f  centerOfMass
-   exposedField   SFVec3f  momentsOfInertia
-   exposedField   SFFloat  mass
-   exposedField   MFNode   children
-   exposedField   MFNode   displacers
-   eventIn        MFNode   addChildren
-   eventIn        MFNode   removeChildren
-]
-[ "urn:inet:bitmanagement.de:node:Segment" "h-anim.wrl#Segment","http://www.bitmanagement.de/vrml/protos/nodes.wrl#Segment" ]
-EXTERNPROTO Site [
-	eventIn MFNode addChildren
-	eventIn MFNode removeChildren
-	exposedField MFNode children
-	exposedField SFString name
-	exposedField SFVec3f center
-	exposedField SFRotation rotation
-	exposedField SFVec3f scale
-	exposedField SFRotation scaleOrientation
-	exposedField SFVec3f translation
-]
-[ "urn:inet:bitmanagement.de:node:Site" "h-anim.wrl#Site","http://www.bitmanagement.de/vrml/protos/nodes.wrl#Site" ]
-EXTERNPROTO Humanoid [
-   eventIn         SFFloat    set_fraction
-   field           SFVec3f    bboxCenter
-   field           SFVec3f    bboxSize
-   field           MFNode     joints
-   field           MFNode     skeleton
-   field           SFNode     skinCoord
-   exposedField    SFVec3f    center
-   exposedField    MFString   info
-   exposedField    SFString   name
-   exposedField    SFRotation rotation
-   exposedField    SFVec3f    scale
-   exposedField    SFRotation scaleOrientation
-   exposedField    MFNode     segments
-   exposedField    MFNode     sites
-   exposedField    MFNode     skin
-   exposedField    SFNode     skinNormal
-   exposedField    SFVec3f    translation
-   exposedField    SFString   version
-   exposedField    MFNode     viewpoints
-]
-[ "urn:inet:bitmanagement.de:node:Humanoid" "h-anim.wrl#Humanoid","http://www.bitmanagement.de/vrml/protos/nodes.wrl#Humanoid" ]
+#EXTERNPROTO Joint [
+#   exposedField     SFVec3f      center
+#   exposedField     MFNode       children
+#   exposedField     MFFloat      llimit
+#   exposedField     SFRotation   limitOrientation
+#   exposedField     SFString     name
+#   exposedField     SFRotation   rotation
+#   exposedField     SFVec3f      scale
+#   exposedField     SFRotation   scaleOrientation
+#   exposedField     MFInt32      skinCoordIndex
+#   exposedField     MFFloat      skinCoordWeight
+#   exposedField     MFFloat      stiffness
+#   exposedField     SFVec3f      translation
+#   exposedField     MFFloat      ulimit
+#]
+#[ "urn:inet:bitmanagement.de:node:Joint","h-anim.wrl#Joint","http://www.bitmanagement.de/vrml/protos/nodes.wrl#Joint" ]
+#EXTERNPROTO Segment [
+#   field          SFVec3f bboxCenter
+#   field          SFVec3f bboxSize
+#   exposedField   SFNode coord
+#   exposedField   SFString name
+#   exposedField   SFVec3f  centerOfMass
+#   exposedField   SFVec3f  momentsOfInertia
+#   exposedField   SFFloat  mass
+#   exposedField   MFNode   children
+#   exposedField   MFNode   displacers
+#   eventIn        MFNode   addChildren
+#   eventIn        MFNode   removeChildren
+#]
+#[ "urn:inet:bitmanagement.de:node:Segment" "h-anim.wrl#Segment","http://www.bitmanagement.de/vrml/protos/nodes.wrl#Segment" ]
+#EXTERNPROTO Site [
+#	eventIn MFNode addChildren
+#	eventIn MFNode removeChildren
+#	exposedField MFNode children
+#	exposedField SFString name
+#	exposedField SFVec3f center
+#	exposedField SFRotation rotation
+#	exposedField SFVec3f scale
+#	exposedField SFRotation scaleOrientation
+#	exposedField SFVec3f translation
+#]
+#[ "urn:inet:bitmanagement.de:node:Site" "h-anim.wrl#Site","http://www.bitmanagement.de/vrml/protos/nodes.wrl#Site" ]
+#EXTERNPROTO Humanoid [
+#   eventIn         SFFloat    set_fraction
+#   field           SFVec3f    bboxCenter
+#   field           SFVec3f    bboxSize
+#   field           MFNode     joints
+#   field           MFNode     skeleton
+#   field           SFNode     skinCoord
+#   exposedField    SFVec3f    center
+#   exposedField    MFString   info
+#   exposedField    SFString   name
+#   exposedField    SFRotation rotation
+#   exposedField    SFVec3f    scale
+#   exposedField    SFRotation scaleOrientation
+#   exposedField    MFNode     segments
+#   exposedField    MFNode     sites
+#   exposedField    MFNode     skin
+#   exposedField    SFNode     skinNormal
+#   exposedField    SFVec3f    translation
+#   exposedField    SFString   version
+#   exposedField    MFNode     viewpoints
+#]
+#[ "urn:inet:bitmanagement.de:node:Humanoid" "h-anim.wrl#Humanoid","http://www.bitmanagement.de/vrml/protos/nodes.wrl#Humanoid" ]
 WorldInfo {
   info [ "Fri Aug 12 16:18:11 2011"
    "options:relativeTime=true" ]

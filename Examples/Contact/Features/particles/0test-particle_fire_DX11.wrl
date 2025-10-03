@@ -1,0 +1,246 @@
+#VRML V2.0 utf8
+
+
+WorldInfo{
+	title "Particles - DX11 shader"
+	info[
+ 		"Contact Particle system test - DX11 shader"
+	]
+}
+
+
+NavigationInfo {
+	visibilityLimit 400
+}
+
+DEF TS TimeSensor {
+	enabled TRUE
+	loop TRUE
+	cycleInterval 10
+}
+
+Viewpoint 
+{
+	position 0 2.75 35	
+	fieldOfView 1.0
+	description	"Start"
+}
+
+DEF Background Background { skyColor 0.2 0.2 0.4 }
+PointLight {
+	on FALSE
+	location 0 2 0
+	color 1 0.05 0.05
+}
+
+
+DEF Ground Transform {
+	scale 50 50 50
+	children [
+		Shape {
+			appearance Appearance { 
+				material Material { diffuseColor 0 0 0 emissiveColor 1 1 1 
+				#transparency 0.2  # to look from bottom
+				}
+				texture ImageTexture { url "../textures/gray_ground.jpg" }
+				textureTransform TextureTransform { scale 10 10 }
+			}
+			geometry DEF Square IndexedFaceSet {
+				solid FALSE
+				creaseAngle	3.14
+				coord Coordinate {
+					point [ -1 0 -1,
+						1 0 -1,
+						1 0 1,
+						-1 0 1 ]
+				}
+				texCoord TextureCoordinate {
+					point [ 0 0, 
+						1 0,
+						1 1,
+						0 1 ]
+				}
+				coordIndex [ 0, 1, 2, 3, -1 ]
+			}
+		}
+	]
+}
+
+
+DEF PS-S Shape {
+	appearance 	DEF PS-APP Appearance {
+		material Material { transparency 0  emissiveColor 1 0.5 0.5 }
+		texture DEF PS-TEX 
+		ImageTexture 
+		#MovieTexture 
+		{	# loop TRUE speed	2
+			repeatS	FALSE repeatT FALSE
+			url [
+				#"../textures/anim/fire_ani.gif" 
+				"../textures/particle.png" 
+				## "../textures/particle.png" 
+			    ##"../textures/shine1.png" 
+				##	"../textures/flare2.png"
+			]
+		}
+			shaders[
+			
+			
+			DEF PSShader PackagedShader {
+				language "HLSL"
+
+				field SFFloat time	0.0
+				##exposedField SFFloat Explode 0.2
+				field SFNode texture0 USE PS-TEX
+
+				url "hlsl://5_0
+//hlsl:5_0 BSContact Shader Generator: numLights=0 numTextures=1 lightingEnable=0 specularEnable=0 doubleSidedEnable=0 fogEnable=0 vertexLighting=1 pixelLighting=0 vertexColor=1 numTextureCoord=1
+// Texture enable & type colorType: [0] = 1 t=3 
+cbuffer ModelViewProjectionConstantBuffer {
+float4x4 World			: WORLD;
+float4x4 View			: VIEW;
+float4x4 Projection		: PROJECTION;
+float4x4 WorldView		: WORLDVIEW;
+float4x4 WorldViewProjection	: WORLDVIEWPROJECTION;
+float4x4 WorldViewInverseTranspose	: worldViewInverseTranspose;
+};
+float AlphaRef			 	: alphaRef;
+float4 currentColor         : currentColor;
+
+Texture2D   texture0;
+SamplerState samp_texture0;
+
+
+float time : TIME;		  // Contact time parameter
+
+struct VSIn
+{
+	float3 Position		: POSITION;
+	float4 Color 		: COLOR;
+	float2 Texture0 	: TEXCOORD0;
+};
+
+struct VSOut
+{
+	float4 Position		: SV_POSITION;
+	float4 Color		: COLOR0;
+	float2 Texture0		: TEXCOORD0;
+};
+
+struct PSIn
+{
+	float4 sv_position	: SV_POSITION;
+	float4 Color  		: COLOR0;
+	float2 Texture0		: TEXCOORD0;
+};
+
+VSOut VS(VSIn input)
+{
+	VSOut output = (VSOut)0.0;
+
+	float4 position = float4(input.Position,1.0);
+
+	// try some vertex effect 
+	float  frequency =0.2;
+	float phase = 1.0;
+
+	float distance = time * 2 + input.Position.x  * 5;
+
+	float2 wave;
+    sincos(frequency * distance + phase, wave.x, wave.y);
+
+	position = mul(position,WorldView);
+
+	//float4 direction = mul(float4(1,0,0,0),WorldView);
+	position.x += 2.0 * wave.x;				 // some sinus offset in viewspace x
+
+	//output.Position = mul(position,WorldViewProjection);
+	output.Position = mul(position,Projection);
+	output.Texture0	 = input.Texture0;
+	output.Color = input.Color;
+
+	//output.Color.r = 1.0; //xx	output.Color.g = 0.0;voutput.Color.b = 0.0; //xx
+
+	return output;
+}
+
+float4 PS(in PSIn input) : SV_TARGET
+{
+	float4 color;
+	color=input.Color;
+	float4 textureColor0=texture0.Sample(samp_texture0,input.Texture0.xy);
+	color *= textureColor0;
+	clip((color.a <= AlphaRef) ? -1.0 : 1.0);
+	return color;
+}
+"
+			}
+		]
+
+		
+	}
+	geometry  DEF PS Particles 
+	{
+		bboxSize -1 -1 -1 
+
+		geometryType "SPRITE"	#	   "LINE" 
+
+		lodRange 300 
+		particleRadius 0.35
+		particleRadiusRate 1.5
+		particleRadiusVariation 0.2
+
+		emitColor 0.85 0.15 0.15
+		emitColorVariation 0.5
+
+		fadeColor 1 1 0.5
+
+		fadeStartFraction 0   # when to start fade 
+		fadeRate 0.25
+		fadeAlpha 0
+		emitterPosition 0 0 0
+		emitterRadius 1
+
+		emitterSpread 0.95
+		
+		creationRate 2000 
+
+		maxParticles 25000
+		maxLifeTime 10
+
+		emitVelocity 4 15 4
+		#emitVelocity 15 15 15
+		gravity	0 0 0
+		emitVelocityVariation 0.25		
+		
+		
+		numTrails 0 #4
+		numSparks 0
+	}
+}
+
+
+
+
+
+
+DEF PS-translation PositionInterpolator {
+	keyValue [ 0 0 0,  2 0 0, 0 0 0]
+}
+DEF PS-rate ScalarInterpolator {
+	keyValue [ 200  350  700 200  100 200  ]
+}
+DEF PS-spread ScalarInterpolator {
+	keyValue [ 0.25 0.35 0.3 0.1 0.25 ]
+}
+
+ROUTE TS.fraction_changed TO PS-translation.set_fraction
+ROUTE PS-translation.value_changed TO PS.emitterPosition
+
+ROUTE TS.fraction_changed TO PS-rate.set_fraction
+ROUTE PS-rate.value_changed TO PS.creationRate
+ROUTE TS.fraction_changed TO PS-spread.set_fraction
+ROUTE PS-spread.value_changed TO PS.emitterSpread
+
+
+

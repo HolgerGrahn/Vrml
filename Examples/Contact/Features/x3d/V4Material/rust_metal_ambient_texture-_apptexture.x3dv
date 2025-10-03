@@ -1,0 +1,29 @@
+#X3D V4.0 utf8
+PROFILE Interchange
+
+NavigationInfo { headlight FALSE }
+PointLight { location 1 0 2 ambientIntensity 1 }
+
+Shape {
+  appearance DEF DIFFUSE_AMBIENT-RUST Appearance {
+  
+  
+    texture ImageTexture { url "rust_metal_textures/metall001-new-tileable.png" } # shall be used as Material DiffuseTexture
+	## https://www.web3d.org/specifications/X3Dv4Draft/ISO-IEC19775-1v4.1-CD/Part01/components/shape.html#TextureMapping
+    material Material   #X3D
+	{ 
+      transparency 0
+	 
+	  diffuseColor 1 1 1
+      ### diffuseTexture ImageTexture { url "rust_metal_textures/metall001-new-tileable.png" }
+      normalTexture ImageTexture { url "rust_metal_textures/metall001-new-nm.png" }
+
+	  ambientIntensity 1.0
+      ambientTexture ImageTexture { url "rust_metal_textures/metall001-new-contrast.png" }
+      specularColor 1 1 1
+	  
+    }
+  }
+  geometry Box {  }
+  # geometry Sphere { }
+}

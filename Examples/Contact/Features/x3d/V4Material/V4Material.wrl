@@ -1,0 +1,45 @@
+#VRML V2.0 utf8
+#written by BS Contact Stereo (Developer)  9.285
+
+DEF _PointLight PointLight {location -2 3 3}
+DEF _PointLight_1 PointLight {location 1 0 2}
+DEF _NavigationInfo NavigationInfo {headlight FALSE }
+
+EXTERNPROTO MaterialX3D[
+			exposedField SFFloat ambientIntensity
+			exposedField SFNode ambientTexture
+			exposedField SFString ambientTextureMapping
+			exposedField SFColor diffuseColor
+			exposedField SFNode diffuseTexture
+			exposedField SFString diffuseTextureMapping
+			exposedField SFColor emissiveColor
+			exposedField SFNode emissiveTexture
+			exposedField SFString emissiveTextureMapping
+			exposedField SFNode metadata
+			exposedField SFFloat normalScale
+			exposedField SFNode normalTexture
+			exposedField SFString normalTextureMapping
+			exposedField SFFloat occlusionStrength
+			exposedField SFNode occlusionTexture
+			exposedField SFString occlusionTextureMapping
+			exposedField SFFloat shininess
+			exposedField SFNode shininessTexture
+			exposedField SFString shininessTextureMapping
+			exposedField SFColor specularColor
+			exposedField SFNode specularTexture
+			exposedField SFString specularTextureMapping
+			exposedField SFFloat transparency
+			]
+	["urn:inet:bitmanagement.de:node:MaterialX3D","http://www.bitmanagement.de/vrml/protos/nodes.wrl#MaterialX3D","nodes.wrl#MaterialX3D"]
+
+
+DEF _Shape Shape {
+	appearance Appearance {material 		
+	MaterialX3D {
+			diffuseTexture ImageTexture {url "synthetic_metal_textures_with_specular_maps/synthetic_metal_06_diffuse.png"}
+			normalTexture ImageTexture {url "synthetic_metal_textures_with_specular_maps/synthetic_metal_06_normal.png"}
+			specularColor 1 1 1
+			specularTexture ImageTexture {url "synthetic_metal_textures_with_specular_maps/synthetic_metal_06_specular.png"}
+		}}
+	geometry DEF _Sphere Sphere {}
+}

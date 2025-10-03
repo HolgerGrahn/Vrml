@@ -1,0 +1,27 @@
+#X3D V4.0 utf8
+PROFILE Interchange
+
+NavigationInfo { headlight FALSE }
+PointLight { location 1 0 2 ambientIntensity 1 }
+
+Shape {
+  appearance DEF SHININESS-RUST Appearance {
+    material Material #X3D 
+	{ 
+      #multiDiffuseAlphaTexture
+      diffuseTexture  ImageTexture { url "rust_metal_textures/metall001-new-tileable.png" }
+
+      normalTexture ImageTexture { url "rust_metal_textures/metall001-new-nm.png" }
+      # normalTextureParallaxHeight 0.01 # don't use, not a cool effect with this texture
+
+      #shininessFactor 1
+	  shininess 1 # scale with this  # shall be in a channel
+      shininessTexture ImageTexture { url "rust_metal_textures/metall001-new-contrast.png" }
+      #shininessTextureChannelMask "r"
+      specularColor 1 1 1
+	  
+    }
+  }
+  geometry Box { }
+  #geometry Sphere { }
+}

@@ -1,7 +1,7 @@
 #VRML V2.0 utf8
 
 WorldInfo { 
-	title "texture DDS cubemap example"
+	title "texture DDS volumemap example"
 	info "Drop DDS cube textures to change"
 }
 DEF _1 Viewpoint 
@@ -30,21 +30,22 @@ DEF _5 Transform
 			appearance Appearance {
 				texture ImageTexture {
 					url [
-						"../textures/cubemaps/sky_cube_mipmap.dds"
+						"../textures/volumemaps/NoiseVolume.dds"
+						#"../textures/cubemaps/sky_cube_mipmap.dds"
 						#"../textures/cubemaps/nvlobby_cube_mipmap.dds",
 						#"../textures/cubemaps/sky.dds"
-						"../textures/cubemaps/sky_dxt1.dds"
+						#"../textures/cubemaps/sky_dxt1.dds"
 					]
 					#repeatS FALSE 
 					#repeatT FALSE 
 				}
-#			textureTransform TextureMatrixTransform 
-#				{
-#					matrix 1 0 0 0
-#							0 1 0 0
-#							0 0 1 0
-#							0 0 0 1
-#				}						
+			textureTransform DEF TM TextureMatrixTransform 
+				{
+					matrix 1 0 0 0
+							0 1 0 0
+							0 0 1 0
+							0 0 0 1
+				}						
 			}
 	
 			geometry DEF _IndexedFaceSet IndexedFaceSet {

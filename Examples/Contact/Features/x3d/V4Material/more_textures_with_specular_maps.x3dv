@@ -1,0 +1,209 @@
+#X3D V4.0 utf8 X_ITE V12.0.9
+
+PROFILE Interchange
+
+COMPONENT Geometry2D : 2
+
+META "created" "Tue, 30 Sep 2025 15:11:25 GMT"
+META "creator" "Holger Grahn"
+META "generator" "Sunrize X3D Editor V1.10.4, https://create3000.github.io/sunrize/"
+META "modified" "Tue, 30 Sep 2025 15:11:25 GMT"
+
+WorldInfo {
+  title "more_textures_with_specular_maps, X3D 4.0 Material"
+  info [
+    "Based on",
+    "https://github.com/castle-engine/demo-models/blob/master/common_surface_shader/more_textures_with_specular_maps.x3dv",
+    "hg@snafu.de"
+  ]
+}
+
+NavigationInfo {
+  headlight FALSE
+}
+
+PointLight {
+  location 1 0 2
+}
+
+Transform {
+  children Shape {
+    appearance Appearance {
+      material Material {
+        diffuseTexture ImageTexture {
+          url "more_textures_with_specular_maps/pattern_240/diffuse.png"
+        }
+        specularColor 1 1 1
+        specularTexture ImageTexture {
+          url "more_textures_with_specular_maps/pattern_240/specular.png"
+        }
+        normalTexture ImageTexture {
+          url "more_textures_with_specular_maps/pattern_240/normal.png"
+        }
+      }
+    }
+    geometry Box { }
+  }
+}
+
+Transform {
+  translation 2.481479 0 0
+  rotation -0.97488326534532 0.134505418697699 -0.177513129910441 1.32141944688767
+  children Shape {
+    appearance Appearance {
+      material Material {
+        diffuseTexture ImageTexture {
+          url "more_textures_with_specular_maps/pattern_241/diffuse.png"
+        }
+        specularColor 1 1 1
+        specularTexture ImageTexture {
+          url "more_textures_with_specular_maps/pattern_241/specular.png"
+        }
+        normalTexture ImageTexture {
+          url "more_textures_with_specular_maps/pattern_241/normal.png"
+        }
+      }
+    }
+    geometry Box { }
+  }
+}
+
+Transform {
+  translation 6 0 0
+  children Shape {
+    appearance Appearance {
+      material Material {
+        diffuseTexture ImageTexture {
+          url "more_textures_with_specular_maps/pattern_242/diffuse.png"
+        }
+        specularColor 1 1 1
+        specularTexture ImageTexture {
+          url "more_textures_with_specular_maps/pattern_242/specular.png"
+        }
+        normalTexture ImageTexture {
+          url "more_textures_with_specular_maps/pattern_242/normal.png"
+        }
+      }
+    }
+    geometry Box { }
+  }
+}
+
+Transform {
+  translation 9 0 0
+  children Shape {
+    appearance Appearance {
+      material Material {
+        diffuseTexture ImageTexture {
+          url "more_textures_with_specular_maps/pattern_243/diffuse.png"
+        }
+        specularColor 1 1 1
+        specularTexture ImageTexture {
+          url "more_textures_with_specular_maps/pattern_243/specular.png"
+        }
+        normalTexture ImageTexture {
+          url "more_textures_with_specular_maps/pattern_243/normal.png"
+        }
+      }
+    }
+    geometry Box { }
+  }
+}
+
+Transform {
+  translation 12 0 0
+  children Shape {
+    appearance Appearance {
+      material Material {
+        diffuseTexture ImageTexture {
+          url "more_textures_with_specular_maps/pattern_244/diffuse.png"
+        }
+        specularColor 1 1 1
+        specularTexture ImageTexture {
+          url "more_textures_with_specular_maps/pattern_244/specular.png"
+        }
+        normalTexture ImageTexture {
+          url "more_textures_with_specular_maps/pattern_244/normal.png"
+        }
+      }
+    }
+    geometry Box { }
+  }
+}
+
+Transform {
+  translation 0 3 0
+  children [
+    Transform {
+      children Shape {
+        appearance Appearance {
+          material Material {
+            specularColor 1 1 1
+            specularTexture ImageTexture {
+              url "more_textures_with_specular_maps/pattern_240/specular.png"
+            }
+          }
+        }
+        geometry Box { }
+      }
+    }
+    Transform {
+      translation 3 0 0
+      children Shape {
+        appearance Appearance {
+          material Material {
+            specularColor 1 1 1
+            specularTexture ImageTexture {
+              url "more_textures_with_specular_maps/pattern_241/specular.png"
+            }
+          }
+        }
+        geometry Box { }
+      }
+    }
+    Transform {
+      translation 6 0 0
+      children Shape {
+        appearance Appearance {
+          material Material {
+            specularColor 1 1 1
+            specularTexture ImageTexture {
+              url "more_textures_with_specular_maps/pattern_242/specular.png"
+            }
+          }
+        }
+        geometry Box { }
+      }
+    }
+    Transform {
+      translation 9 0 0
+      children Shape {
+        appearance Appearance {
+          material Material {
+            specularColor 1 1 1
+            specularTexture ImageTexture {
+              url "more_textures_with_specular_maps/pattern_243/specular.png"
+            }
+          }
+        }
+        geometry Box { }
+      }
+    }
+    Transform {
+      translation 12 0 0
+      children Shape {
+        appearance Appearance {
+          material Material {
+            specularColor 1 1 1
+            specularTexture ImageTexture {
+              url "more_textures_with_specular_maps/pattern_244/specular.png"
+            }
+          }
+        }
+        geometry Box { }
+      }
+    }
+  ]
+}
+
+TriangleSet2D { }

@@ -1,0 +1,8 @@
+[InternetShortcut]
+URL=https://www.web3d.org/x3d/content/examples/Basic/Vrml97Specification/Example09.wrl
+INFOURL=https://www.web3d.org/x3d/content/examples/Basic/Vrml97Specification/Example09Index.html
+INFO=A DirectionalLight source illuminates only the objects in its enclosing grouping node. The light illuminates everything within this coordinate system, including the objects that precede it in the scene graph.
+
+
+
+

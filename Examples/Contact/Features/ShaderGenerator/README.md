@@ -35,3 +35,9 @@ MultiTexture   {
 				ImageTexture {url "../../../textures/cubemaps/NV-Metal-ADXT1.dds"}
 			]
 	}		
+	
+in addition the X3D Version 4.0 Material has been implemented which supports adding a modulation texture 
+for each material paramenter, i.e. ambientTexture emissiveTexture specularTexture shininessTexture and normalTexture.
+X3D Material node is used for X3D 4.0 files, in this case also material.diffuseColor is modulated with Appearance.texture / Material.diffuseTexture.
+for RGB/RGBA textures.
+In VRML97 diffuseColor was ignored in this case in the lighting model.
